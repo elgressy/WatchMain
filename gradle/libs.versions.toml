@@ -11,7 +11,7 @@ wearCompose = "1.4.0"
 playServicesWearable = "19.0.0"
 healthServicesClient = "1.0.0"
 coroutinesPlayServices = "1.9.0"
-concurrentFutures = "1.2.0"
+guava = "33.3.1-android"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -25,7 +25,7 @@ wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-fou
 play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
 health-services-client = { group = "androidx.health", name = "health-services-client", version.ref = "healthServicesClient" }
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }
-androidx-concurrent-futures = { group = "androidx.concurrent", name = "concurrent-futures", version.ref = "concurrentFutures" }
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
