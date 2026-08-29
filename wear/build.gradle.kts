@@ -46,4 +46,5 @@ dependencies {
     implementation(libs.play.services.wearable)
     implementation(libs.health.services.client)
     implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.androidx.concurrent.futures)
 }
