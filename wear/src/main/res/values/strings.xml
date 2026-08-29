@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">גל פועם</string>
+    <string name="start">התחל</string>
+    <string name="stop">עצור</string>
+    <string name="bpm_unit">BPM</string>
+    <string name="phone_connected">טלפון מחובר</string>
+    <string name="phone_disconnected">טלפון לא מחובר</string>
+    <string name="permission_explainer">גישה לחיישן הדופק נדרשת כדי למדוד. לחץ שוב כדי לנסות, או פתח הגדרות האפליקציה כדי לאשר ידנית.</string>
+    <string name="hr_channel_name">מדידת דופק</string>
+    <string name="hr_notification_text">מודד דופק עבור גל פועם</string>
+</resources>

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>גל פועם — מסע הרגעה</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<style>
+  :root{
+    --paper:#FAFBFD;
+    --ink:#1C2B45;
+    --ink-dim:#5A6B85;
+    --accent:#4A7BC8;
+    --line:rgba(28,43,69,.15);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;width:100%;height:100%;background:var(--paper);overflow:hidden;font-family:Arial,sans-serif;color:var(--ink);-webkit-tap-highlight-color:transparent;}
+  #app{position:fixed;inset:0;}
+  canvas#wave{position:absolute;inset:0;width:100%;height:100%;display:block;}
+  .overlay{position:absolute;inset:0;pointer-events:none;}
+  .overlay > *{pointer-events:auto;}
+
+  .topbar{position:absolute;top:0;right:0;left:0;display:flex;flex-direction:column;align-items:center;padding:16px 16px 0;text-align:center;z-index:4;}
+  .title{font-weight:500;font-size:13px;letter-spacing:.06em;color:var(--ink-dim);opacity:.85;margin:0;}
+  .level-name{font-weight:700;font-size:23px;margin:3px 0 0;color:var(--ink);transition:opacity .8s ease;}
+
+  .gauge{position:absolute;top:88px;bottom:225px;left:14px;width:34px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;z-index:4;}
+  .gauge-track{position:absolute;top:0;bottom:0;right:16px;width:2px;background:var(--line);border-radius:2px;}
+  .gauge-fill{position:absolute;right:16px;bottom:0;width:2px;background:var(--accent);border-radius:2px;transition:height 1.2s ease;}
+  .gauge-dot{width:9px;height:9px;border-radius:50%;background:rgba(28,43,69,.2);position:relative;z-index:2;transition:all .6s ease;}
+  .gauge-dot.active{background:var(--accent);box-shadow:0 0 8px rgba(74,123,200,.6);transform:scale(1.3);}
+  .depth-label{position:absolute;top:58px;left:14px;font-size:11px;color:var(--ink-dim);letter-spacing:.05em;z-index:4;}
+
+  /* the large guidance text at the heart of the screen */
+  .wave-text{
+    position:absolute; left:50%; top:36%; transform:translate(-50%,-50%);
+    width:min(86vw, 560px); text-align:center; pointer-events:none; z-index:6;
+    font-size:clamp(24px, 6vw, 34px); font-weight:700; line-height:1.55; color:var(--ink);
+    opacity:0; transition:opacity 1.2s ease;
+  }
+  .wave-text.show{opacity:1;}
+
+  .breath-word{position:absolute;left:0;right:0;top:78%;text-align:center;pointer-events:none;font-weight:300;font-size:13px;letter-spacing:.4em;color:rgba(28,43,69,.55);text-transform:uppercase;z-index:5;}
+
+  .hr-source{
+    position:absolute; top:58px; right:14px; font-size:11px; color:var(--ink-dim);
+    letter-spacing:.03em; z-index:4; display:flex; align-items:center; gap:5px;
+  }
+  .hr-source .dot{width:7px;height:7px;border-radius:50%;background:rgba(28,43,69,.25);}
+  .hr-source.live .dot{background:#E5484D;box-shadow:0 0 6px rgba(229,72,77,.6);}
+
+  .controls{position:absolute;left:0;right:0;bottom:0;padding:12px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top, rgba(250,251,253,.96) 65%, rgba(250,251,253,0));z-index:5;}
+  .row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+  .row:last-child{margin-bottom:0;}
+  label.small{font-size:12px;color:var(--ink-dim);min-width:78px;}
+  input[type=range]{-webkit-appearance:none;flex:1;height:4px;border-radius:2px;background:rgba(28,43,69,.15);outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 1px 5px rgba(28,43,69,.3);cursor:pointer;}
+  input[type=range]:disabled::-webkit-slider-thumb{background:#A8B6CC;}
+  .bpm-val{font-size:13px;min-width:64px;text-align:left;color:var(--accent);font-weight:600;}
+
+  .audiotabs{display:flex;gap:6px;}
+  .audiotab{flex:1;text-align:center;padding:8px 4px;border-radius:10px;border:1px solid var(--line);background:rgba(28,43,69,.03);font-size:11.5px;color:var(--ink-dim);cursor:pointer;transition:all .3s ease;}
+  .audiotab.active{border-color:var(--accent);color:var(--accent);background:rgba(74,123,200,.08);}
+
+  .btnrow{display:flex;gap:8px;justify-content:center;}
+  .iconbtn{flex:1;max-width:150px;display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(28,43,69,.04);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:10px 14px;font-size:13px;cursor:pointer;transition:all .3s ease;}
+  .iconbtn.active{background:rgba(74,123,200,.1);border-color:var(--accent);color:var(--accent);}
+  .togglewrap{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-dim);}
+  .switch{width:34px;height:19px;border-radius:999px;background:rgba(28,43,69,.18);position:relative;cursor:pointer;transition:background .3s ease;flex-shrink:0;}
+  .switch::after{content:'';position:absolute;top:2px;right:2px;width:15px;height:15px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .3s ease;}
+  .switch.on{background:rgba(74,123,200,.55);}
+  .switch.on::after{transform:translateX(-15px);}
+  .disclaimer{text-align:center;font-size:10.5px;color:rgba(90,107,133,.75);margin-top:9px;line-height:1.5;}
+
+  .fullscreen-panel{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 28px;background:linear-gradient(180deg, #EAF1FA 0%, var(--paper) 70%);z-index:10;gap:22px;}
+  .fullscreen-panel h1{font-weight:700;font-size:32px;color:var(--ink);margin:0;line-height:1.3;}
+  .fullscreen-panel h1 span{color:var(--accent);}
+  .fullscreen-panel p{font-size:14.5px;color:var(--ink-dim);max-width:320px;line-height:1.7;margin:0;}
+  .startbtn{background:linear-gradient(135deg,#5D8AD4,#3A66AC);color:#fff;border:none;border-radius:999px;padding:16px 44px;font-size:16px;font-weight:600;cursor:pointer;box-shadow:0 8px 24px rgba(74,123,200,.35);}
+  .mock-tag{font-size:11px;letter-spacing:.08em;color:var(--accent);border:1px solid rgba(74,123,200,.45);border-radius:999px;padding:5px 12px;}
+  .presetpick{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:320px;}
+  .presetpick button{border:1px solid var(--line);background:rgba(28,43,69,.03);color:var(--ink-dim);border-radius:999px;padding:7px 14px;font-size:12px;cursor:pointer;}
+  .presetpick button.active{border-color:var(--accent);color:var(--accent);background:rgba(74,123,200,.08);}
+  .hidden{display:none !important;}
+
+  .infobtn{
+    position:absolute; top:16px; left:14px; width:30px; height:30px; border-radius:50%;
+    border:1px solid var(--line); background:rgba(28,43,69,.04); color:var(--ink-dim);
+    font-size:14px; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:7;
+  }
+  .infomodal{
+    position:absolute; inset:0; z-index:20; background:rgba(28,43,69,.45);
+    display:flex; align-items:flex-end; justify-content:center;
+  }
+  .infomodal .sheet{
+    width:100%; max-height:82vh; overflow-y:auto; background:#FFFFFF;
+    border-top:1px solid rgba(74,123,200,.4); border-radius:20px 20px 0 0;
+    padding:20px 20px calc(24px + env(safe-area-inset-bottom));
+  }
+  .infomodal h2{font-size:19px; color:var(--accent); margin:0 0 4px;}
+  .infomodal .sub{font-size:12px; color:var(--ink-dim); margin:0 0 16px; line-height:1.6;}
+  .infoitem{margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid rgba(28,43,69,.1);}
+  .infoitem:last-of-type{border-bottom:none;}
+  .infoitem h3{font-size:14.5px; color:var(--ink); margin:0 0 4px;}
+  .infoitem p{font-size:12.5px; color:var(--ink-dim); line-height:1.65; margin:0 0 4px;}
+  .infoitem .src{font-size:11px; color:var(--accent);}
+  .infoclose{display:block; margin:14px auto 0; background:rgba(28,43,69,.04); border:1px solid var(--line); color:var(--ink); border-radius:999px; padding:9px 22px; font-size:13px; cursor:pointer;}
+  .infodisclaimer{font-size:11px; color:rgba(90,107,133,.85); line-height:1.6; margin-top:14px; padding-top:12px; border-top:1px solid rgba(28,43,69,.12);}
+
+  .passflash{
+    position:fixed; inset:0; background:radial-gradient(circle at 50% 45%, rgba(120,170,255,.5), rgba(120,170,255,.12) 45%, transparent 70%);
+    opacity:0; pointer-events:none; z-index:8;
+  }
+  .passflash.fire{ animation:flashPulse .6s ease-out; }
+  @keyframes flashPulse{ 0%{opacity:0;} 15%{opacity:1;} 100%{opacity:0;} }
+
+  .xppop{
+    position:absolute; left:50%; top:24%; transform:translate(-50%,-50%) scale(0.6);
+    font-size:15px; color:var(--accent); font-weight:700; opacity:0; pointer-events:none; z-index:9;
+  }
+  .xppop.fire{ animation:xpPop 1.1s ease-out; }
+  @keyframes xpPop{
+    0%{opacity:0; transform:translate(-50%,-50%) scale(0.5);}
+    20%{opacity:1; transform:translate(-50%,-50%) scale(1.1);}
+    35%{transform:translate(-50%,-50%) scale(1);}
+    100%{opacity:0; transform:translate(-50%,-60%) scale(1);}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="wave"></canvas>
+  <div class="passflash" id="passFlash"></div>
+  <div class="xppop" id="xpPop">שלב הושלם +1</div>
+  <button class="infobtn" id="infoBtn">ⓘ</button>
+
+  <div class="overlay">
+    <div class="topbar">
+      <p class="title">גל פועם · מסע הרגעה</p>
+      <p class="level-name" id="levelName">רגע נוכחי</p>
+    </div>
+
+    <div class="depth-label" id="depthLabel">שלב 1 מתוך 5</div>
+    <div class="hr-source" id="hrSource"><span class="dot"></span><span id="hrSourceText">דופק: ידני</span></div>
+    <div class="gauge">
+      <div class="gauge-track"></div>
+      <div class="gauge-fill" id="gaugeFill" style="height:0%"></div>
+      <div class="gauge-dot" id="dot0"></div>
+      <div class="gauge-dot" id="dot1"></div>
+      <div class="gauge-dot" id="dot2"></div>
+      <div class="gauge-dot" id="dot3"></div>
+      <div class="gauge-dot" id="dot4"></div>
+    </div>
+
+    <div class="wave-text" id="waveText"></div>
+    <div class="breath-word" id="breathWord"></div>
+
+    <div class="controls">
+      <div class="row">
+        <label class="small">דופק</label>
+        <input type="range" id="bpmSlider" min="50" max="120" value="74">
+        <span class="bpm-val" id="bpmVal">74 BPM</span>
+      </div>
+      <div class="row">
+        <div class="togglewrap" style="flex:1">
+          <div class="switch" id="bpmInvertSwitch"></div>
+          <span id="bpmMapLabel">מיפוי: דופק גבוה = איטי יותר</span>
+        </div>
+      </div>
+      <div class="row audiotabs">
+        <div class="audiotab" data-mode="pad">פאד רך</div>
+        <div class="audiotab" data-mode="nature">טבע</div>
+        <div class="audiotab" data-mode="bells">קערות טיבטיות</div>
+        <div class="audiotab" data-mode="silent">שקט</div>
+      </div>
+      <div class="row">
+        <div class="togglewrap" style="flex:1">
+          <div class="switch" id="autoSimSwitch"></div>
+          <span>סימולציה אוטומטית של הרגעה</span>
+        </div>
+        <div class="togglewrap">
+          <div class="switch on" id="guideSwitch"></div>
+          <span>טקסט הנחיה</span>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button class="iconbtn active" id="playPauseBtn">⏸ השהה</button>
+        <button class="iconbtn" id="endBtn">🏁 סיים מסע</button>
+      </div>
+      <div class="disclaimer">כשהשעון מחובר, הדופק מגיע ממנו אוטומטית; אחרת שולטים ידנית. כלי הרפיה בלבד, לא תחליף לטיפול — אפשר לעצור בכל רגע.</div>
+    </div>
+  </div>
+
+  <div class="fullscreen-panel" id="startScreen">
+    <span class="mock-tag">גרסת פיתוח</span>
+    <h1>גל אחד.<br><span>הקצב שלך.</span></h1>
+    <p>גל צבעוני פועם בקצב הלב שלך, על מסך לבן ושקט. ככל שהדופק נרגע, המסע מתקדם — חמישה שלבים עד שקט מלא.</p>
+    <div class="presetpick" id="presetPick">
+      <button data-mode="pad">פאד רך</button>
+      <button data-mode="nature">טבע</button>
+      <button data-mode="bells">קערות טיבטיות</button>
+      <button data-mode="silent">שקט</button>
+    </div>
+    <button class="startbtn" id="startBtn">התחל מסע</button>
+    <button class="iconbtn" id="demoBtn" style="max-width:220px;">🎬 הרץ דמו מהיר (~45 שנ׳)</button>
+  </div>
+
+  <div class="fullscreen-panel hidden" id="endScreen">
+    <h1>הגעת <span>אל השקט.</span></h1>
+    <p id="endSummary">היית במסע קצר. קח עוד רגע לפני שאתה חוזר למסך.</p>
+    <button class="startbtn" id="restartBtn">עוד מסע</button>
+  </div>
+
+  <div class="infomodal hidden" id="infoModal">
+    <div class="sheet">
+      <h2>מה בנוי כאן, ולמה</h2>
+      <p class="sub">כל אלמנט בחוויה הזו מבוסס על מרכיב ספציפי מתוך מחקר קליני על היפנוזה עצמית והרפיה — לא המצאה חופשית. הנה המיפוי, עם המקורות.</p>
+
+      <div class="infoitem">
+        <h3>1. נקודת מיקוד יחידה (הגל והטקסט במרכז)</h3>
+        <p>ד״ר דיוויד שפיגל מסטנפורד מגדיר היפנוזה כתשומת לב ממוקדת וסוחפת — כמו הסתכלות דרך עדשת טלה שמצמצמת את שדה הראייה לנקודה אחת. הגל היחיד על המסך הריק משמש בדיוק לזה: עוגן חזותי יחיד שמצמצם את תשומת הלב.</p>
+        <p class="src">מקור: Spiegel D., Stanford University — מחקר על "focused attention/absorption" כמרכיב מרכזי בהיפנוזה.</p>
+      </div>
+
+      <div class="infoitem">
+        <h3>2. דיסוציאציה מודרכת מרעש חיצוני</h3>
+        <p>טקסטי ההנחיה ("הרעש שבחוץ נשאר מאחור") משקפים את מרכיב הדיסוציאציה — הפרדה מודעת מגירויים חיצוניים לא רלוונטיים, אחד משלושת המרכיבים המרכזיים שמתאר שפיגל בהיפנוזה קלינית.</p>
+        <p class="src">מקור: אותו בסיס מחקרי של שפיגל; Cardeña & Spiegel, מודל אינטגרטיבי של דיסוציאציה בהיפנוזה.</p>
+      </div>
+
+      <div class="infoitem">
+        <h3>3. דימוי מקום בטוח ומסע מודרך</h3>
+        <p>במחקר בקרה מבוקר אקראית שערך שפיגל (2000, 241 מטופלים לפני ניתוח), אינדוקציה היפנוטית שכללה תשומת לב ממוקדת ולאחריה דמיון של מקום בטוח ונעים הפחיתה משמעותית כאב וחרדה בהשוואה לטיפול רגיל. המסע ההדרגתי כאן, מהשלב הראשון ועד השקט המלא, בנוי על אותו עיקרון.</p>
+        <p class="src">מקור: Spiegel D. et al., מחקר RCT על היפנוזה טרום-ניתוחית, Stanford.</p>
+      </div>
+
+      <div class="infoitem">
+        <h3>4. נשימה ודופק כמנוע להתקדמות</h3>
+        <p>מחקר RCT שבחן היפנוזה עצמית מוגברת ב-VR (מודול "Aqua", כולל תרגילי נשימה ודימוי צלילה) ב-100 מטופלים לפני צנתור כלי דם, הראה ירידה משמעותית בחרדה בהשוואה לטיפול רגיל. כאן, הדופק והנשימה שלך הם שמניעים את קצב המסע — ככל שהדופק נרגע, כך מתקרבים לשקט.</p>
+        <p class="src">מקור: מחקר RCT, Virtually Augmented Self-Hypnosis in Peripheral Vascular Intervention (PMC10030078).</p>
+      </div>
+
+      <div class="infoitem">
+        <h3>5. העמקה הדרגתית בשלבים (Deepener)</h3>
+        <p>ספירה לאחור, מדרגות יורדות, או כל דימוי הדרגתי של "ירידה עמוק יותר" הם "deepeners" קלאסיים בהיפנוזה קלינית — טכניקה סטנדרטית להעמקת מצב ההרפיה בהדרגה. חמשת השלבים במסע הם גרסה ויזואלית לאותה טכניקה.</p>
+        <p class="src">מקור: ספרות קלינית סטנדרטית על טכניקות "deepening" בהיפנוזה (staircase / countdown deepeners).</p>
+      </div>
+
+      <div class="infoitem">
+        <h3>6. פורמט של היפנוזה-עצמית דיגיטלית</h3>
+        <p>סקירה שיטתית ומטה-אנליזה של ניסויים מבוקרים אקראיים מצאה תמיכה בהיפנוזה עצמית להפחתת חרדה, מצוקה רגשית וכאב — כולל תוכניות המועברות דרך אפליקציה או וידאו, ללא נוכחות מטפל.</p>
+        <p class="src">מקור: Clinical Applications of Self-Hypnosis: Systematic Review & Meta-Analysis of RCTs; Häuser et al. (PMC10807512).</p>
+      </div>
+
+      <div class="infoitem">
+        <h3>7. גירוי חזותי קצבי ומונוטוני</h3>
+        <p>גירויים חזותיים איטיים, קבועים וצפויים (מטוטלת, נקודת קיבוע, תנועה מחזורית) הם כלי אינדוקציה קלאסיים בהיפנוזה — הם מקלים על צמצום תשומת הלב ומרגיעים את מערכת העצבים. הגל כאן נע בקצב קבוע שנגזר מהגוף שלך עצמו, והצבע מתחלף בהדרגה כדי לשמור עניין בלי לעורר.</p>
+        <p class="src">מקור: ספרות קלינית על טכניקות אינדוקציה חזותיות (eye-fixation / rhythmic stimulus induction).</p>
+      </div>
+
+      <div class="infodisclaimer">
+        זהו כלי הרפיה בהשראת מרכיבים ממחקר קליני — הוא עצמו <strong>לא נבדק קלינית</strong> ואינו תחליף לטיפול, לייעוץ רפואי, או להיפנותרפיה בליווי איש מקצוע מוסמך. אם אתה חווה חרדה משמעותית ומתמשכת, מומלץ לפנות לאיש מקצוע.
+      </div>
+
+      <button class="infoclose" id="infoCloseBtn">סגור</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const LEVELS = [
+    { name:"רגע נוכחי", prompt:"תן לכתפיים לצנוח. אתה לא צריך לעשות כלום — רק להביט בגל." },
+    { name:"האטה", prompt:"עם כל נשיפה, הגל נרגע — ואתה איתו." },
+    { name:"צלילה פנימה", prompt:"הרעש שבחוץ נשאר מאחור. כאן יש רק את הקצב שלך." },
+    { name:"עומק", prompt:"אתה לא צריך לשלוט בכלום. רק להיות נישא." },
+    { name:"שקט", prompt:"עוד מעט מגיעים. תן לגל לשאת אותך עד הסוף." }
+  ];
+
+  let state = {
+    playing:false, started:false, levelIdx:0, bpm:74, autoSim:false,
+    guideOn:true, audioMode:'pad', demoMode:false, bpmInvert:false,
+    t0:performance.now(), breathCycleMs:14000,
+  };
+
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function clamp01(x){return Math.max(0,Math.min(1,x));}
+  function smoothstep(a,b,x){const t=clamp01((x-a)/(b-a)); return t*t*(3-2*t);}
+  function easeInOut(t){return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
+
+  function breathState(now){
+    const tIn=4000,tHold=4000,tOut=6000,cycle=state.breathCycleMs;
+    const tt=(now-state.t0)%cycle;
+    if(tt<tIn){ const p=tt/tIn; return {phase:'שאיפה', scale:easeInOut(p)}; }
+    if(tt<tIn+tHold) return {phase:'החזק', scale:1};
+    const p=(tt-tIn-tHold)/tOut;
+    return {phase:'נשיפה', scale:1-easeInOut(p)};
+  }
+
+  // ---------- shifting color palette (no external libs) ----------
+  function hslToRgb(h,s,l){
+    const a=s*Math.min(l,1-l);
+    const f=(n)=>{const k=(n+h*12)%12; return l-a*Math.max(-1,Math.min(k-3,Math.min(9-k,1)));};
+    return {r:f(0)*255, g:f(8)*255, b:f(4)*255};
+  }
+  let waveColor = hslToRgb(0.58, 0.65, 0.5);
+  let waveTarget = {...waveColor};
+  let nextPaletteAt = 0;
+  function maybeNewPalette(nowMs){
+    if (nowMs < nextPaletteAt) return;
+    nextPaletteAt = nowMs + 4500 + Math.random()*2500; // a new hue every ~4.5-7s
+    waveTarget = hslToRgb(Math.random(), 0.6 + Math.random()*0.2, 0.42 + Math.random()*0.12);
+  }
+  function updatePalette(dtMs){
+    const t = Math.min(1, dtMs*0.0010);
+    waveColor.r = lerp(waveColor.r, waveTarget.r, t);
+    waveColor.g = lerp(waveColor.g, waveTarget.g, t);
+    waveColor.b = lerp(waveColor.b, waveTarget.b, t);
+  }
+
+  // ---------- the wave canvas ----------
+  const waveCanvas = document.getElementById('wave');
+  const ctx = waveCanvas.getContext('2d');
+  let W=1,H=1,DPR=1;
+  function resize(){
+    W = window.innerWidth; H = window.innerHeight;
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    waveCanvas.width = W*DPR; waveCanvas.height = H*DPR;
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  window.addEventListener('resize', resize);
+
+  let wavePhase = 0;
+  function drawWave(dt, beatPulse, bs, exitT){
+    if (state.playing) wavePhase += dt*0.0035;
+    ctx.fillStyle = '#FAFBFD';
+    ctx.fillRect(0,0,W,H);
+
+    const midY = H*0.60;
+    const baseAmp = H*0.05 * (1 + bs.scale*0.3);          // breathing gently swells the wave
+    const pulseAmp = 1 + beatPulse*1.05;                   // the whole wave lifts on each beat
+    const spikeH = H*0.15 * beatPulse;                     // sharp ECG-style blip at the center
+    const spikeX = W*0.5, spikeSigma = W*0.013;
+    const fade = 1 - exitT*0.85;                           // the wave calms toward the end
+
+    const strokeCol = `rgb(${Math.round(waveColor.r)},${Math.round(waveColor.g)},${Math.round(waveColor.b)})`;
+
+    ctx.lineWidth = 3.5;
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.strokeStyle = strokeCol;
+    ctx.shadowColor = strokeCol;
+    ctx.shadowBlur = 16;
+    ctx.beginPath();
+    const k = (Math.PI*2)/(W*0.22);
+    for (let x=0; x<=W; x+=3){
+      let y = midY + Math.sin(x*k - wavePhase*6)*baseAmp*pulseAmp*fade;
+      const dxs = x - spikeX;
+      y -= spikeH*fade * Math.exp(-(dxs*dxs)/(2*spikeSigma*spikeSigma));
+      if (x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // a faint echo line beneath, for depth
+    ctx.globalAlpha = 0.22;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x=0; x<=W; x+=4){
+      const y = midY + H*0.025 + Math.sin(x*k*0.8 - wavePhase*4.2)*baseAmp*0.6*fade;
+      if (x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  // ---------- journey (0 = start, 1 = full calm) ----------
+  let journeyT = 0;
+  let lastFrameTime = performance.now();
+  let lastLevelIdxSeen = 0;
+
+  function currentBpmSpeedPerMs(){
+    const bpmNorm = clamp01((state.bpm-50)/(120-50));
+    const bpmRaw = state.bpmInvert ? bpmNorm : (1-bpmNorm);
+    const speedLo = 0.0000035, speedHi = 0.0000135;
+    return lerp(speedLo, speedHi, bpmRaw);
+  }
+
+  function renderFrame(now){
+    const dt = Math.min(50, now-lastFrameTime); lastFrameTime = now;
+    const bs = breathState(now);
+    document.getElementById('breathWord').textContent = state.playing ? bs.phase : '';
+
+    const beatIntervalMs = 60000/state.bpm;
+    const beatPhase = ((now-state.t0)%beatIntervalMs)/beatIntervalMs;
+    const beatPulse = Math.max(0,1-beatPhase*6);
+
+    if (state.playing && journeyT < 1){
+      const breathMultiplier = 0.85 + bs.scale*0.3;
+      const speed = state.demoMode ? 0.0000235 : currentBpmSpeedPerMs()*breathMultiplier;
+      journeyT = clamp01(journeyT + dt*speed);
+
+      const newLevelIdx = Math.min(LEVELS.length-1, Math.floor(journeyT*LEVELS.length + 1e-6));
+      if (newLevelIdx > lastLevelIdxSeen){
+        lastLevelIdxSeen = newLevelIdx;
+        state.levelIdx = newLevelIdx;
+        updateLevelUI();
+        chime();
+        triggerPass();
+      }
+      if (journeyT >= 1 && state.demoMode){ endJourney(); }
+    }
+
+    maybeNewPalette(now);
+    updatePalette(dt);
+
+    drawWave(dt, state.playing ? beatPulse : 0, bs, smoothstep(0.86,1,journeyT));
+    requestAnimationFrame(renderFrame);
+  }
+
+  // ---------- UI ----------
+  const levelNameEl = document.getElementById('levelName');
+  const depthLabelEl = document.getElementById('depthLabel');
+  const gaugeFillEl = document.getElementById('gaugeFill');
+  const waveText = document.getElementById('waveText');
+  const dots = [0,1,2,3,4].map(i=>document.getElementById('dot'+i));
+
+  function updateLevelUI(){
+    const lvl = LEVELS[state.levelIdx];
+    levelNameEl.style.opacity=0;
+    setTimeout(()=>{levelNameEl.textContent=lvl.name; levelNameEl.style.opacity=1;},400);
+    depthLabelEl.textContent = `שלב ${state.levelIdx+1} מתוך ${LEVELS.length}`;
+    gaugeFillEl.style.height = (state.levelIdx/(LEVELS.length-1)*100)+'%';
+    dots.forEach((d,i)=>d.classList.toggle('active', i<=state.levelIdx));
+    document.getElementById('xpPop').textContent = state.levelIdx===0 ? 'המסע התחיל' : `שלב ${state.levelIdx+1} • ממשיכים`;
+    if (state.guideOn){
+      waveText.classList.remove('show');
+      setTimeout(()=>{ waveText.textContent=lvl.prompt; waveText.classList.add('show'); },700);
+    } else waveText.classList.remove('show');
+  }
+
+  function triggerPass(){
+    const flash = document.getElementById('passFlash');
+    flash.classList.remove('fire'); void flash.offsetWidth; flash.classList.add('fire');
+    const xp = document.getElementById('xpPop');
+    xp.classList.remove('fire'); void xp.offsetWidth; xp.classList.add('fire');
+  }
+
+  const bpmSlider=document.getElementById('bpmSlider'), bpmVal=document.getElementById('bpmVal');
+  bpmSlider.addEventListener('input',()=>{state.bpm=parseInt(bpmSlider.value,10); bpmVal.textContent=state.bpm+' BPM';});
+
+  const bpmInvertSwitch=document.getElementById('bpmInvertSwitch'), bpmMapLabel=document.getElementById('bpmMapLabel');
+  bpmInvertSwitch.addEventListener('click',()=>{
+    state.bpmInvert = !state.bpmInvert;
+    bpmInvertSwitch.classList.toggle('on', state.bpmInvert);
+    bpmMapLabel.textContent = state.bpmInvert ? 'מיפוי: דופק גבוה = מהיר יותר' : 'מיפוי: דופק גבוה = איטי יותר';
+  });
+
+  let autoSimInterval=null;
+  const autoSwitch=document.getElementById('autoSimSwitch');
+  autoSwitch.addEventListener('click',()=>{
+    state.autoSim=!state.autoSim; autoSwitch.classList.toggle('on', state.autoSim);
+    if (state.autoSim){
+      if (autoSimInterval) clearInterval(autoSimInterval);
+      autoSimInterval=setInterval(()=>{
+        if(!state.playing || externalBpmActive) return;
+        state.bpm=Math.max(58,state.bpm-0.6);
+        bpmSlider.value=Math.round(state.bpm); bpmVal.textContent=Math.round(state.bpm)+' BPM';
+      },900);
+    } else if (autoSimInterval) clearInterval(autoSimInterval);
+  });
+
+  const guideSwitch=document.getElementById('guideSwitch');
+  guideSwitch.addEventListener('click',()=>{
+    state.guideOn=!state.guideOn; guideSwitch.classList.toggle('on', state.guideOn);
+    if(!state.guideOn) waveText.classList.remove('show'); else updateLevelUI();
+  });
+
+  let pausedAt = performance.now();
+  const playPauseBtn=document.getElementById('playPauseBtn');
+  playPauseBtn.addEventListener('click',()=>{
+    state.playing=!state.playing;
+    playPauseBtn.textContent = state.playing?'⏸ השהה':'▶ המשך';
+    playPauseBtn.classList.toggle('active', state.playing);
+    const now=performance.now();
+    if (state.playing){ state.t0 += (now-pausedAt); setMasterGain(); }
+    else { pausedAt=now; setMasterGain(); }
+  });
+
+  // ---------- Audio engine (Tone.js) ----------
+  let audioReady=false;
+  let padSynth, natureNoise, natureFilter, natureGainLFO, natureFilterLFO, bellSynth, overtoneSynth, bellLoop, chimeSynth;
+  let gPad, gNature, gBells, gMaster;
+
+  function initAudio(){
+    if (audioReady) return;
+    audioReady = true;
+
+    gMaster = new Tone.Gain(1).toDestination();
+    const reverb = new Tone.Reverb({decay:4.5, wet:0.4}).connect(gMaster);
+
+    gPad = new Tone.Gain(0).connect(reverb);
+    padSynth = new Tone.PolySynth(Tone.Synth,{
+      oscillator:{type:'sine'}, envelope:{attack:4, decay:2, sustain:0.9, release:8}
+    }).connect(gPad);
+    padSynth.volume.value = -18;
+
+    gNature = new Tone.Gain(0).connect(reverb);
+    natureFilter = new Tone.Filter({frequency:260, type:'lowpass', rolloff:-24}).connect(gNature);
+    natureNoise = new Tone.Noise('brown').connect(natureFilter);
+    natureNoise.volume.value = -6;
+    natureFilterLFO = new Tone.LFO({frequency:1/11, min:140, max:420});
+    natureFilterLFO.connect(natureFilter.frequency); natureFilterLFO.start();
+    natureGainLFO = new Tone.LFO({frequency:1/11, min:-20, max:-9});
+    natureGainLFO.phase = 90;
+    natureGainLFO.connect(natureNoise.volume); natureGainLFO.start();
+    natureNoise.start();
+
+    gBells = new Tone.Gain(0).connect(reverb);
+    const bellChorus = new Tone.Chorus({frequency:0.3, delayTime:4, depth:0.4, wet:0.35}).connect(gBells);
+    bellChorus.start();
+    bellSynth = new Tone.PolySynth(Tone.Synth,{
+      oscillator:{type:'sine'}, envelope:{attack:0.9, decay:2.5, sustain:0.25, release:7}
+    }).connect(bellChorus);
+    bellSynth.volume.value = -14;
+    overtoneSynth = new Tone.PolySynth(Tone.Synth,{
+      oscillator:{type:'triangle'}, envelope:{attack:1.1, decay:3, sustain:0.1, release:6}
+    }).connect(bellChorus);
+    overtoneSynth.volume.value = -24;
+    const pentatonic = ['C3','D3','F3','G3','A3','C4'];
+    bellLoop = new Tone.Loop((time)=>{
+      if (state.audioMode!=='bells' || !state.playing) return;
+      if (Math.random()<0.5){
+        const note = pentatonic[Math.floor(Math.random()*pentatonic.length)];
+        bellSynth.triggerAttackRelease(note,'2n',time);
+        overtoneSynth.triggerAttackRelease(Tone.Frequency(note).transpose(19).toNote(),'2n',time);
+      }
+    }, '4n');
+    bellLoop.humanize = true;
+
+    chimeSynth = new Tone.PolySynth(Tone.Synth,{
+      oscillator:{type:'sine'}, envelope:{attack:0.5, decay:2.5, sustain:0, release:4}
+    }).connect(reverb);
+    chimeSynth.volume.value = -10;
+
+    padSynth.triggerAttack(['C3','G3','C4']);
+    Tone.Transport.start();
+    bellLoop.start(0);
+    applyAudioMode(true);
+  }
+
+  function applyAudioMode(instant){
+    if (!audioReady) return;
+    const t = instant?0:1.5;
+    gPad.gain.rampTo(state.audioMode==='pad' ? 0.55 : 0, t);
+    gNature.gain.rampTo(state.audioMode==='nature' ? 0.6 : 0, t);
+    gBells.gain.rampTo(state.audioMode==='bells' ? 0.8 : 0, t);
+  }
+  function setMasterGain(){ if (audioReady) gMaster.gain.rampTo(state.playing?1:0, 0.4); }
+  function chime(){
+    if (!audioReady || state.audioMode==='silent') return;
+    const notes = ['C5','D5','F5','G5','A5'];
+    chimeSynth.triggerAttackRelease(notes[state.levelIdx % notes.length], '2n');
+  }
+
+  function wireAudioTabs(container){
+    container.querySelectorAll('[data-mode]').forEach(el=>{
+      el.addEventListener('click',()=>{
+        state.audioMode = el.getAttribute('data-mode');
+        document.querySelectorAll('.audiotab').forEach(t=>t.classList.toggle('active', t.getAttribute('data-mode')===state.audioMode));
+        document.querySelectorAll('#presetPick button').forEach(b=>b.classList.toggle('active', b.getAttribute('data-mode')===state.audioMode));
+        applyAudioMode(false);
+      });
+    });
+  }
+  wireAudioTabs(document.querySelector('.audiotabs'));
+  wireAudioTabs(document.getElementById('presetPick'));
+  document.querySelectorAll('[data-mode]').forEach(el=>{
+    if (el.getAttribute('data-mode')===state.audioMode) el.classList.add('active');
+  });
+
+  // ---------- start / end / demo ----------
+  const startScreen=document.getElementById('startScreen'), endScreen=document.getElementById('endScreen');
+
+  function beginJourney(demo){
+    state.demoMode = !!demo;
+    startScreen.classList.add('hidden');
+    state.started=true; state.playing=true;
+    state.t0=performance.now(); lastFrameTime=performance.now();
+    state.levelIdx=0; lastLevelIdxSeen=0; journeyT=0; wavePhase=0;
+    pausedAt = performance.now();
+    if (demo){
+      state.autoSim = true; autoSwitch.classList.add('on');
+      state.bpm = 82; bpmSlider.value=82; bpmVal.textContent='82 BPM';
+      if (autoSimInterval) clearInterval(autoSimInterval);
+      autoSimInterval=setInterval(()=>{
+        if(!state.playing || externalBpmActive) return;
+        state.bpm=Math.max(56,state.bpm-1.1);
+        bpmSlider.value=Math.round(state.bpm); bpmVal.textContent=Math.round(state.bpm)+' BPM';
+      },900);
+    }
+    updateLevelUI();
+    triggerPass();
+  }
+
+  document.getElementById('startBtn').addEventListener('click', async ()=>{
+    await Tone.start(); initAudio(); beginJourney(false);
+  });
+  document.getElementById('demoBtn').addEventListener('click', async ()=>{
+    await Tone.start(); initAudio(); beginJourney(true);
+  });
+
+  function endJourney(){
+    state.playing=false; setMasterGain();
+    const lvl=LEVELS[state.levelIdx];
+    document.getElementById('endSummary').textContent = journeyT>=1
+      ? `השלמת את המסע עד "${lvl.name}". קח עוד רגע לפני שאתה חוזר למסך.`
+      : `הגעת עד "${lvl.name}" (שלב ${state.levelIdx+1}). קח עוד רגע לפני שאתה חוזר למסך.`;
+    endScreen.classList.remove('hidden');
+  }
+  document.getElementById('endBtn').addEventListener('click', endJourney);
+
+  document.getElementById('restartBtn').addEventListener('click',()=>{
+    endScreen.classList.add('hidden'); startScreen.classList.remove('hidden');
+    state.playing=false; state.demoMode=false;
+  });
+
+  const infoModal = document.getElementById('infoModal');
+  document.getElementById('infoBtn').addEventListener('click', ()=> infoModal.classList.remove('hidden'));
+  document.getElementById('infoCloseBtn').addEventListener('click', ()=> infoModal.classList.add('hidden'));
+
+  // =========================================================================
+  // EXTERNAL HEART-RATE BRIDGE (Android WebView / Galaxy Watch)
+  // The native app calls window.onExternalBpm(bpm) whenever a fresh reading
+  // arrives from the watch. While live data flows, the manual slider locks.
+  // If the watch goes silent for 10s, control returns to manual.
+  // =========================================================================
+  let externalBpmActive = false, lastExternalAt = 0;
+  const hrSource = document.getElementById('hrSource');
+  const hrSourceText = document.getElementById('hrSourceText');
+
+  window.onExternalBpm = function(bpm){
+    bpm = Number(bpm);
+    if (!isFinite(bpm) || bpm < 25 || bpm > 230) return;
+    externalBpmActive = true; lastExternalAt = performance.now();
+    state.bpm = bpm;
+    bpmSlider.value = Math.round(bpm);
+    bpmSlider.disabled = true;
+    bpmVal.textContent = Math.round(bpm) + ' BPM ⌚';
+    hrSource.classList.add('live');
+    hrSourceText.textContent = 'דופק: שעון (חי)';
+  };
+
+  setInterval(()=>{
+    if (externalBpmActive && performance.now()-lastExternalAt > 10000){
+      externalBpmActive = false;
+      bpmSlider.disabled = false;
+      bpmVal.textContent = Math.round(state.bpm) + ' BPM';
+      hrSource.classList.remove('live');
+      hrSourceText.textContent = 'דופק: ידני (שעון נותק)';
+    }
+  }, 2000);
+
+  // let the native shell know the page is ready to receive readings
+  try{ if (window.AndroidBridge && AndroidBridge.onWebReady) AndroidBridge.onWebReady(); }catch(e){}
+
+  resize();
+  requestAnimationFrame(renderFrame);
+
+})();
+</script>
+</body>
+</html>
