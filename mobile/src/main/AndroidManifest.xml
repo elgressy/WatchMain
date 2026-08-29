@@ -3,6 +3,10 @@
 
     <!-- Tone.js loads from cdnjs inside the WebView -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Camera-based BPM fallback when no watch is paired -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.flash" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -23,5 +27,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".CameraHeartRateActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PulseWave.Fullscreen" />
     </application>
 </manifest>

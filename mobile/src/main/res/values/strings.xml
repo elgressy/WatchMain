@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">גל פועם</string>
+    <string name="camera_measure_button">מדוד דופק דרך המצלמה</string>
+    <string name="camera_instructions">כסה את המצלמה האחורית והפלאש עם האצבע, בלי ללחוץ חזק מדי</string>
+    <string name="camera_measuring">מודד… עוד %1$d שניות</string>
+    <string name="camera_permission_denied">נדרשת הרשאת מצלמה כדי למדוד דופק. אפשר לנסות שוב מהגדרות האפליקציה.</string>
+    <string name="cancel">ביטול</string>
 </resources>
