@@ -36,6 +36,12 @@ jobs:
           SDKM=$(ls -d "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | tail -1)
           yes | "$SDKM" --licenses > /dev/null || true
 
+      # Fail fast if the web app has a JS syntax error (would leave every button dead)
+      - name: Check web app JavaScript
+        run: |
+          python3 -c "import re,sys; s=open('pitput/src/main/assets/index.html').read(); open('/tmp/app.js','w').write('\n'.join(re.findall(r'<script>(.*?)</script>', s, re.S)))"
+          node --check /tmp/app.js
+
       - name: Build APK
         run: |
           chmod +x gradlew

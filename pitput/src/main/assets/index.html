@@ -3,196 +3,267 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#FFF4E0">
+<meta name="theme-color" content="#1B1150">
 <title>פטפוט</title>
 <style>
+@font-face{font-family:"Fredoka";src:url(fonts/fredoka-hebrew.woff2) format("woff2");font-weight:300 700;unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
+@font-face{font-family:"Fredoka";src:url(fonts/fredoka-latin.woff2) format("woff2");font-weight:300 700;unicode-range:U+0000-00FF,U+2000-206F}
 :root{
-  --bg:#FFF4E0; --ink:#3B2F2F; --soft:#8A7B6F; --card:#FFFFFF; --accent:#FF8A5B; --accent2:#5BC0BE;
-  --ok:#6BCB77; --line:#EADBC8; --shadow:0 6px 0 rgba(59,47,47,.12), 0 10px 24px rgba(59,47,47,.10);
-  --r:28px;
+  --sky1:#1B1150; --sky2:#3A1D8A; --sky3:#7A2CB8;
+  --ink:#2A1A4A; --paper:#FFFFFF; --soft:#7C6A9E;
+  --pink:#FF4FA3; --orange:#FF8A3D; --yellow:#FFD23F; --lime:#7BE36A; --cyan:#3CD3F5; --violet:#9B6BFF;
+  --r:30px;
+  --font:"Fredoka","Rubik","Noto Sans Hebrew",system-ui,sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
-  font-family:"Rubik","Noto Sans Hebrew","Assistant",system-ui,sans-serif;overscroll-behavior:none}
+html,body{margin:0;height:100%;background:var(--sky1);color:#fff;font-family:var(--font);overscroll-behavior:none}
 body{user-select:none;-webkit-user-select:none;touch-action:manipulation;overflow:hidden}
-button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation;padding:0}
 input,select,textarea{font:inherit;user-select:text;-webkit-user-select:text}
-.screen{position:fixed;inset:0;display:none;flex-direction:column;
+
+/* ---------- night sky background ---------- */
+.sky{position:fixed;inset:0;z-index:0;overflow:hidden;
+  background:radial-gradient(120% 80% at 80% 0%, var(--sky3) 0%, transparent 60%),
+             radial-gradient(100% 70% at 0% 100%, #C2185B 0%, transparent 55%),
+             linear-gradient(170deg, var(--sky2), var(--sky1) 70%)}
+.sky i{position:absolute;border-radius:50%;opacity:.55;filter:blur(1px);animation:rise linear infinite}
+.sky i.b{background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), rgba(255,255,255,.15) 40%, rgba(255,255,255,.05) 70%);border:1px solid rgba(255,255,255,.25)}
+.sky i.s{background:#fff;opacity:.9;filter:none;animation:twinkle ease-in-out infinite}
+@keyframes rise{from{transform:translateY(110vh)}to{transform:translateY(-20vh)}}
+@keyframes twinkle{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}
+
+.screen{position:fixed;inset:0;z-index:1;display:none;flex-direction:column;
   padding:max(14px,env(safe-area-inset-top)) 16px max(14px,env(safe-area-inset-bottom))}
-.screen.on{display:flex}
-.top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:56px}
-.icon-btn{width:56px;height:56px;border-radius:50%;background:var(--card);box-shadow:var(--shadow);
-  font-size:28px;display:grid;place-items:center;flex:none}
-.icon-btn:active{transform:translateY(3px);box-shadow:0 3px 0 rgba(59,47,47,.12)}
-h1,h2,h3{margin:0}
+.screen.on{display:flex;animation:enter .35s cubic-bezier(.2,1.3,.4,1)}
+@keyframes enter{from{opacity:0;transform:scale(.94) translateY(12px)}}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:60px;position:relative;z-index:2}
 .grow{flex:1;min-height:0}
+h1,h2,h3{margin:0}
+
+/* ---------- candy 3D buttons ---------- */
+.candy{position:relative;border-radius:var(--r);color:#fff;
+  background:linear-gradient(180deg,var(--c1),var(--c2));
+  box-shadow:0 8px 0 var(--c3), 0 16px 26px rgba(0,0,0,.35), inset 0 -6px 0 rgba(0,0,0,.08);
+  transition:transform .08s, box-shadow .08s}
+.candy::before{content:"";position:absolute;top:6px;right:8%;left:8%;height:38%;border-radius:999px;
+  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0));pointer-events:none}
+.candy:active{transform:translateY(6px) scale(.98);box-shadow:0 2px 0 var(--c3), 0 6px 12px rgba(0,0,0,.3)}
+.icon-btn{width:58px;height:58px;border-radius:50%;font-size:28px;display:grid;place-items:center;flex:none;
+  --c1:#ffffff;--c2:#E9E2FF;--c3:#A99BD6;color:var(--ink)}
+.icon-btn::before{top:4px;height:42%}
+.title{font-size:28px;font-weight:700;text-shadow:0 3px 0 rgba(0,0,0,.25)}
+
+/* ---------- owl mascot ---------- */
+.owl{display:block;overflow:visible}
+.owl .lid{transform-box:fill-box;transform-origin:center top;transform:scaleY(0);animation:blink 4.5s infinite}
+@keyframes blink{0%,92%,100%{transform:scaleY(0)}95%{transform:scaleY(1)}}
+.owl .pupils{transition:transform .15s ease-out}
+.owl .wingL,.owl .wingR{transform-box:fill-box}
+.owl .wingL{transform-origin:right top}.owl .wingR{transform-origin:left top}
+.owl-wrap{position:relative;display:inline-block}
+.owl-wrap.idle .owl{animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px) rotate(-2deg)}}
+.owl-wrap.listen .owl{animation:tilt 1.6s ease-in-out infinite}
+@keyframes tilt{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(-4deg) translateY(-3px)}}
+.owl-wrap.party .owl{animation:dance .5s ease-in-out 4}
+.owl-wrap.party .wingL{animation:flapL .25s ease-in-out 8}
+.owl-wrap.party .wingR{animation:flapR .25s ease-in-out 8}
+@keyframes dance{25%{transform:translateY(-22px) rotate(-10deg)}75%{transform:translateY(-22px) rotate(10deg)}}
+@keyframes flapL{50%{transform:rotate(35deg)}}
+@keyframes flapR{50%{transform:rotate(-35deg)}}
+.owl-wrap .halo{position:absolute;inset:8%;border-radius:50%;border:5px solid var(--cyan);opacity:0;
+  box-shadow:0 0 24px var(--cyan);transform:scale(calc(1 + var(--lvl,0)*.5));transition:transform .08s,opacity .2s}
+.owl-wrap.listen .halo{opacity:calc(.35 + var(--lvl,0)*.65)}
 
 /* ---------- home ---------- */
 #home{align-items:center}
-.mascot{font-size:110px;line-height:1;margin-top:4vh;animation:float 3.2s ease-in-out infinite;filter:drop-shadow(0 10px 8px rgba(0,0,0,.12))}
-@keyframes float{50%{transform:translateY(-10px) rotate(-3deg)}}
-.brand{font-size:44px;font-weight:800;letter-spacing:-.5px;margin-top:6px}
-.hello{color:var(--soft);font-size:18px;margin-top:2px;text-align:center}
-.modes{display:grid;gap:14px;width:100%;max-width:520px;margin-top:3vh}
-.mode{display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:var(--r);box-shadow:var(--shadow);
-  font-size:28px;font-weight:800;text-align:right}
-.mode .e{font-size:46px}
-.mode small{display:block;font-size:15px;font-weight:500;opacity:.75}
-.mode:active{transform:translateY(4px) scale(.99)}
-.tip{margin-top:auto;width:100%;max-width:520px;background:#ffffffaa;border:2px dashed var(--line);
-  border-radius:20px;padding:12px 14px;font-size:15px;line-height:1.45;color:#5b4d43}
-.tip b{color:var(--accent)}
-.gate{position:absolute;top:max(14px,env(safe-area-inset-top));left:16px}
-.gate .ring{position:absolute;inset:-4px;border-radius:50%;
-  background:conic-gradient(var(--accent) calc(var(--p,0)*1%), transparent 0);
-  -webkit-mask:radial-gradient(circle, transparent 58%, #000 60%);mask:radial-gradient(circle, transparent 58%, #000 60%)}
-.gate .icon-btn{position:relative;font-size:24px;opacity:.75}
-.gate-hint{position:absolute;top:64px;left:0;white-space:nowrap;font-size:12px;color:var(--soft);opacity:0;transition:.3s}
+#homeOwl{margin-top:2vh;width:min(42vw,180px)}
+.brand{font-size:56px;font-weight:700;line-height:1;margin-top:4px;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--yellow),var(--orange),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 0 rgba(0,0,0,.35))}
+.hello{color:#E6DBFF;font-size:19px;margin-top:6px;text-align:center;font-weight:500}
+.modes{display:grid;gap:18px;width:100%;max-width:520px;margin-top:3.2vh}
+.mode{display:flex;align-items:center;gap:14px;padding:16px 18px;font-size:32px;font-weight:700;text-align:right;
+  text-shadow:0 2px 0 rgba(0,0,0,.2)}
+.mode .e{font-size:44px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.28);display:grid;place-items:center;flex:none;
+  box-shadow:inset 0 -4px 0 rgba(0,0,0,.08)}
+.mode small{display:block;font-size:15px;font-weight:500;opacity:.92;text-shadow:none}
+.mode:nth-child(1){--c1:#FFB547;--c2:#FF7A2F;--c3:#C4501A}
+.mode:nth-child(2){--c1:#8BEA5B;--c2:#2FBF71;--c3:#1C8A4E}
+.mode:nth-child(3){--c1:#58D8FF;--c2:#3B82F6;--c3:#2357B0}
+.mode .e{animation:bob 2.6s ease-in-out infinite}
+.mode:nth-child(2) .e{animation-delay:-.8s}.mode:nth-child(3) .e{animation-delay:-1.6s}
+.tip{margin-top:auto;width:100%;max-width:520px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-radius:20px;padding:12px 14px;font-size:15px;line-height:1.5;color:#EDE6FF}
+.tip b{color:var(--yellow)}
+.gate{position:absolute;top:max(14px,env(safe-area-inset-top));left:16px;z-index:3}
+.gate .ring{position:absolute;inset:-5px;border-radius:50%;pointer-events:none;
+  background:conic-gradient(var(--yellow) calc(var(--p,0)*1%), transparent 0);
+  -webkit-mask:radial-gradient(circle, transparent 60%, #000 62%);mask:radial-gradient(circle, transparent 60%, #000 62%)}
+.gate .icon-btn{width:48px;height:48px;font-size:22px;opacity:.85}
+.gate-hint{position:absolute;top:58px;left:0;white-space:nowrap;font-size:13px;color:#E6DBFF;opacity:0;transition:.3s}
 .gate.hint .gate-hint{opacity:1}
 
 /* ---------- categories ---------- */
-.cats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;overflow:auto;padding:6px 2px 20px;align-content:start}
-.cat{border-radius:var(--r);box-shadow:var(--shadow);padding:16px 8px;display:flex;flex-direction:column;
-  align-items:center;gap:4px;font-size:22px;font-weight:800}
-.cat .e{font-size:58px;line-height:1.1}
-.cat:active{transform:translateY(4px)}
-.title{font-size:26px;font-weight:800}
+.cats{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;overflow:auto;padding:10px 4px 30px;align-content:start}
+.cat{padding:14px 8px 16px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:23px;font-weight:700;
+  text-shadow:0 2px 0 rgba(0,0,0,.2);animation:popin .45s cubic-bezier(.3,1.6,.5,1) backwards}
+.cat .e{font-size:54px;width:84px;height:84px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.3);
+  box-shadow:inset 0 -5px 0 rgba(0,0,0,.08)}
+@keyframes popin{from{transform:scale(.4);opacity:0}}
 
 /* ---------- word card ---------- */
-.stage{flex:1;display:flex;align-items:center;justify-content:center;position:relative;min-height:0}
-.card{width:min(84vw,430px);aspect-ratio:3/3.6;background:var(--card);border-radius:40px;box-shadow:var(--shadow);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;position:relative;
-  border:6px solid var(--cc,#FFD6A5);transition:transform .12s}
-.card .pic{font-size:min(38vw,190px);line-height:1;display:grid;place-items:center;width:78%;aspect-ratio:1}
-.card .pic img{width:100%;height:100%;object-fit:cover;border-radius:28px}
-.card .word{font-size:min(13vw,62px);font-weight:800;letter-spacing:.5px}
-.card .snd{font-size:22px;color:var(--soft);min-height:1.2em}
-.card.pop{animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
-@keyframes pop{0%{transform:scale(.6) rotate(-6deg);opacity:0}100%{transform:none;opacity:1}}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;position:relative;min-height:0;perspective:1200px}
+.card{width:min(82vw,420px);max-height:100%;aspect-ratio:3/3.7;border-radius:44px;position:relative;
+  background:linear-gradient(165deg,#fff 0%,#F6F0FF 100%);
+  box-shadow:0 10px 0 var(--c3,#B9A6E8), 0 26px 50px rgba(0,0,0,.45);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4vh;color:var(--ink);transition:transform .12s}
+.card::after{content:"";position:absolute;inset:10px;border-radius:36px;border:4px dashed var(--c2,#ddd);opacity:.45;pointer-events:none}
+.card .spot{position:absolute;top:9%;width:72%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle, var(--c1,#FFE08A) 0%, transparent 70%);opacity:.75;animation:pulse2 3s ease-in-out infinite}
+@keyframes pulse2{50%{transform:scale(1.08);opacity:.95}}
+.card .pic{position:relative;font-size:min(36vw,180px);line-height:1;display:grid;place-items:center;width:74%;aspect-ratio:1;
+  filter:drop-shadow(0 12px 10px rgba(0,0,0,.18))}
+.card .pic img{width:100%;height:100%;object-fit:cover;border-radius:32px;border:6px solid #fff;box-shadow:0 6px 0 var(--c3,#ccc)}
+.card .word{position:relative;font-size:min(14vw,66px);font-weight:700;line-height:1.15;color:var(--ink)}
+.card .snd{position:relative;font-size:24px;font-weight:600;color:var(--c3,#888);min-height:1.2em}
+.card.in-next{animation:inNext .5s cubic-bezier(.3,1.4,.5,1)}
+.card.in-prev{animation:inPrev .5s cubic-bezier(.3,1.4,.5,1)}
+.card.pop{animation:pop .55s cubic-bezier(.3,1.6,.5,1)}
+/* RTL: "next" comes in from the LEFT side (reading direction is right-to-left) */
+@keyframes inNext{from{transform:translateX(-70vw) rotate(-14deg);opacity:0}}
+@keyframes inPrev{from{transform:translateX(70vw) rotate(14deg);opacity:0}}
+@keyframes pop{0%{transform:scale(.5) rotate(-8deg);opacity:0}100%{transform:none;opacity:1}}
 .card.boing .pic{animation:boing .6s}
-@keyframes boing{30%{transform:scale(1.18,.86)}55%{transform:scale(.92,1.1) translateY(-14px)}80%{transform:scale(1.03,.98)}}
-.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:10px}
-.big-arrow{width:86px;height:86px;border-radius:50%;background:var(--accent);color:#fff;font-size:44px;
-  box-shadow:0 6px 0 #d0643a;display:grid;place-items:center}
-.big-arrow:active{transform:translateY(4px);box-shadow:0 2px 0 #d0643a}
-.big-arrow.alt{background:#fff;color:var(--ink);box-shadow:var(--shadow)}
-.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:50vw}
-.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
-.dots i.on{background:var(--accent)}
+@keyframes boing{30%{transform:scale(1.2,.84)}55%{transform:scale(.9,1.12) translateY(-18px)}80%{transform:scale(1.04,.97)}}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:16px}
+.big-arrow{width:88px;height:88px;border-radius:50%;font-size:46px;display:grid;place-items:center}
+.big-arrow.go{--c1:#FFB547;--c2:#FF6A3D;--c3:#B9441A}
+.big-arrow.alt{--c1:#fff;--c2:#E9E2FF;--c3:#A99BD6;color:var(--ink);width:74px;height:74px;font-size:34px}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:56vw;font-weight:700}
+.dots i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.25);transition:.3s}
+.dots i.on{background:var(--yellow);box-shadow:0 0 10px var(--yellow);transform:scale(1.3)}
 
 /* ---------- turn mode ---------- */
-.ear{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);width:84px;height:84px;border-radius:50%;
-  background:#fff;box-shadow:var(--shadow);display:grid;place-items:center;font-size:42px;opacity:0;transition:opacity .3s}
-.ear.on{opacity:1}
-.ear::before{content:"";position:absolute;inset:0;border-radius:50%;border:5px solid var(--accent2);
-  transform:scale(calc(1 + var(--lvl,0)*0.9));opacity:calc(.25 + var(--lvl,0));transition:transform .08s}
-.ear.wait::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:3px dashed var(--accent2);animation:spin 6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.parent-bar{display:flex;gap:10px;justify-content:center;padding-top:22px}
-.pill{padding:12px 18px;border-radius:999px;background:#fff;box-shadow:var(--shadow);font-size:17px;font-weight:700}
-.pill.ok{background:var(--ok);color:#fff;box-shadow:0 5px 0 #4a9c55}
-.pill:active{transform:translateY(3px)}
-.prompt{font-size:24px;font-weight:800;text-align:center;min-height:36px;color:var(--soft)}
+.turn-head{display:flex;align-items:center;justify-content:center;gap:10px;min-height:96px;margin-top:-4px}
+#tuOwl{width:92px}
+.prompt{font-size:28px;font-weight:700;min-height:40px;text-shadow:0 3px 0 rgba(0,0,0,.3)}
+.parent-bar{display:flex;gap:12px;justify-content:center;padding-top:22px}
+.pill{padding:13px 18px;border-radius:999px;font-size:18px;font-weight:700;--c1:#fff;--c2:#ECE5FF;--c3:#A99BD6;color:var(--ink)}
+.pill.ok{--c1:#FFE066;--c2:#FFB800;--c3:#C27C00;color:#4A2A00}
 
 /* ---------- peekaboo ---------- */
-.peek{flex:1;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr);gap:14px;padding:10px 0}
-.hole{position:relative;border-radius:var(--r);background:#fff;box-shadow:var(--shadow);overflow:hidden;
+.peek{flex:1;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr);gap:16px;padding:10px 0}
+.hole{position:relative;border-radius:var(--r);overflow:hidden;color:var(--ink);
+  background:linear-gradient(165deg,#fff,#F1EAFF);box-shadow:0 7px 0 #8E7BD0, 0 14px 24px rgba(0,0,0,.35);
   display:flex;flex-direction:column;align-items:center;justify-content:center}
-.hole .pic{font-size:min(18vw,84px);line-height:1;width:70%;aspect-ratio:1;display:grid;place-items:center}
-.hole .pic img{width:100%;height:100%;object-fit:cover;border-radius:18px}
-.hole .w{font-size:22px;font-weight:800;opacity:0;transition:.3s .2s}
+.hole .pic{font-size:min(17vw,80px);line-height:1;width:66%;aspect-ratio:1;display:grid;place-items:center}
+.hole .pic img{width:100%;height:100%;object-fit:cover;border-radius:20px}
+.hole .w{font-size:24px;font-weight:700;opacity:0;transition:.3s .2s}
 .hole.open .w{opacity:1}
-.cloud{position:absolute;inset:0;display:grid;place-items:center;font-size:min(22vw,96px);
-  background:linear-gradient(160deg,#BDE0FE,#A2D2FF);transition:transform .6s cubic-bezier(.5,-0.4,.6,1),opacity .6s}
-.cloud span{animation:float 2.6s ease-in-out infinite}
-.hole.open .cloud{transform:translateY(-120%) scale(.6) rotate(-14deg);opacity:0}
+.cloud{position:absolute;inset:0;display:grid;place-items:center;font-size:min(20vw,90px);
+  background:radial-gradient(circle at 30% 25%, #9FE8FF, #4C9BFF 75%);
+  transition:transform .65s cubic-bezier(.5,-0.5,.6,1),opacity .65s}
+.cloud::after{content:"?";position:absolute;bottom:8px;left:14px;font-size:28px;font-weight:700;color:rgba(255,255,255,.75)}
+.cloud span{animation:bob 2.6s ease-in-out infinite;filter:drop-shadow(0 6px 4px rgba(0,0,0,.15))}
+.hole.open .cloud{transform:translateY(-130%) scale(.6) rotate(14deg);opacity:0}
 .hole.open .pic{animation:boing .7s .15s}
 
 /* ---------- bye ---------- */
-#bye{align-items:center;justify-content:center;text-align:center;gap:16px}
-#bye .mascot{font-size:140px}
-#bye h2{font-size:38px}
+#bye{align-items:center;justify-content:center;text-align:center;gap:14px}
+#byeOwl{width:min(50vw,210px)}
+#bye h2{font-size:46px;color:var(--yellow);text-shadow:0 4px 0 rgba(0,0,0,.3)}
+#bye .owl .lid{animation:none;transform:scaleY(1)}
+.zzz{font-size:34px;font-weight:700;color:#CFC2FF;animation:bob 2s ease-in-out infinite}
 
-/* ---------- parent area ---------- */
-#parent{padding-left:0;padding-right:0;background:#FBF7F2}
+/* ---------- parent area (light, calm, readable) ---------- */
+#parent{padding-left:0;padding-right:0;background:#F6F2FF;color:var(--ink)}
 #parent .top{padding:0 16px}
+#parent .title{text-shadow:none;color:var(--ink);font-size:24px}
 .tabs{display:flex;gap:6px;padding:10px 16px;overflow-x:auto;flex:none}
-.tab{padding:10px 14px;border-radius:999px;background:#fff;border:2px solid var(--line);font-weight:700;font-size:15px;white-space:nowrap}
-.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tab{padding:10px 14px;border-radius:999px;background:#fff;border:2px solid #E2D9F7;font-weight:600;font-size:15px;white-space:nowrap}
+.tab.on{background:var(--sky2);color:#fff;border-color:var(--sky2)}
 .pane{flex:1;overflow:auto;padding:4px 16px 40px;display:none}
 .pane.on{display:block}
-.box{background:#fff;border-radius:20px;padding:16px;margin:10px 0;border:1px solid var(--line)}
-.box h3{font-size:18px;margin-bottom:8px}
-.muted{color:var(--soft);font-size:14px;line-height:1.5}
+.box{background:#fff;border-radius:22px;padding:16px;margin:10px 0;border:1px solid #E7DFF8;box-shadow:0 2px 0 #E7DFF8}
+.box h3{font-size:19px;margin-bottom:8px;font-weight:600}
+.muted{color:var(--soft);font-size:14.5px;line-height:1.55}
 .progress{display:flex;align-items:center;gap:16px}
 .ringbig{--v:0;width:112px;height:112px;border-radius:50%;flex:none;display:grid;place-items:center;
-  background:conic-gradient(var(--ok) calc(var(--v)*1%), #eee 0)}
-.ringbig div{width:88px;height:88px;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center;font-weight:800;font-size:28px;line-height:1}
+  background:conic-gradient(var(--lime) 0, #2FBF71 calc(var(--v)*1%), #EEE8FA 0)}
+.ringbig div{width:88px;height:88px;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center;font-weight:700;font-size:30px;line-height:1}
 .ringbig small{display:block;font-size:12px;font-weight:500;color:var(--soft)}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
-.chip{padding:7px 12px;border-radius:999px;border:2px solid var(--line);background:#fff;font-size:14px;font-weight:700}
-.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
-.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f1e8dd}
+.chip{padding:7px 12px;border-radius:999px;border:2px solid #E2D9F7;background:#fff;font-size:14px;font-weight:600}
+.chip.on{background:var(--violet);border-color:var(--violet);color:#fff}
+.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #F0EAFB}
 .row:last-child{border-bottom:0}
-.row .pic{width:52px;height:52px;border-radius:14px;background:#FFF4E0;display:grid;place-items:center;font-size:32px;flex:none;overflow:hidden}
+.row .pic{width:52px;height:52px;border-radius:16px;background:#F3EEFF;display:grid;place-items:center;font-size:32px;flex:none;overflow:hidden}
 .row .pic img{width:100%;height:100%;object-fit:cover}
-.row .nm{flex:1;min-width:0;font-size:19px;font-weight:700}
-.row .nm small{display:block;font-size:12px;color:var(--soft);font-weight:500}
-.seg{display:flex;border:2px solid var(--line);border-radius:12px;overflow:hidden;flex:none}
-.seg button{padding:7px 8px;font-size:13px;font-weight:700;background:#fff;min-width:44px}
-.seg button+button{border-right:2px solid var(--line)}
-.seg button.s1{background:#FFE8A3}
-.seg button.s2{background:var(--ok);color:#fff}
-.mini{width:40px;height:40px;border-radius:12px;background:#f6efe6;font-size:20px;display:grid;place-items:center;flex:none;position:relative}
-.mini.has::after{content:"";position:absolute;top:4px;left:4px;width:9px;height:9px;border-radius:50%;background:var(--ok)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 18px;border-radius:14px;background:var(--ink);color:#fff;font-weight:700;font-size:16px}
-.btn.light{background:#fff;color:var(--ink);border:2px solid var(--line)}
-.btn.warn{background:#E76F51}
+.row .nm{flex:1;min-width:0;font-size:20px;font-weight:600}
+.row .nm small{display:block;font-size:12px;color:var(--soft);font-weight:400}
+.seg{display:flex;border:2px solid #E2D9F7;border-radius:12px;overflow:hidden;flex:none}
+.seg button{padding:7px 8px;font-size:13px;font-weight:600;background:#fff;min-width:46px}
+.seg button+button{border-right:2px solid #E2D9F7}
+.seg button.s1{background:#FFE9A8}
+.seg button.s2{background:#2FBF71;color:#fff}
+.mini{width:40px;height:40px;border-radius:12px;background:#F3EEFF;font-size:20px;display:grid;place-items:center;flex:none;position:relative}
+.mini.has::after{content:"";position:absolute;top:4px;left:4px;width:9px;height:9px;border-radius:50%;background:#2FBF71}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 18px;border-radius:14px;background:var(--sky2);color:#fff;font-weight:600;font-size:16px}
+.btn.light{background:#fff;color:var(--ink);border:2px solid #E2D9F7}
+.btn.warn{background:#E5484D}
 .btn:active{opacity:.8}
 .field{display:block;margin:10px 0}
 .field span{display:block;font-size:14px;color:var(--soft);margin-bottom:4px}
-.field input,.field select,.field textarea{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:#fff;font-size:17px}
-.tiplist li{margin:0 0 12px;line-height:1.55}
-.tiplist b{color:var(--accent)}
-.moment{padding:10px 0;border-bottom:1px solid #f1e8dd;display:flex;gap:10px;align-items:baseline}
+.field input,.field select,.field textarea{width:100%;padding:12px;border-radius:12px;border:2px solid #E2D9F7;background:#fff;font-size:17px;color:var(--ink)}
+.tiplist{padding-inline-start:20px}
+.tiplist li{margin:0 0 12px;line-height:1.6}
+.tiplist b{color:var(--sky3)}
+.moment{padding:10px 0;border-bottom:1px solid #F0EAFB;display:flex;gap:10px;align-items:baseline}
 .moment time{font-size:12px;color:var(--soft);flex:none;width:72px}
-.moment .x{margin-inline-start:auto;color:#c9b9a8;font-size:18px;padding:0 6px}
-.warnbox{background:#FFF1E6;border:2px solid #FFB38A;border-radius:16px;padding:12px 14px;margin:10px 0;font-size:15px;line-height:1.5}
+.moment .x{margin-inline-start:auto;color:#C2B6DD;font-size:18px;padding:0 6px}
+.warnbox{background:#FFF4E5;border:2px solid #FFC078;border-radius:16px;padding:12px 14px;margin:10px 0;font-size:15px;line-height:1.5}
 
-/* ---------- modal ---------- */
-.modal{position:fixed;inset:0;background:rgba(40,30,25,.45);display:none;align-items:flex-end;justify-content:center;z-index:50}
+/* ---------- modal / toast / fx ---------- */
+.modal{position:fixed;inset:0;background:rgba(20,10,45,.55);display:none;align-items:flex-end;justify-content:center;z-index:50}
 .modal.on{display:flex}
-.sheet{background:#fff;width:100%;max-width:560px;border-radius:26px 26px 0 0;padding:20px 18px max(20px,env(safe-area-inset-bottom));
+.sheet{background:#fff;color:var(--ink);width:100%;max-width:560px;border-radius:28px 28px 0 0;padding:20px 18px max(20px,env(safe-area-inset-bottom));
   max-height:92vh;overflow:auto;animation:up .25s ease-out}
 @keyframes up{from{transform:translateY(40px);opacity:.5}}
-.sheet h3{font-size:22px;margin-bottom:6px}
+.sheet h3{font-size:23px;margin-bottom:6px;font-weight:600}
 .sheet .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.recdot{width:110px;height:110px;border-radius:50%;background:#E63946;color:#fff;font-size:20px;font-weight:800;margin:16px auto;display:grid;place-items:center;box-shadow:0 6px 0 #a52632}
-.recdot.live{animation:pulse 1s infinite}
-@keyframes pulse{50%{transform:scale(1.07);box-shadow:0 0 0 14px rgba(230,57,70,.18),0 6px 0 #a52632}}
+.recdot{width:112px;height:112px;border-radius:50%;background:linear-gradient(180deg,#FF6B6B,#E5484D);color:#fff;font-size:20px;font-weight:700;margin:16px auto;display:grid;place-items:center;box-shadow:0 6px 0 #A52632}
+.recdot.live{animation:recpulse 1s infinite}
+@keyframes recpulse{50%{transform:scale(1.07);box-shadow:0 0 0 14px rgba(229,72,77,.18),0 6px 0 #A52632}}
 video.cam{width:100%;border-radius:18px;background:#000;aspect-ratio:1;object-fit:cover}
-.toast{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(30px);background:var(--ink);color:#fff;
-  padding:12px 18px;border-radius:14px;font-size:15px;opacity:0;transition:.25s;z-index:80;pointer-events:none;max-width:90vw;text-align:center}
+.toast{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(30px);background:#fff;color:var(--ink);font-weight:600;
+  padding:12px 18px;border-radius:16px;font-size:16px;opacity:0;transition:.25s;z-index:80;pointer-events:none;max-width:90vw;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 .toast.on{opacity:1;transform:translateX(-50%)}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:60}
+.flash{position:fixed;inset:0;pointer-events:none;z-index:59;background:radial-gradient(circle,rgba(255,230,120,.55),transparent 65%);opacity:0}
+.flash.go{animation:flash .7s ease-out}
+@keyframes flash{20%{opacity:1}}
+@media (prefers-reduced-motion: reduce){ .sky i{animation:none} }
 </style>
 </head>
 <body>
+<div class="sky" id="sky"></div>
+<div class="flash" id="flash"></div>
 
 <!-- ============ HOME ============ -->
 <section class="screen on" id="home">
   <div class="gate" id="gate">
     <span class="ring"></span>
-    <button class="icon-btn" aria-label="אזור הורים">⚙️</button>
+    <button class="icon-btn candy" aria-label="אזור הורים">⚙️</button>
     <div class="gate-hint">לחיצה ארוכה = הורים</div>
   </div>
-  <div class="mascot" id="mascot">🦉</div>
+  <div class="owl-wrap idle" id="homeOwl"></div>
   <div class="brand">פִּטְפּוּט</div>
-  <div class="hello" id="hello">משחקים יחד, מדברים יחד</div>
+  <div class="hello" id="hello">מְשַׂחֲקִים יַחַד, מְדַבְּרִים יַחַד</div>
   <div class="modes">
-    <button class="mode" style="background:#FFD6A5" data-mode="explore"><span class="e">🔍</span><span>מָה זֶה?<small>מסתכלים, שומעים, אומרים</small></span></button>
-    <button class="mode" style="background:#CAFFBF" data-mode="turn"><span class="e">🎤</span><span>תּוֹרְךָ!<small>האפליקציה מקשיבה ומחכה לו</small></span></button>
-    <button class="mode" style="background:#BDE0FE" data-mode="peek"><span class="e">☁️</span><span>קוּקוּ!<small>מה מתחבא מאחורי הענן?</small></span></button>
+    <button class="mode candy" data-mode="explore"><span class="e">🔍</span><span>מָה זֶה?<small>מסתכלים, שומעים, אומרים</small></span></button>
+    <button class="mode candy" data-mode="turn"><span class="e">🎤</span><span>תּוֹרְךָ!<small>הינשוף מקשיב ומחכה לו</small></span></button>
+    <button class="mode candy" data-mode="peek"><span class="e">☁️</span><span>קוּקוּ!<small>מה מתחבא מאחורי הענן?</small></span></button>
   </div>
   <div class="tip" id="homeTip"></div>
 </section>
@@ -200,9 +271,9 @@ video.cam{width:100%;border-radius:18px;background:#000;aspect-ratio:1;object-fi
 <!-- ============ CATEGORIES ============ -->
 <section class="screen" id="cats">
   <div class="top">
-    <button class="icon-btn" data-go="home">🏠</button>
+    <button class="icon-btn candy" data-go="home">🏠</button>
     <div class="title" id="catsTitle"></div>
-    <div style="width:56px"></div>
+    <div style="width:58px"></div>
   </div>
   <div class="cats" id="catGrid"></div>
 </section>
@@ -210,57 +281,60 @@ video.cam{width:100%;border-radius:18px;background:#000;aspect-ratio:1;object-fi
 <!-- ============ EXPLORE ============ -->
 <section class="screen" id="explore">
   <div class="top">
-    <button class="icon-btn" data-go="cats">↩️</button>
+    <button class="icon-btn candy" data-go="cats">➡️</button>
     <div class="dots" id="exDots"></div>
-    <button class="icon-btn" data-go="home">🏠</button>
+    <button class="icon-btn candy" data-go="home">🏠</button>
   </div>
   <div class="stage" id="exStage"></div>
   <div class="nav">
-    <button class="big-arrow alt" id="exPrev" aria-label="הקודם">➜</button>
-    <button class="big-arrow alt" id="exSay" aria-label="שוב">🔊</button>
-    <button class="big-arrow" id="exNext" aria-label="הבא"><span style="display:inline-block;transform:scaleX(-1)">➜</span></button>
+    <!-- RTL: "previous" on the right, "next" on the left -->
+    <button class="big-arrow alt candy" id="exPrev" aria-label="הקודם">➡️</button>
+    <button class="big-arrow alt candy" id="exSay" aria-label="שוב">🔊</button>
+    <button class="big-arrow go candy" id="exNext" aria-label="הבא">⬅️</button>
   </div>
 </section>
 
 <!-- ============ TURN ============ -->
 <section class="screen" id="turn">
   <div class="top">
-    <button class="icon-btn" data-go="cats">↩️</button>
-    <div class="prompt" id="tuPrompt"></div>
-    <button class="icon-btn" data-go="home">🏠</button>
+    <button class="icon-btn candy" data-go="cats">➡️</button>
+    <div class="title">🎤 תּוֹרְךָ!</div>
+    <button class="icon-btn candy" data-go="home">🏠</button>
   </div>
+  <div class="turn-head"><div class="owl-wrap idle" id="tuOwl"><span class="halo"></span></div><div class="prompt" id="tuPrompt"></div></div>
   <div class="stage" id="tuStage"></div>
   <div class="parent-bar">
-    <button class="pill" id="tuAgain">🔊 שוב</button>
-    <button class="pill ok" id="tuSaid">⭐ אמר!</button>
-    <button class="pill" id="tuNext">הבא ⏭</button>
+    <button class="pill candy" id="tuAgain">🔊 שׁוּב</button>
+    <button class="pill ok candy" id="tuSaid">⭐ אָמַר!</button>
+    <button class="pill candy" id="tuNext">הַבָּא ⬅️</button>
   </div>
 </section>
 
 <!-- ============ PEEK ============ -->
 <section class="screen" id="peek">
   <div class="top">
-    <button class="icon-btn" data-go="cats">↩️</button>
-    <div class="title">קוּקוּ! 👀</div>
-    <button class="icon-btn" data-go="home">🏠</button>
+    <button class="icon-btn candy" data-go="cats">➡️</button>
+    <div class="title">☁️ קוּקוּ!</div>
+    <button class="icon-btn candy" data-go="home">🏠</button>
   </div>
   <div class="peek" id="peekGrid"></div>
 </section>
 
 <!-- ============ BYE ============ -->
 <section class="screen" id="bye">
-  <div class="mascot">😴</div>
-  <h2>בַּי בַּי!</h2>
-  <div class="hello">שיחקנו מספיק למסך. עכשיו בואו נמצא את המילים בבית! 🏡</div>
-  <button class="pill" id="byeMore" style="margin-top:20px">עוד קצת (לחיצה ארוכה של הורה)</button>
+  <div class="zzz">Z z z</div>
+  <div class="owl-wrap" id="byeOwl"></div>
+  <h2>לַיְלָה טוֹב, יָנְשׁוּף!</h2>
+  <div class="hello">שיחקנו מספיק במסך 💜<br>עכשיו בואו נמצא את המילים בבית, בגן ובחוץ!</div>
+  <button class="pill candy" id="byeMore" style="margin-top:22px">עוד קצת (לחיצה ארוכה של הורה)</button>
 </section>
 
 <!-- ============ PARENT ============ -->
 <section class="screen" id="parent">
   <div class="top">
-    <button class="icon-btn" data-go="home">🏠</button>
+    <button class="icon-btn candy" data-go="home">🏠</button>
     <div class="title">אזור הורים</div>
-    <div style="width:56px"></div>
+    <div style="width:58px"></div>
   </div>
   <div class="tabs" id="ptabs">
     <button class="tab on" data-p="diary">📒 יומן</button>
@@ -282,16 +356,28 @@ video.cam{width:100%;border-radius:18px;background:#000;aspect-ratio:1;object-fi
 
 <script>
 "use strict";
+// show any unexpected error on screen instead of failing silently
+window.addEventListener("error", e => { const t = document.getElementById("toast"); if(t){ t.textContent = "⚠️ " + (e.message || "שגיאה"); t.classList.add("on"); } });
 /* =====================================================================
    CONTENT
    w = word with nikud (shown + spoken), e = emoji, s = sound (onomatopoeia)
    ===================================================================== */
+// c1/c2 = tile gradient, c3 = 3D shadow edge. Words chosen from what Israeli toddlers actually hear and say.
 const CATS = [
-  {id:"family", name:"מִשְׁפָּחָה", e:"👨‍👩‍👦", c:"#FFD6A5", words:[
+  {id:"family", name:"מִשְׁפָּחָה", e:"👨‍👩‍👦", c1:"#FFB86B", c2:"#FF7E4F", c3:"#C2502A", words:[
     {id:"ima", w:"אִמָּא", e:"👩"}, {id:"aba", w:"אַבָּא", e:"👨"}, {id:"me", w:"__NAME__", e:"😊"},
     {id:"savta", w:"סַבְתָּא", e:"👵"}, {id:"saba", w:"סַבָּא", e:"👴"}, {id:"tinok", w:"תִּינוֹק", e:"👶"},
-    {id:"ach", w:"אָח", e:"👦"}, {id:"achot", w:"אָחוֹת", e:"👧"}]},
-  {id:"animals", name:"חַיּוֹת", e:"🐾", c:"#CAFFBF", words:[
+    {id:"ach", w:"אָח", e:"👦"}, {id:"achot", w:"אָחוֹת", e:"👧"}, {id:"ganenet", w:"גַּנֶּנֶת", e:"👩‍🏫"},
+    {id:"chaver", w:"חָבֵר", e:"🧒"}]},
+  {id:"go", name:"נוֹסְעִים", e:"🚗", c1:"#5EE7FF", c2:"#2F8BFF", c3:"#1D58B8", words:[
+    {id:"oto", w:"אוֹטוֹ", e:"🚗", s:"בִּיפּ בִּיפּ"}, {id:"otobus", w:"אוֹטוֹבּוּס", e:"🚌"},
+    {id:"rakevet", w:"רַכֶּבֶת", e:"🚂", s:"טְשׁוּ טְשׁוּ"}, {id:"matos", w:"מָטוֹס", e:"✈️", s:"וּוּוּשׁ"},
+    {id:"ofanayim", w:"אוֹפַנַּיִם", e:"🚲", s:"טְרִין טְרִין"}, {id:"korkinet", w:"קוֹרְקִינֶט", e:"🛴"},
+    {id:"masait", w:"מַשָּׂאִית", e:"🚚"}, {id:"tractor", w:"טְרַקְטוֹר", e:"🚜", s:"בְּרְרְרְ"},
+    {id:"mishtara", w:"מִשְׁטָרָה", e:"🚓", s:"וִיוּ וִיוּ"}, {id:"kabait", w:"כַּבָּאִית", e:"🚒", s:"נִי נוּ נִי נוּ"},
+    {id:"ambulans", w:"אַמְבּוּלַנְס", e:"🚑", s:"נִי נוּ"}, {id:"masok", w:"מַסּוֹק", e:"🚁", s:"טְרְרְרְ"},
+    {id:"sira", w:"סִירָה", e:"⛵"}, {id:"ofanoa", w:"אוֹפַנּוֹעַ", e:"🏍️", s:"בְּרוּם בְּרוּם"}, {id:"raketa", w:"טִיל", e:"🚀"}]},
+  {id:"animals", name:"חַיּוֹת", e:"🐾", c1:"#9BF06B", c2:"#2FBF71", c3:"#1C8A4E", words:[
     {id:"kelev", w:"כֶּלֶב", e:"🐶", s:"הַב הַב"}, {id:"chatul", w:"חָתוּל", e:"🐱", s:"מְיָאוּ"},
     {id:"para", w:"פָּרָה", e:"🐮", s:"מוּוּ"}, {id:"barvaz", w:"בַּרְוָז", e:"🦆", s:"גָּה גָּה"},
     {id:"tarnegol", w:"תַּרְנְגוֹל", e:"🐓", s:"קוּקוּרִיקוּ"}, {id:"kivsa", w:"כִּבְשָׂה", e:"🐑", s:"מֶה"},
@@ -300,48 +386,46 @@ const CATS = [
     {id:"tzfardea", w:"צְפַרְדֵּעַ", e:"🐸", s:"קְוָוה קְוָוה"}, {id:"tzipor", w:"צִפּוֹר", e:"🐦", s:"צִיף צִיף"},
     {id:"dag", w:"דָּג", e:"🐟", s:"בְּלוּבּ בְּלוּבּ"}, {id:"dvora", w:"דְּבוֹרָה", e:"🐝", s:"בְּזְזְז"},
     {id:"nachash", w:"נָחָשׁ", e:"🐍", s:"סְסְסְ"}, {id:"dov", w:"דֹּב", e:"🐻"},
-    {id:"arnav", w:"אַרְנָב", e:"🐰"}, {id:"parpar", w:"פַּרְפַּר", e:"🦋"}]},
-  {id:"food", name:"אֹכֶל", e:"🍎", c:"#FDFFB6", words:[
-    {id:"banana", w:"בַּנָּנָה", e:"🍌"}, {id:"tapuach", w:"תַּפּוּחַ", e:"🍎"}, {id:"lechem", w:"לֶחֶם", e:"🍞"},
-    {id:"mayim", w:"מַיִם", e:"💧"}, {id:"chalav", w:"חָלָב", e:"🥛"}, {id:"beitza", w:"בֵּיצָה", e:"🥚"},
+    {id:"arnav", w:"אַרְנָב", e:"🐰"}, {id:"parpar", w:"פַּרְפַּר", e:"🦋"}, {id:"gamal", w:"גָּמָל", e:"🐪"},
+    {id:"tzav", w:"צָב", e:"🐢"}, {id:"dinozaur", w:"דִּינוֹזָאוּר", e:"🦖", s:"רָאאאוּר"}]},
+  {id:"food", name:"אֹכֶל", e:"🍌", c1:"#FFE45C", c2:"#FFB300", c3:"#B87A00", words:[
+    {id:"banana", w:"בַּנָּנָה", e:"🍌"}, {id:"tapuach", w:"תַּפּוּחַ", e:"🍎"}, {id:"mayim", w:"מַיִם", e:"💧"},
+    {id:"shoko", w:"שׁוֹקוֹ", e:"🥛"}, {id:"bamba", w:"בַּמְבָּה", e:"🥜"}, {id:"pita", w:"פִּתָּה", e:"🫓"},
+    {id:"chumus", w:"חוּמוּס", e:"🥣"}, {id:"lechem", w:"לֶחֶם", e:"🍞"}, {id:"beitza", w:"בֵּיצָה", e:"🥚"},
     {id:"gvina", w:"גְּבִינָה", e:"🧀"}, {id:"agvaniya", w:"עַגְבָנִיָּה", e:"🍅"}, {id:"melafefon", w:"מְלָפְפוֹן", e:"🥒"},
-    {id:"tut", w:"תּוּת", e:"🍓"}, {id:"anavim", w:"עֲנָבִים", e:"🍇"}, {id:"avatiach", w:"אֲבַטִּיחַ", e:"🍉"},
+    {id:"tut", w:"תּוּת", e:"🍓"}, {id:"avatiach", w:"אֲבַטִּיחַ", e:"🍉"}, {id:"anavim", w:"עֲנָבִים", e:"🍇"},
     {id:"tapuz", w:"תַּפּוּז", e:"🍊"}, {id:"uga", w:"עוּגָה", e:"🎂"}, {id:"ugiya", w:"עוּגִיָּה", e:"🍪"},
-    {id:"glida", w:"גְּלִידָה", e:"🍦"}, {id:"pizza", w:"פִּיצָה", e:"🍕"}]},
-  {id:"go", name:"נוֹסְעִים", e:"🚗", c:"#9BF6FF", words:[
-    {id:"mechonit", w:"מְכוֹנִית", e:"🚗", s:"בִּיפּ בִּיפּ"}, {id:"otobus", w:"אוֹטוֹבּוּס", e:"🚌"},
-    {id:"rakevet", w:"רַכֶּבֶת", e:"🚂", s:"טְשׁוּ טְשׁוּ"}, {id:"matos", w:"מָטוֹס", e:"✈️", s:"וּוּוּשׁ"},
-    {id:"ofanayim", w:"אוֹפַנַּיִם", e:"🚲", s:"טְרִין טְרִין"}, {id:"masait", w:"מַשָּׂאִית", e:"🚚"},
-    {id:"sira", w:"סִירָה", e:"⛵"}, {id:"masok", w:"מַסּוֹק", e:"🚁", s:"טְרְרְרְ"},
-    {id:"ambulans", w:"אַמְבּוּלַנְס", e:"🚑", s:"נִי נוּ נִי נוּ"}, {id:"tractor", w:"טְרַקְטוֹר", e:"🚜"},
-    {id:"ofanoa", w:"אוֹפַנּוֹעַ", e:"🏍️", s:"בְּרוּם בְּרוּם"}]},
-  {id:"body", name:"הַגּוּף שֶׁלִּי", e:"👃", c:"#FFC6FF", words:[
-    {id:"einayim", w:"עֵינַיִם", e:"👀"}, {id:"af", w:"אַף", e:"👃"}, {id:"pe", w:"פֶּה", e:"👄"},
-    {id:"ozen", w:"אֹזֶן", e:"👂"}, {id:"yad", w:"יָד", e:"✋"}, {id:"regel", w:"רֶגֶל", e:"🦶"},
-    {id:"shinayim", w:"שִׁנַּיִם", e:"🦷"}, {id:"lashon", w:"לָשׁוֹן", e:"👅"}]},
-  {id:"home", name:"בַּבַּיִת", e:"🏠", c:"#BDB2FF", words:[
+    {id:"glida", w:"גְּלִידָה", e:"🍦"}, {id:"pizza", w:"פִּיצָה", e:"🍕"}, {id:"sufganiya", w:"סֻפְגָּנִיָּה", e:"🍩"}]},
+  {id:"home", name:"בַּבַּיִת", e:"🏠", c1:"#C59BFF", c2:"#8A4DFF", c3:"#5A2BB8", words:[
     {id:"kadur", w:"כַּדּוּר", e:"⚽"}, {id:"dubi", w:"דֻּבִּי", e:"🧸"}, {id:"balon", w:"בָּלוֹן", e:"🎈"},
     {id:"sefer", w:"סֵפֶר", e:"📖"}, {id:"naalayim", w:"נַעֲלַיִם", e:"👟"}, {id:"kova", w:"כּוֹבַע", e:"🧢"},
     {id:"mita", w:"מִטָּה", e:"🛏️"}, {id:"kise", w:"כִּסֵּא", e:"🪑"}, {id:"kos", w:"כּוֹס", e:"🥤"},
     {id:"kapit", w:"כַּפִּית", e:"🥄"}, {id:"bakbuk", w:"בַּקְבּוּק", e:"🍼"}, {id:"ambatya", w:"אַמְבַּטְיָה", e:"🛁"},
     {id:"telefon", w:"טֶלֶפוֹן", e:"📱"}, {id:"mafteach", w:"מַפְתֵּחַ", e:"🔑"}, {id:"or", w:"אוֹר", e:"💡"},
-    {id:"delet", w:"דֶּלֶת", e:"🚪"}, {id:"mishkafayim", w:"מִשְׁקָפַיִם", e:"👓"}]},
-  {id:"out", name:"בַּחוּץ", e:"🌳", c:"#A0E7E5", words:[
+    {id:"delet", w:"דֶּלֶת", e:"🚪"}, {id:"mishkafayim", w:"מִשְׁקָפַיִם", e:"👓"}, {id:"tof", w:"תֹּף", e:"🥁", s:"בּוּם בּוּם"},
+    {id:"ner", w:"נֵר", e:"🕯️"}, {id:"gan", w:"גַּן", e:"🏫"}]},
+  {id:"body", name:"הַגּוּף שֶׁלִּי", e:"👃", c1:"#FF9AD5", c2:"#FF4FA3", c3:"#B8236F", words:[
+    {id:"einayim", w:"עֵינַיִם", e:"👀"}, {id:"af", w:"אַף", e:"👃"}, {id:"pe", w:"פֶּה", e:"👄"},
+    {id:"ozen", w:"אֹזֶן", e:"👂"}, {id:"yad", w:"יָד", e:"✋"}, {id:"regel", w:"רֶגֶל", e:"🦶"},
+    {id:"shinayim", w:"שִׁנַּיִם", e:"🦷"}, {id:"lashon", w:"לָשׁוֹן", e:"👅"}, {id:"pupik", w:"פּוּפִּיק", e:"🫃"}]},
+  {id:"out", name:"בַּחוּץ", e:"🌳", c1:"#6BF0D8", c2:"#14B8A6", c3:"#0B7D71", words:[
     {id:"shemesh", w:"שֶׁמֶשׁ", e:"☀️"}, {id:"yareach", w:"יָרֵחַ", e:"🌙"}, {id:"kochav", w:"כּוֹכָב", e:"⭐"},
     {id:"perach", w:"פֶּרַח", e:"🌸"}, {id:"etz", w:"עֵץ", e:"🌳"}, {id:"geshem", w:"גֶּשֶׁם", e:"🌧️"},
-    {id:"yam", w:"יָם", e:"🌊"}, {id:"anan", w:"עָנָן", e:"☁️"}, {id:"bayit", w:"בַּיִת", e:"🏠"},
-    {id:"keshet", w:"קֶשֶׁת", e:"🌈"}]},
-  {id:"magic", name:"מִלּוֹת קֶסֶם", e:"✨", c:"#FFADAD", words:[
-    {id:"od", w:"עוֹד", e:"➕"}, {id:"dai", w:"דַּי", e:"🛑"}, {id:"lo", w:"לֹא", e:"🙅"},
+    {id:"yam", w:"יָם", e:"🌊"}, {id:"chol", w:"חוֹל", e:"🏖️"}, {id:"anan", w:"עָנָן", e:"☁️"},
+    {id:"bayit", w:"בַּיִת", e:"🏠"}, {id:"keshet", w:"קֶשֶׁת", e:"🌈"}, {id:"magalsha", w:"מַגְלֵשָׁה", e:"🛝", s:"ווּוּי"}]},
+  {id:"magic", name:"מִלּוֹת קֶסֶם", e:"✨", c1:"#FF8A8A", c2:"#F43F5E", c3:"#A51D3A", words:[
+    {id:"od", w:"עוֹד", e:"➕"}, {id:"dai", w:"דַּי", e:"🛑"}, {id:"lo", w:"לֹא", e:"🙅‍♂️"},
     {id:"ken", w:"כֵּן", e:"👍"}, {id:"hine", w:"הִנֵּה", e:"👉"}, {id:"bye", w:"בַּי בַּי", e:"👋"},
-    {id:"shalom", w:"שָׁלוֹם", e:"🙋"}, {id:"toda", w:"תּוֹדָה", e:"🙏"}, {id:"ein", w:"אֵין", e:"🤷"},
-    {id:"hopa", w:"הוֹפָּה", e:"🤸"}, {id:"bum", w:"בּוּם", e:"💥"}, {id:"oi", w:"אוֹי", e:"😮"},
-    {id:"lemala", w:"לְמַעְלָה", e:"⬆️"}, {id:"lemata", w:"לְמַטָּה", e:"⬇️"}, {id:"ptach", w:"פְּתַח", e:"🔓"},
-    {id:"nani", w:"נַנִּי", e:"😴"}, {id:"cham", w:"חַם", e:"🔥"}, {id:"kar", w:"קַר", e:"🧊"}]},
+    {id:"shalom", w:"שָׁלוֹם", e:"🙋‍♂️"}, {id:"toda", w:"תּוֹדָה", e:"🙏"}, {id:"ein", w:"אֵין", e:"🤷‍♂️"},
+    {id:"sheli", w:"שֶׁלִּי", e:"🫵"}, {id:"ten", w:"תֵּן", e:"🤲"}, {id:"bo", w:"בּוֹא", e:"🏃‍♂️"},
+    {id:"yalla", w:"יַאלְלָה", e:"🚀"}, {id:"hopa", w:"הוֹפָּה", e:"🤸‍♂️"}, {id:"bum", w:"בּוּם", e:"💥"},
+    {id:"oi", w:"אוֹי", e:"😮"}, {id:"lemala", w:"לְמַעְלָה", e:"⬆️"}, {id:"lemata", w:"לְמַטָּה", e:"⬇️"},
+    {id:"ptach", w:"פְּתַח", e:"🔓"}, {id:"nani", w:"נַנִּי", e:"😴"}, {id:"cham", w:"חַם", e:"🔥"}, {id:"kar", w:"קַר", e:"🧊"}]},
 ];
-const OURS = {id:"ours", name:"שֶׁלָּנוּ", e:"💛", c:"#FFE5A0", words:[]};
+const OURS = {id:"ours", name:"שֶׁלָּנוּ", e:"💛", c1:"#FFD86B", c2:"#FF9F1C", c3:"#B86A00", words:[]};
 
-const PRAISE = ["יָפֶה מְאוֹד!", "כָּל הַכָּבוֹד!", "וָואוּ!", "אַלּוּף!", "אֵיזֶה יֹפִי!", "יֵשׁ!", "מְצֻיָּן!"];
+// addressed to a boy (masculine forms), the way Israeli parents actually cheer
+const PRAISE = ["כָּל הַכָּבוֹד!", "יָא מֶלֶךְ!", "אַלּוּף!", "וָואוּ!", "יֵשׁ!", "אַתָּה תּוֹתָח!", "אֵיזֶה גִּבּוֹר!", "מְעוּלֶּה!"];
 const WHATIS = "מָה זֶה?";
 
 const TIPS = [
@@ -613,7 +697,7 @@ function go(id){
   if(id === "home") renderHome();
   if(id === "cats") renderCats();
   if(id === "parent") renderParent();
-  if(id === "bye"){ Speech.speak("בַּי בַּי! נְשַׂחֵק עוֹד מְעַט"); }
+  if(id === "bye"){ Speech.speak("לַיְלָה טוֹב! נְשַׂחֵק עוֹד מְעַט"); }
   try{ NATIVE && NATIVE.setKeepScreenOn && NATIVE.setKeepScreenOn(KID.has(id)); }catch(e){}
 }
 document.addEventListener("click", e => {
@@ -649,7 +733,7 @@ function longPress(node, ms, onDone, onProgress){
    ===================================================================== */
 function renderHome(){
   const said = Object.values(diary).filter(d => d.s === 2).length;
-  $("#hello").textContent = settings.name ? `שלום ${stripNikud(settings.name)}! 👋` + (said ? `  ·  כבר ${said} מילים` : "") : "משחקים יחד, מדברים יחד";
+  $("#hello").textContent = settings.name ? `שָׁלוֹם ${settings.name}! 👋` + (said ? `  ·  כְּבָר ${said} מִלִּים ⭐` : "") : "מְשַׂחֲקִים יַחַד, מְדַבְּרִים יַחַד";
   const day = Math.floor(Date.now()/86400000);
   const [h, t] = TIPS[day % TIPS.length];
   $("#homeTip").innerHTML = `💡 <b>${esc(h)}:</b> ${esc(t)}`;
@@ -657,7 +741,62 @@ function renderHome(){
 document.querySelectorAll(".mode").forEach(b => b.addEventListener("click", () => {
   ac(); sfx.pop(); mode = b.dataset.mode; go("cats");
 }));
-$("#mascot").addEventListener("click", () => { ac(); sfx.pop(); $("#mascot").animate([{transform:"scale(1)"},{transform:"scale(1.25) rotate(10deg)"},{transform:"scale(1)"}],{duration:500}); Speech.speak("הוּ הוּ! שָׁלוֹם " + childName()); });
+
+/* =====================================================================
+   OWL MASCOT (inline SVG): blinks, eyes follow the finger, listens, dances
+   ===================================================================== */
+function owlSVG(u){
+  return `<svg class="owl" viewBox="0 0 200 210" aria-hidden="true">
+    <defs>
+      <radialGradient id="ob${u}" cx="40%" cy="30%" r="75%"><stop offset="0" stop-color="#FFB25B"/><stop offset="1" stop-color="#F0662B"/></radialGradient>
+      <radialGradient id="obl${u}" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#FFF4DC"/><stop offset="1" stop-color="#FFD59A"/></radialGradient>
+    </defs>
+    <ellipse cx="100" cy="200" rx="56" ry="8" fill="rgba(0,0,0,.25)"/>
+    <path class="wingL" d="M38 112 Q8 140 30 178 Q44 160 52 132 Z" fill="#D9541F"/>
+    <path class="wingR" d="M162 112 Q192 140 170 178 Q156 160 148 132 Z" fill="#D9541F"/>
+    <path d="M52 40 L62 8 L84 34 Q100 28 116 34 L138 8 L148 40 Q172 66 170 120 Q166 190 100 192 Q34 190 30 120 Q28 66 52 40 Z" fill="url(#ob${u})"/>
+    <ellipse cx="100" cy="142" rx="44" ry="44" fill="url(#obl${u})"/>
+    <path d="M80 130 q6 6 12 0 M108 130 q6 6 12 0 M90 150 q6 6 12 0 M94 166 q6 6 12 0" stroke="#F0A35B" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="70" cy="82" r="31" fill="#fff"/><circle cx="130" cy="82" r="31" fill="#fff"/>
+    <circle cx="70" cy="82" r="31" fill="none" stroke="#FFD59A" stroke-width="5"/><circle cx="130" cy="82" r="31" fill="none" stroke="#FFD59A" stroke-width="5"/>
+    <g class="pupils">
+      <circle cx="70" cy="84" r="15" fill="#2A1A4A"/><circle cx="130" cy="84" r="15" fill="#2A1A4A"/>
+      <circle cx="75" cy="78" r="5.5" fill="#fff"/><circle cx="135" cy="78" r="5.5" fill="#fff"/>
+    </g>
+    <rect class="lid" x="38" y="50" width="64" height="64" rx="32" fill="#F0662B"/>
+    <rect class="lid" x="98" y="50" width="64" height="64" rx="32" fill="#F0662B"/>
+    <path d="M90 104 L110 104 L100 122 Z" fill="#FFC93C" stroke="#E0A400" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="44" cy="112" r="7" fill="#FF6F91" opacity=".55"/><circle cx="156" cy="112" r="7" fill="#FF6F91" opacity=".55"/>
+    <path d="M80 190 l-6 10 M86 190 l0 11 M92 190 l6 10 M108 190 l-6 10 M114 190 l0 11 M120 190 l6 10" stroke="#FFC93C" stroke-width="5" stroke-linecap="round"/>
+  </svg>`;
+}
+const Owl = {
+  mount(sel){ const w = $(sel); w.insertAdjacentHTML("beforeend", owlSVG(sel.slice(1))); return w; },  // unique gradient ids per owl
+  state(sel, st){ const w = $(sel); if(!w) return; w.classList.remove("idle","listen","party"); if(st) w.classList.add(st); },
+  party(sel){ Owl.state(sel, "party"); clearTimeout(Owl._t); Owl._t = setTimeout(() => Owl.state(sel, "idle"), 2100); }
+};
+["#homeOwl", "#tuOwl", "#byeOwl"].forEach(s => Owl.mount(s));
+// eyes follow the finger
+addEventListener("pointermove", e => lookAt(e.clientX, e.clientY), {passive:true});
+addEventListener("pointerdown", e => lookAt(e.clientX, e.clientY), {passive:true});
+function lookAt(x, y){
+  document.querySelectorAll(".screen.on .owl .pupils").forEach(p => {
+    const r = p.closest("svg").getBoundingClientRect(); if(!r.width) return;
+    const dx = x - (r.left + r.width/2), dy = y - (r.top + r.height*.4), d = Math.hypot(dx, dy) || 1;
+    const k = Math.min(1, d/220) * 9;
+    p.style.transform = `translate(${(dx/d*k).toFixed(1)}px, ${(dy/d*k).toFixed(1)}px)`;
+  });
+}
+$("#homeOwl").addEventListener("click", () => { ac(); sfx.pop(); Owl.party("#homeOwl"); FX.burst(["🪶","⭐","💜"], 14); Speech.speak("הוּ הוּ! שָׁלוֹם " + childName() + "!"); });
+
+// night sky: drifting bubbles + twinkling stars
+(() => {
+  const sky = $("#sky"); let h = "";
+  for(let i=0;i<14;i++){ const s = 14 + Math.random()*46; h += `<i class="b" style="width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${14+Math.random()*16}s;animation-delay:${-Math.random()*30}s"></i>`; }
+  for(let i=0;i<26;i++){ const s = 2 + Math.random()*3; h += `<i class="s" style="width:${s}px;height:${s}px;left:${Math.random()*100}%;top:${Math.random()*70}%;animation-duration:${2+Math.random()*3}s;animation-delay:${-Math.random()*4}s"></i>`; }
+  sky.innerHTML = h;
+})();
+
 (() => {
   const gate = $("#gate"), ring = gate.querySelector(".ring");
   longPress(gate.querySelector(".icon-btn"), 1500, () => { sfx.chime(); go("parent"); }, p => ring.style.setProperty("--p", p*100));
@@ -668,16 +807,17 @@ longPress($("#byeMore"), 1500, () => { playMs = 0; go("home"); });
 /* =====================================================================
    CATEGORIES
    ===================================================================== */
+const MIX = {c1:"#FFFFFF", c2:"#E6DCFF", c3:"#9C88D9"};
+function candyVars(c){ return `--c1:${c.c1};--c2:${c.c2};--c3:${c.c3}`; }
 function renderCats(){
   $("#catsTitle").textContent = {explore:"🔍 מָה זֶה?", turn:"🎤 תּוֹרְךָ!", peek:"☁️ קוּקוּ!"}[mode];
   const g = $("#catGrid"); g.innerHTML = "";
-  const mix = el("button", {class:"cat", style:"background:#fff"}, `<span class="e">🎲</span>הַכֹּל`);
+  const mix = el("button", {class:"cat candy", style:candyVars(MIX)+";color:var(--ink);text-shadow:none"}, `<span class="e">🎲</span>הַכֹּל`);
   mix.onclick = () => startMode(null); g.appendChild(mix);
-  for(const c of allCats()){
-    if(!c.words.length) continue;
-    const b = el("button", {class:"cat", style:`background:${c.c}`}, `<span class="e">${c.e}</span>${esc(c.name)}`);
+  allCats().filter(c => c.words.length).forEach((c, i) => {
+    const b = el("button", {class:"cat candy", style:`${candyVars(c)};animation-delay:${(i+1)*.05}s`}, `<span class="e">${c.e}</span>${esc(c.name)}`);
     b.onclick = () => startMode(c); g.appendChild(b);
-  }
+  });
 }
 function startMode(cat){
   ac(); sfx.pop(); curCat = cat;
@@ -693,40 +833,49 @@ function poolFor(cat){
    MODE 1: EXPLORE ("מה זה?")
    ===================================================================== */
 let exList = [], exIdx = 0;
-function cardHTML(w, showSound=true){
-  return `<div class="card pop" style="--cc:${w.cat.c}">
+function cardHTML(w, showSound=true, anim="pop"){
+  return `<div class="card ${anim}" style="${candyVars(w.cat)}">
+    <div class="spot"></div>
     <div class="pic">${picHTML(w)}</div>
     <div class="word">${esc(wordText(w))}</div>
-    <div class="snd">${showSound && w.s ? esc(w.s) : ""}</div>
-    <div class="ear" id="ear">👂</div></div>`;
+    <div class="snd">${showSound && w.s ? esc(w.s) : ""}</div></div>`;
 }
 function startExplore(){
   exList = curCat ? poolFor(curCat) : shuffle(allWords()).slice(0, 15);
-  exIdx = 0; go("explore"); showExplore();
+  exIdx = 0; go("explore"); showExplore("pop");
 }
-function showExplore(){
+function showExplore(anim){
   const w = exList[exIdx];
-  $("#exStage").innerHTML = cardHTML(w);
+  $("#exStage").innerHTML = cardHTML(w, true, anim);
   const card = $("#exStage .card");
   card.addEventListener("click", () => { bounce(card); sfx.pop(); sayWord(w); });
-  swipe(card, dir => { dir > 0 ? exGo(1) : exGo(-1); });
+  swipe(card, dir => exGo(dir));
   const dots = $("#exDots"); dots.innerHTML = exList.length <= 20 ? exList.map((_, i) => `<i class="${i===exIdx?"on":""}"></i>`).join("") : `<b>${exIdx+1}/${exList.length}</b>`;
   stopAllSound(); setTimeout(() => cur === "explore" && sayWord(w), 350);
 }
-function exGo(d){ sfx.whoosh(); exIdx = (exIdx + d + exList.length) % exList.length; if(exIdx === 0 && d > 0){ FX.burst(); sfx.chime(); } showExplore(); }
+function exGo(d){
+  sfx.whoosh(); exIdx = (exIdx + d + exList.length) % exList.length;
+  if(exIdx === 0 && d > 0){ FX.burst(); sfx.chime(); }
+  showExplore(d > 0 ? "in-next" : "in-prev");
+}
 $("#exNext").onclick = () => exGo(1);
 $("#exPrev").onclick = () => exGo(-1);
 $("#exSay").onclick = () => { const c = $("#exStage .card"); bounce(c); sayWord(exList[exIdx]); };
-function bounce(card){ card.classList.remove("boing","pop"); void card.offsetWidth; card.classList.add("boing"); }
+function bounce(card){ if(!card) return; card.classList.remove("boing","pop","in-next","in-prev"); void card.offsetWidth; card.classList.add("boing"); }
+// RTL book feel: swiping toward the right (finger moves right) = next page
 function swipe(node, cb){
   let x0 = null;
   node.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, {passive:true});
-  node.addEventListener("touchend", e => { if(x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if(Math.abs(dx) > 60) cb(dx > 0 ? 1 : -1); // RTL: swipe right = forward });
+  node.addEventListener("touchend", e => {
+    if(x0 == null) return;
+    const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if(Math.abs(dx) > 60) cb(dx > 0 ? 1 : -1);
+  });
 }
 
 /* =====================================================================
    MODE 2: YOUR TURN ("תורך!")
-   Show picture -> ask "מה זה?" -> WAIT & listen (the pause is the point) ->
+   Show picture -> ask "מה זה?" -> the owl WAITS & listens (the pause is the point) ->
    any voice = party + model the word back (expansion). Silence = model the word,
    then a second, shorter wait. Prioritises words he understands but doesn't say yet.
    ===================================================================== */
@@ -754,45 +903,51 @@ async function startTurn(){
   if(!ok) toast("בלי מיקרופון: לחצו ⭐ כשהוא אומר מילה", 3500);
   runTurn();
 }
-function setLevel(v){ const e = $("#ear"); if(e) e.style.setProperty("--lvl", v.toFixed(2)); const c = $("#tuStage .card"); if(c) c.style.transform = `scale(${1 + v*0.06})`; }
+function setLevel(v){
+  const o = $("#tuOwl"); if(o) o.style.setProperty("--lvl", v.toFixed(2));
+  const c = $("#tuStage .card"); if(c) c.style.transform = `scale(${1 + v*0.07}) rotate(${(v*3).toFixed(1)}deg)`;
+}
+async function listenPhase(pr, text, ms, tok){
+  pr.textContent = text; Owl.state("#tuOwl", "listen");
+  const r = await Mic.listen(ms, setLevel, tok);
+  if(r !== "cancel") Owl.state("#tuOwl", "idle");
+  return r;
+}
 async function runTurn(){
   killFlow(); const tok = flowToken;
   if(tuIdx >= tuList.length){ tuList = turnPool(); tuIdx = 0; }
   const w = tuWord = tuList[tuIdx];
-  $("#tuStage").innerHTML = cardHTML(w, false);
-  const card = $("#tuStage .card"), ear = $("#ear"), pr = $("#tuPrompt");
+  Owl.state("#tuOwl", "idle");
+  $("#tuStage").innerHTML = cardHTML(w, false, tuIdx ? "in-next" : "pop");
+  const card = $("#tuStage .card"), pr = $("#tuPrompt");
   card.addEventListener("click", () => { bounce(card); sfx.pop(); });
   swipe(card, () => tuNext());
   const wordEl = card.querySelector(".word"); wordEl.style.visibility = "hidden";
   await sleep(500); if(tok.dead) return;
   pr.textContent = "מָה זֶה? 🤔";
   await sayPhrase("__whatis", WHATIS); if(tok.dead) return;
-  ear.classList.add("on","wait"); pr.textContent = "מַקְשִׁיבִים... 👂";
-  let r = await Mic.listen(6500, setLevel, tok); if(r === "cancel") return;
-  ear.classList.remove("wait");
+  let r = await listenPhase(pr, "מַקְשִׁיב... 👂", 6500, tok); if(r === "cancel") return;
   if(r === "voice"){ await celebrate(w, tok, false); return; }
   // model the word, then give him another chance
   wordEl.style.visibility = "visible"; bounce(card); pr.textContent = "";
   await sayWord(w); if(tok.dead) return;
   await sleep(250); if(tok.dead) return;
-  pr.textContent = "עַכְשָׁו אַתָּה! 👂"; ear.classList.add("wait");
-  r = await Mic.listen(4500, setLevel, tok); if(r === "cancel") return;
-  ear.classList.remove("on","wait");
+  r = await listenPhase(pr, "עַכְשָׁו אַתָּה! 👂", 4500, tok); if(r === "cancel") return;
   if(r === "voice"){ await celebrate(w, tok, false); return; }
   pr.textContent = ""; await sleep(900); if(tok.dead) return;
   tuIdx++; runTurn();
 }
+function flash(){ const f = $("#flash"); f.classList.remove("go"); void f.offsetWidth; f.classList.add("go"); }
 async function celebrate(w, tok, fromParent){
   const card = $("#tuStage .card"); const pr = $("#tuPrompt");
-  const ear = $("#ear"); ear && ear.classList.remove("on","wait");
+  setLevel(0);
   if(card){ card.querySelector(".word").style.visibility = "visible"; bounce(card); }
-  sfx.chime(); FX.burst();
-  pr.textContent = "🎉";
+  sfx.chime(); FX.burst(); flash(); Owl.party("#tuOwl");
+  pr.textContent = "🎉 יֵשׁ!";
   const p = pick(PRAISE);
   await sayPhrase("__praise", Math.random() < .35 ? `${p.replace("!","")} ${childName()}!` : p); if(tok.dead) return;
   await sleep(150);
   await sayWord(w); if(tok.dead) return;   // expansion: he hears the target word right after his attempt
-  // remember attempts for the parent
   const att = LS.get("attempts", {}); att[w.id] = (att[w.id]||0) + 1; LS.set("attempts", att);
   if(fromParent) markSaid(w.id);
   await sleep(1200); if(tok.dead) return;
@@ -800,9 +955,16 @@ async function celebrate(w, tok, fromParent){
 }
 function tuNext(){ sfx.whoosh(); tuIdx++; runTurn(); }
 $("#tuNext").onclick = tuNext;
-$("#tuAgain").onclick = () => { if(!tuWord) return; killFlow(); const tok = flowToken; const c = $("#tuStage .card"); if(c){ c.querySelector(".word").style.visibility="visible"; bounce(c); }
-  sayWord(tuWord).then(async () => { if(tok.dead) return; const ear=$("#ear"); ear && ear.classList.add("on","wait"); $("#tuPrompt").textContent = "עַכְשָׁו אַתָּה! 👂";
-    const r = await Mic.listen(5000, setLevel, tok); if(r==="voice") celebrate(tuWord, tok, false); else if(r==="timeout"){ ear && ear.classList.remove("on","wait"); $("#tuPrompt").textContent=""; } }); };
+$("#tuAgain").onclick = () => {
+  if(!tuWord) return; killFlow(); const tok = flowToken; const c = $("#tuStage .card");
+  if(c){ c.querySelector(".word").style.visibility = "visible"; bounce(c); }
+  const pr = $("#tuPrompt");
+  sayWord(tuWord).then(async () => {
+    if(tok.dead) return;
+    const r = await listenPhase(pr, "עַכְשָׁו אַתָּה! 👂", 5000, tok);
+    if(r === "voice") celebrate(tuWord, tok, false); else if(r === "timeout") pr.textContent = "";
+  });
+};
 $("#tuSaid").onclick = () => { if(!tuWord) return; killFlow(); celebrate(tuWord, flowToken, true); };
 function markSaid(id){
   const d = diary[id] || (diary[id] = {s:0});
@@ -1066,7 +1228,7 @@ function renderSettings(){
     <div class="box"><h3>💞 סנכרון בין הטלפונים</h3>
       <div class="muted">ייצאו קובץ (יומן, הקלטות, תמונות ומילים) ושלחו בווטסאפ לטלפון השני. שם: "ייבוא" → בוחרים את הקובץ. הייבוא ממזג — לא מוחק כלום.</div>
       <div class="acts" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn" id="bExp">📤 ייצוא ושיתוף</button><button class="btn light" id="bImp">📥 ייבוא</button></div></div>
-    <div class="box"><div class="muted">פטפוט · גרסה 1.0 · הכל נשמר מקומית בטלפון, בלי אינטרנט, בלי פרסומות, בלי איסוף מידע.</div></div>`;
+    <div class="box"><div class="muted">פטפוט · גרסה 1.1 · הכל נשמר מקומית בטלפון, בלי אינטרנט, בלי פרסומות, בלי איסוף מידע.</div></div>`;
   const bindChips = (id, key, conv) => $("#"+id).querySelectorAll(".chip").forEach(b => b.onclick = () => { settings[key] = conv(b.dataset.v); saveSettings(); renderSettings(); });
   bindChips("sMin", "minutes", Number); bindChips("sVoice", "voice", String); bindChips("sRate", "rate", Number);
   bindChips("sSens", "sens", String); bindChips("sNik", "nikud", v => v === "1");

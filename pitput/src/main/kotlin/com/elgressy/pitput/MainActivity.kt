@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
             settings.allowFileAccess = false
             settings.textZoom = 100
             overScrollMode = View.OVER_SCROLL_NEVER
-            setBackgroundColor(0xFFFFF4E0.toInt())
+            setBackgroundColor(0xFF1B1150.toInt())
             addJavascriptInterface(NativeBridge(), "PitputNative")
 
             webViewClient = object : WebViewClient() {
@@ -120,7 +120,7 @@ class MainActivity : ComponentActivity() {
         }
 
         val root = FrameLayout(this).apply {
-            setBackgroundColor(0xFFFFF4E0.toInt())
+            setBackgroundColor(0xFF1B1150.toInt())
             addView(webView, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
         }
         setContentView(root)
