@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "PulseWaveRelax"
-include(":mobile", ":wear")
+include(":mobile", ":wear", ":pitput")

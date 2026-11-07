@@ -1,0 +1,1134 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#FFF4E0">
+<title>פטפוט</title>
+<style>
+:root{
+  --bg:#FFF4E0; --ink:#3B2F2F; --soft:#8A7B6F; --card:#FFFFFF; --accent:#FF8A5B; --accent2:#5BC0BE;
+  --ok:#6BCB77; --line:#EADBC8; --shadow:0 6px 0 rgba(59,47,47,.12), 0 10px 24px rgba(59,47,47,.10);
+  --r:28px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Rubik","Noto Sans Hebrew","Assistant",system-ui,sans-serif;overscroll-behavior:none}
+body{user-select:none;-webkit-user-select:none;touch-action:manipulation;overflow:hidden}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation}
+input,select,textarea{font:inherit;user-select:text;-webkit-user-select:text}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;
+  padding:max(14px,env(safe-area-inset-top)) 16px max(14px,env(safe-area-inset-bottom))}
+.screen.on{display:flex}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:56px}
+.icon-btn{width:56px;height:56px;border-radius:50%;background:var(--card);box-shadow:var(--shadow);
+  font-size:28px;display:grid;place-items:center;flex:none}
+.icon-btn:active{transform:translateY(3px);box-shadow:0 3px 0 rgba(59,47,47,.12)}
+h1,h2,h3{margin:0}
+.grow{flex:1;min-height:0}
+
+/* ---------- home ---------- */
+#home{align-items:center}
+.mascot{font-size:110px;line-height:1;margin-top:4vh;animation:float 3.2s ease-in-out infinite;filter:drop-shadow(0 10px 8px rgba(0,0,0,.12))}
+@keyframes float{50%{transform:translateY(-10px) rotate(-3deg)}}
+.brand{font-size:44px;font-weight:800;letter-spacing:-.5px;margin-top:6px}
+.hello{color:var(--soft);font-size:18px;margin-top:2px;text-align:center}
+.modes{display:grid;gap:14px;width:100%;max-width:520px;margin-top:3vh}
+.mode{display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:var(--r);box-shadow:var(--shadow);
+  font-size:28px;font-weight:800;text-align:right}
+.mode .e{font-size:46px}
+.mode small{display:block;font-size:15px;font-weight:500;opacity:.75}
+.mode:active{transform:translateY(4px) scale(.99)}
+.tip{margin-top:auto;width:100%;max-width:520px;background:#ffffffaa;border:2px dashed var(--line);
+  border-radius:20px;padding:12px 14px;font-size:15px;line-height:1.45;color:#5b4d43}
+.tip b{color:var(--accent)}
+.gate{position:absolute;top:max(14px,env(safe-area-inset-top));left:16px}
+.gate .ring{position:absolute;inset:-4px;border-radius:50%;
+  background:conic-gradient(var(--accent) calc(var(--p,0)*1%), transparent 0);
+  -webkit-mask:radial-gradient(circle, transparent 58%, #000 60%);mask:radial-gradient(circle, transparent 58%, #000 60%)}
+.gate .icon-btn{position:relative;font-size:24px;opacity:.75}
+.gate-hint{position:absolute;top:64px;left:0;white-space:nowrap;font-size:12px;color:var(--soft);opacity:0;transition:.3s}
+.gate.hint .gate-hint{opacity:1}
+
+/* ---------- categories ---------- */
+.cats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;overflow:auto;padding:6px 2px 20px;align-content:start}
+.cat{border-radius:var(--r);box-shadow:var(--shadow);padding:16px 8px;display:flex;flex-direction:column;
+  align-items:center;gap:4px;font-size:22px;font-weight:800}
+.cat .e{font-size:58px;line-height:1.1}
+.cat:active{transform:translateY(4px)}
+.title{font-size:26px;font-weight:800}
+
+/* ---------- word card ---------- */
+.stage{flex:1;display:flex;align-items:center;justify-content:center;position:relative;min-height:0}
+.card{width:min(84vw,430px);aspect-ratio:3/3.6;background:var(--card);border-radius:40px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;position:relative;
+  border:6px solid var(--cc,#FFD6A5);transition:transform .12s}
+.card .pic{font-size:min(38vw,190px);line-height:1;display:grid;place-items:center;width:78%;aspect-ratio:1}
+.card .pic img{width:100%;height:100%;object-fit:cover;border-radius:28px}
+.card .word{font-size:min(13vw,62px);font-weight:800;letter-spacing:.5px}
+.card .snd{font-size:22px;color:var(--soft);min-height:1.2em}
+.card.pop{animation:pop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.6) rotate(-6deg);opacity:0}100%{transform:none;opacity:1}}
+.card.boing .pic{animation:boing .6s}
+@keyframes boing{30%{transform:scale(1.18,.86)}55%{transform:scale(.92,1.1) translateY(-14px)}80%{transform:scale(1.03,.98)}}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:10px}
+.big-arrow{width:86px;height:86px;border-radius:50%;background:var(--accent);color:#fff;font-size:44px;
+  box-shadow:0 6px 0 #d0643a;display:grid;place-items:center}
+.big-arrow:active{transform:translateY(4px);box-shadow:0 2px 0 #d0643a}
+.big-arrow.alt{background:#fff;color:var(--ink);box-shadow:var(--shadow)}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:50vw}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--accent)}
+
+/* ---------- turn mode ---------- */
+.ear{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);width:84px;height:84px;border-radius:50%;
+  background:#fff;box-shadow:var(--shadow);display:grid;place-items:center;font-size:42px;opacity:0;transition:opacity .3s}
+.ear.on{opacity:1}
+.ear::before{content:"";position:absolute;inset:0;border-radius:50%;border:5px solid var(--accent2);
+  transform:scale(calc(1 + var(--lvl,0)*0.9));opacity:calc(.25 + var(--lvl,0));transition:transform .08s}
+.ear.wait::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:3px dashed var(--accent2);animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.parent-bar{display:flex;gap:10px;justify-content:center;padding-top:22px}
+.pill{padding:12px 18px;border-radius:999px;background:#fff;box-shadow:var(--shadow);font-size:17px;font-weight:700}
+.pill.ok{background:var(--ok);color:#fff;box-shadow:0 5px 0 #4a9c55}
+.pill:active{transform:translateY(3px)}
+.prompt{font-size:24px;font-weight:800;text-align:center;min-height:36px;color:var(--soft)}
+
+/* ---------- peekaboo ---------- */
+.peek{flex:1;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr);gap:14px;padding:10px 0}
+.hole{position:relative;border-radius:var(--r);background:#fff;box-shadow:var(--shadow);overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center}
+.hole .pic{font-size:min(18vw,84px);line-height:1;width:70%;aspect-ratio:1;display:grid;place-items:center}
+.hole .pic img{width:100%;height:100%;object-fit:cover;border-radius:18px}
+.hole .w{font-size:22px;font-weight:800;opacity:0;transition:.3s .2s}
+.hole.open .w{opacity:1}
+.cloud{position:absolute;inset:0;display:grid;place-items:center;font-size:min(22vw,96px);
+  background:linear-gradient(160deg,#BDE0FE,#A2D2FF);transition:transform .6s cubic-bezier(.5,-0.4,.6,1),opacity .6s}
+.cloud span{animation:float 2.6s ease-in-out infinite}
+.hole.open .cloud{transform:translateY(-120%) scale(.6) rotate(-14deg);opacity:0}
+.hole.open .pic{animation:boing .7s .15s}
+
+/* ---------- bye ---------- */
+#bye{align-items:center;justify-content:center;text-align:center;gap:16px}
+#bye .mascot{font-size:140px}
+#bye h2{font-size:38px}
+
+/* ---------- parent area ---------- */
+#parent{padding-left:0;padding-right:0;background:#FBF7F2}
+#parent .top{padding:0 16px}
+.tabs{display:flex;gap:6px;padding:10px 16px;overflow-x:auto;flex:none}
+.tab{padding:10px 14px;border-radius:999px;background:#fff;border:2px solid var(--line);font-weight:700;font-size:15px;white-space:nowrap}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pane{flex:1;overflow:auto;padding:4px 16px 40px;display:none}
+.pane.on{display:block}
+.box{background:#fff;border-radius:20px;padding:16px;margin:10px 0;border:1px solid var(--line)}
+.box h3{font-size:18px;margin-bottom:8px}
+.muted{color:var(--soft);font-size:14px;line-height:1.5}
+.progress{display:flex;align-items:center;gap:16px}
+.ringbig{--v:0;width:112px;height:112px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:conic-gradient(var(--ok) calc(var(--v)*1%), #eee 0)}
+.ringbig div{width:88px;height:88px;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center;font-weight:800;font-size:28px;line-height:1}
+.ringbig small{display:block;font-size:12px;font-weight:500;color:var(--soft)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.chip{padding:7px 12px;border-radius:999px;border:2px solid var(--line);background:#fff;font-size:14px;font-weight:700}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f1e8dd}
+.row:last-child{border-bottom:0}
+.row .pic{width:52px;height:52px;border-radius:14px;background:#FFF4E0;display:grid;place-items:center;font-size:32px;flex:none;overflow:hidden}
+.row .pic img{width:100%;height:100%;object-fit:cover}
+.row .nm{flex:1;min-width:0;font-size:19px;font-weight:700}
+.row .nm small{display:block;font-size:12px;color:var(--soft);font-weight:500}
+.seg{display:flex;border:2px solid var(--line);border-radius:12px;overflow:hidden;flex:none}
+.seg button{padding:7px 8px;font-size:13px;font-weight:700;background:#fff;min-width:44px}
+.seg button+button{border-right:2px solid var(--line)}
+.seg button.s1{background:#FFE8A3}
+.seg button.s2{background:var(--ok);color:#fff}
+.mini{width:40px;height:40px;border-radius:12px;background:#f6efe6;font-size:20px;display:grid;place-items:center;flex:none;position:relative}
+.mini.has::after{content:"";position:absolute;top:4px;left:4px;width:9px;height:9px;border-radius:50%;background:var(--ok)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 18px;border-radius:14px;background:var(--ink);color:#fff;font-weight:700;font-size:16px}
+.btn.light{background:#fff;color:var(--ink);border:2px solid var(--line)}
+.btn.warn{background:#E76F51}
+.btn:active{opacity:.8}
+.field{display:block;margin:10px 0}
+.field span{display:block;font-size:14px;color:var(--soft);margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:#fff;font-size:17px}
+.tiplist li{margin:0 0 12px;line-height:1.55}
+.tiplist b{color:var(--accent)}
+.moment{padding:10px 0;border-bottom:1px solid #f1e8dd;display:flex;gap:10px;align-items:baseline}
+.moment time{font-size:12px;color:var(--soft);flex:none;width:72px}
+.moment .x{margin-inline-start:auto;color:#c9b9a8;font-size:18px;padding:0 6px}
+.warnbox{background:#FFF1E6;border:2px solid #FFB38A;border-radius:16px;padding:12px 14px;margin:10px 0;font-size:15px;line-height:1.5}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(40,30,25,.45);display:none;align-items:flex-end;justify-content:center;z-index:50}
+.modal.on{display:flex}
+.sheet{background:#fff;width:100%;max-width:560px;border-radius:26px 26px 0 0;padding:20px 18px max(20px,env(safe-area-inset-bottom));
+  max-height:92vh;overflow:auto;animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:.5}}
+.sheet h3{font-size:22px;margin-bottom:6px}
+.sheet .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.recdot{width:110px;height:110px;border-radius:50%;background:#E63946;color:#fff;font-size:20px;font-weight:800;margin:16px auto;display:grid;place-items:center;box-shadow:0 6px 0 #a52632}
+.recdot.live{animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.07);box-shadow:0 0 0 14px rgba(230,57,70,.18),0 6px 0 #a52632}}
+video.cam{width:100%;border-radius:18px;background:#000;aspect-ratio:1;object-fit:cover}
+.toast{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(30px);background:var(--ink);color:#fff;
+  padding:12px 18px;border-radius:14px;font-size:15px;opacity:0;transition:.25s;z-index:80;pointer-events:none;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%)}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:60}
+</style>
+</head>
+<body>
+
+<!-- ============ HOME ============ -->
+<section class="screen on" id="home">
+  <div class="gate" id="gate">
+    <span class="ring"></span>
+    <button class="icon-btn" aria-label="אזור הורים">⚙️</button>
+    <div class="gate-hint">לחיצה ארוכה = הורים</div>
+  </div>
+  <div class="mascot" id="mascot">🦉</div>
+  <div class="brand">פִּטְפּוּט</div>
+  <div class="hello" id="hello">משחקים יחד, מדברים יחד</div>
+  <div class="modes">
+    <button class="mode" style="background:#FFD6A5" data-mode="explore"><span class="e">🔍</span><span>מָה זֶה?<small>מסתכלים, שומעים, אומרים</small></span></button>
+    <button class="mode" style="background:#CAFFBF" data-mode="turn"><span class="e">🎤</span><span>תּוֹרְךָ!<small>האפליקציה מקשיבה ומחכה לו</small></span></button>
+    <button class="mode" style="background:#BDE0FE" data-mode="peek"><span class="e">☁️</span><span>קוּקוּ!<small>מה מתחבא מאחורי הענן?</small></span></button>
+  </div>
+  <div class="tip" id="homeTip"></div>
+</section>
+
+<!-- ============ CATEGORIES ============ -->
+<section class="screen" id="cats">
+  <div class="top">
+    <button class="icon-btn" data-go="home">🏠</button>
+    <div class="title" id="catsTitle"></div>
+    <div style="width:56px"></div>
+  </div>
+  <div class="cats" id="catGrid"></div>
+</section>
+
+<!-- ============ EXPLORE ============ -->
+<section class="screen" id="explore">
+  <div class="top">
+    <button class="icon-btn" data-go="cats">↩️</button>
+    <div class="dots" id="exDots"></div>
+    <button class="icon-btn" data-go="home">🏠</button>
+  </div>
+  <div class="stage" id="exStage"></div>
+  <div class="nav">
+    <button class="big-arrow alt" id="exPrev" aria-label="הקודם">➜</button>
+    <button class="big-arrow alt" id="exSay" aria-label="שוב">🔊</button>
+    <button class="big-arrow" id="exNext" aria-label="הבא"><span style="display:inline-block;transform:scaleX(-1)">➜</span></button>
+  </div>
+</section>
+
+<!-- ============ TURN ============ -->
+<section class="screen" id="turn">
+  <div class="top">
+    <button class="icon-btn" data-go="cats">↩️</button>
+    <div class="prompt" id="tuPrompt"></div>
+    <button class="icon-btn" data-go="home">🏠</button>
+  </div>
+  <div class="stage" id="tuStage"></div>
+  <div class="parent-bar">
+    <button class="pill" id="tuAgain">🔊 שוב</button>
+    <button class="pill ok" id="tuSaid">⭐ אמר!</button>
+    <button class="pill" id="tuNext">הבא ⏭</button>
+  </div>
+</section>
+
+<!-- ============ PEEK ============ -->
+<section class="screen" id="peek">
+  <div class="top">
+    <button class="icon-btn" data-go="cats">↩️</button>
+    <div class="title">קוּקוּ! 👀</div>
+    <button class="icon-btn" data-go="home">🏠</button>
+  </div>
+  <div class="peek" id="peekGrid"></div>
+</section>
+
+<!-- ============ BYE ============ -->
+<section class="screen" id="bye">
+  <div class="mascot">😴</div>
+  <h2>בַּי בַּי!</h2>
+  <div class="hello">שיחקנו מספיק למסך. עכשיו בואו נמצא את המילים בבית! 🏡</div>
+  <button class="pill" id="byeMore" style="margin-top:20px">עוד קצת (לחיצה ארוכה של הורה)</button>
+</section>
+
+<!-- ============ PARENT ============ -->
+<section class="screen" id="parent">
+  <div class="top">
+    <button class="icon-btn" data-go="home">🏠</button>
+    <div class="title">אזור הורים</div>
+    <div style="width:56px"></div>
+  </div>
+  <div class="tabs" id="ptabs">
+    <button class="tab on" data-p="diary">📒 יומן</button>
+    <button class="tab" data-p="words">🎙️ מילים</button>
+    <button class="tab" data-p="tips">💡 טיפים</button>
+    <button class="tab" data-p="settings">⚙️ הגדרות</button>
+  </div>
+  <div class="pane on" id="p-diary"></div>
+  <div class="pane" id="p-words"></div>
+  <div class="pane" id="p-tips"></div>
+  <div class="pane" id="p-settings"></div>
+</section>
+
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+<canvas id="fx"></canvas>
+<input type="file" id="fileImport" accept="application/json,.json,*/*" hidden>
+<input type="file" id="fileImage" accept="image/*" hidden>
+
+<script>
+"use strict";
+/* =====================================================================
+   CONTENT
+   w = word with nikud (shown + spoken), e = emoji, s = sound (onomatopoeia)
+   ===================================================================== */
+const CATS = [
+  {id:"family", name:"מִשְׁפָּחָה", e:"👨‍👩‍👦", c:"#FFD6A5", words:[
+    {id:"ima", w:"אִמָּא", e:"👩"}, {id:"aba", w:"אַבָּא", e:"👨"}, {id:"me", w:"__NAME__", e:"😊"},
+    {id:"savta", w:"סַבְתָּא", e:"👵"}, {id:"saba", w:"סַבָּא", e:"👴"}, {id:"tinok", w:"תִּינוֹק", e:"👶"},
+    {id:"ach", w:"אָח", e:"👦"}, {id:"achot", w:"אָחוֹת", e:"👧"}]},
+  {id:"animals", name:"חַיּוֹת", e:"🐾", c:"#CAFFBF", words:[
+    {id:"kelev", w:"כֶּלֶב", e:"🐶", s:"הַב הַב"}, {id:"chatul", w:"חָתוּל", e:"🐱", s:"מְיָאוּ"},
+    {id:"para", w:"פָּרָה", e:"🐮", s:"מוּוּ"}, {id:"barvaz", w:"בַּרְוָז", e:"🦆", s:"גָּה גָּה"},
+    {id:"tarnegol", w:"תַּרְנְגוֹל", e:"🐓", s:"קוּקוּרִיקוּ"}, {id:"kivsa", w:"כִּבְשָׂה", e:"🐑", s:"מֶה"},
+    {id:"sus", w:"סוּס", e:"🐴", s:"קְלוֹפּ קְלוֹפּ"}, {id:"arye", w:"אַרְיֵה", e:"🦁", s:"אַרְרְרְ"},
+    {id:"pil", w:"פִּיל", e:"🐘"}, {id:"kof", w:"קוֹף", e:"🐵", s:"אוּ אוּ אָה אָה"},
+    {id:"tzfardea", w:"צְפַרְדֵּעַ", e:"🐸", s:"קְוָוה קְוָוה"}, {id:"tzipor", w:"צִפּוֹר", e:"🐦", s:"צִיף צִיף"},
+    {id:"dag", w:"דָּג", e:"🐟", s:"בְּלוּבּ בְּלוּבּ"}, {id:"dvora", w:"דְּבוֹרָה", e:"🐝", s:"בְּזְזְז"},
+    {id:"nachash", w:"נָחָשׁ", e:"🐍", s:"סְסְסְ"}, {id:"dov", w:"דֹּב", e:"🐻"},
+    {id:"arnav", w:"אַרְנָב", e:"🐰"}, {id:"parpar", w:"פַּרְפַּר", e:"🦋"}]},
+  {id:"food", name:"אֹכֶל", e:"🍎", c:"#FDFFB6", words:[
+    {id:"banana", w:"בַּנָּנָה", e:"🍌"}, {id:"tapuach", w:"תַּפּוּחַ", e:"🍎"}, {id:"lechem", w:"לֶחֶם", e:"🍞"},
+    {id:"mayim", w:"מַיִם", e:"💧"}, {id:"chalav", w:"חָלָב", e:"🥛"}, {id:"beitza", w:"בֵּיצָה", e:"🥚"},
+    {id:"gvina", w:"גְּבִינָה", e:"🧀"}, {id:"agvaniya", w:"עַגְבָנִיָּה", e:"🍅"}, {id:"melafefon", w:"מְלָפְפוֹן", e:"🥒"},
+    {id:"tut", w:"תּוּת", e:"🍓"}, {id:"anavim", w:"עֲנָבִים", e:"🍇"}, {id:"avatiach", w:"אֲבַטִּיחַ", e:"🍉"},
+    {id:"tapuz", w:"תַּפּוּז", e:"🍊"}, {id:"uga", w:"עוּגָה", e:"🎂"}, {id:"ugiya", w:"עוּגִיָּה", e:"🍪"},
+    {id:"glida", w:"גְּלִידָה", e:"🍦"}, {id:"pizza", w:"פִּיצָה", e:"🍕"}]},
+  {id:"go", name:"נוֹסְעִים", e:"🚗", c:"#9BF6FF", words:[
+    {id:"mechonit", w:"מְכוֹנִית", e:"🚗", s:"בִּיפּ בִּיפּ"}, {id:"otobus", w:"אוֹטוֹבּוּס", e:"🚌"},
+    {id:"rakevet", w:"רַכֶּבֶת", e:"🚂", s:"טְשׁוּ טְשׁוּ"}, {id:"matos", w:"מָטוֹס", e:"✈️", s:"וּוּוּשׁ"},
+    {id:"ofanayim", w:"אוֹפַנַּיִם", e:"🚲", s:"טְרִין טְרִין"}, {id:"masait", w:"מַשָּׂאִית", e:"🚚"},
+    {id:"sira", w:"סִירָה", e:"⛵"}, {id:"masok", w:"מַסּוֹק", e:"🚁", s:"טְרְרְרְ"},
+    {id:"ambulans", w:"אַמְבּוּלַנְס", e:"🚑", s:"נִי נוּ נִי נוּ"}, {id:"tractor", w:"טְרַקְטוֹר", e:"🚜"},
+    {id:"ofanoa", w:"אוֹפַנּוֹעַ", e:"🏍️", s:"בְּרוּם בְּרוּם"}]},
+  {id:"body", name:"הַגּוּף שֶׁלִּי", e:"👃", c:"#FFC6FF", words:[
+    {id:"einayim", w:"עֵינַיִם", e:"👀"}, {id:"af", w:"אַף", e:"👃"}, {id:"pe", w:"פֶּה", e:"👄"},
+    {id:"ozen", w:"אֹזֶן", e:"👂"}, {id:"yad", w:"יָד", e:"✋"}, {id:"regel", w:"רֶגֶל", e:"🦶"},
+    {id:"shinayim", w:"שִׁנַּיִם", e:"🦷"}, {id:"lashon", w:"לָשׁוֹן", e:"👅"}]},
+  {id:"home", name:"בַּבַּיִת", e:"🏠", c:"#BDB2FF", words:[
+    {id:"kadur", w:"כַּדּוּר", e:"⚽"}, {id:"dubi", w:"דֻּבִּי", e:"🧸"}, {id:"balon", w:"בָּלוֹן", e:"🎈"},
+    {id:"sefer", w:"סֵפֶר", e:"📖"}, {id:"naalayim", w:"נַעֲלַיִם", e:"👟"}, {id:"kova", w:"כּוֹבַע", e:"🧢"},
+    {id:"mita", w:"מִטָּה", e:"🛏️"}, {id:"kise", w:"כִּסֵּא", e:"🪑"}, {id:"kos", w:"כּוֹס", e:"🥤"},
+    {id:"kapit", w:"כַּפִּית", e:"🥄"}, {id:"bakbuk", w:"בַּקְבּוּק", e:"🍼"}, {id:"ambatya", w:"אַמְבַּטְיָה", e:"🛁"},
+    {id:"telefon", w:"טֶלֶפוֹן", e:"📱"}, {id:"mafteach", w:"מַפְתֵּחַ", e:"🔑"}, {id:"or", w:"אוֹר", e:"💡"},
+    {id:"delet", w:"דֶּלֶת", e:"🚪"}, {id:"mishkafayim", w:"מִשְׁקָפַיִם", e:"👓"}]},
+  {id:"out", name:"בַּחוּץ", e:"🌳", c:"#A0E7E5", words:[
+    {id:"shemesh", w:"שֶׁמֶשׁ", e:"☀️"}, {id:"yareach", w:"יָרֵחַ", e:"🌙"}, {id:"kochav", w:"כּוֹכָב", e:"⭐"},
+    {id:"perach", w:"פֶּרַח", e:"🌸"}, {id:"etz", w:"עֵץ", e:"🌳"}, {id:"geshem", w:"גֶּשֶׁם", e:"🌧️"},
+    {id:"yam", w:"יָם", e:"🌊"}, {id:"anan", w:"עָנָן", e:"☁️"}, {id:"bayit", w:"בַּיִת", e:"🏠"},
+    {id:"keshet", w:"קֶשֶׁת", e:"🌈"}]},
+  {id:"magic", name:"מִלּוֹת קֶסֶם", e:"✨", c:"#FFADAD", words:[
+    {id:"od", w:"עוֹד", e:"➕"}, {id:"dai", w:"דַּי", e:"🛑"}, {id:"lo", w:"לֹא", e:"🙅"},
+    {id:"ken", w:"כֵּן", e:"👍"}, {id:"hine", w:"הִנֵּה", e:"👉"}, {id:"bye", w:"בַּי בַּי", e:"👋"},
+    {id:"shalom", w:"שָׁלוֹם", e:"🙋"}, {id:"toda", w:"תּוֹדָה", e:"🙏"}, {id:"ein", w:"אֵין", e:"🤷"},
+    {id:"hopa", w:"הוֹפָּה", e:"🤸"}, {id:"bum", w:"בּוּם", e:"💥"}, {id:"oi", w:"אוֹי", e:"😮"},
+    {id:"lemala", w:"לְמַעְלָה", e:"⬆️"}, {id:"lemata", w:"לְמַטָּה", e:"⬇️"}, {id:"ptach", w:"פְּתַח", e:"🔓"},
+    {id:"nani", w:"נַנִּי", e:"😴"}, {id:"cham", w:"חַם", e:"🔥"}, {id:"kar", w:"קַר", e:"🧊"}]},
+];
+const OURS = {id:"ours", name:"שֶׁלָּנוּ", e:"💛", c:"#FFE5A0", words:[]};
+
+const PRAISE = ["יָפֶה מְאוֹד!", "כָּל הַכָּבוֹד!", "וָואוּ!", "אַלּוּף!", "אֵיזֶה יֹפִי!", "יֵשׁ!", "מְצֻיָּן!"];
+const WHATIS = "מָה זֶה?";
+
+const TIPS = [
+  ["חכו 5 שניות", "אחרי שאלה, ספרו בראש עד חמש לפני שאתם עונים בעצמכם. השקט הזה הוא ההזמנה שלו לדבר."],
+  ["הרחבה, לא תיקון", "הוא אומר \"כֶּלֶב\"? אתם עונים \"כֵּן! כֶּלֶב גָּדוֹל!\". מוסיפים מילה אחת למה שהוא אמר."],
+  ["מדגימים בשמחה", "אמר \"פּוּחַ\" על תפוח? \"נָכוֹן, תַּפּוּחַ!\" — בלי \"תגיד נכון\". כל ניסיון הוא הצלחה."],
+  ["מספרים בקול", "מתארים מה הוא עושה כרגע: \"אתה שופך מים... שְׁפְּרִיץ!\". כך הוא שומע מילים בדיוק כשהן רלוונטיות."],
+  ["בחירה במקום כן/לא", "\"רוצה בננה או תפוח?\" ומחזיקים את שניהם מולו. ככה יש לו סיבה להגיד מילה."],
+  ["שירים עם חור", "שרים שיר מוכר ועוצרים לפני המילה האחרונה. מחכים... ומחייכים כשהוא משלים."],
+  ["בגובה העיניים", "כשהפנים שלכם קרובות לשלו, הוא רואה איך הפה זז. זה עוזר לו לחקות."],
+  ["מחקים אותו", "הוא אומר \"בָּה בָּה\"? חוזרים אחריו \"בָּה בָּה!\". משחק תורות כזה הוא הבסיס לשיחה."],
+  ["קולות נחשבים", "\"מוּ\", \"בּוּם\", \"אוֹי\" ו\"בִּיפּ\" הם מילים ראשונות אמיתיות. סמנו אותן ביומן!"],
+  ["מהמסך לחיים", "ראיתם כלב באפליקציה? חפשו כלב אמיתי בטיול. המילה נקלטת כשהיא קשורה לעולם."],
+  ["מעט מסך, הרבה ביחד", "פטפוט נועד לישיבה משותפת של 5–10 דקות. הוא מתוכנן להיגמר מעצמו — וזה בכוונה."],
+  ["שגרה = שפה", "אמבטיה, ארוחה, לבוש: אותן מילים כל יום, באותו סדר. החזרה היא הקסם."],
+  ["פחות שאלות, יותר הערות", "במקום \"מה זה? מה זה?\" — \"וואו, משאית גדולה!\". ואז מחכים. הוא ימשיך."],
+  ["צלמו את העולם שלו", "באזור ההורים אפשר לצלם את הדובי שלו, את סבתא, את הכלב — ולהקליט את הקול שלכם."],
+];
+
+/* =====================================================================
+   STORAGE
+   ===================================================================== */
+const LS = {
+  get(k, d){ try{ const v = localStorage.getItem("pitput."+k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem("pitput."+k, JSON.stringify(v)); }catch(e){} }
+};
+const settings = Object.assign({name:"", minutes:10, rate:0.85, sens:"mid", voice:"parent", nikud:true}, LS.get("settings", {}));
+const diary = LS.get("diary", {});      // wordId -> {s:0|1|2, d1:date understands, d2:date says}
+const moments = LS.get("moments", []);  // [{t:ts, txt}]
+OURS.words = LS.get("custom", []);      // [{id, w, e}]
+const saveSettings = () => LS.set("settings", settings);
+const saveDiary = () => LS.set("diary", diary);
+const saveMoments = () => LS.set("moments", moments);
+const saveCustom = () => LS.set("custom", OURS.words);
+
+const DB = (() => {
+  let dbp = null;
+  function open(){
+    if(dbp) return dbp;
+    dbp = new Promise((res, rej) => {
+      if(!window.indexedDB) return rej("no idb");
+      const r = indexedDB.open("pitput", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("media");
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+    return dbp;
+  }
+  function tx(mode, fn){
+    return open().then(db => new Promise((res, rej) => {
+      const t = db.transaction("media", mode); const st = t.objectStore("media");
+      const out = fn(st); t.oncomplete = () => res(out && out.result); t.onerror = () => rej(t.error);
+    }));
+  }
+  return {
+    get: k => tx("readonly", st => st.get(k)).catch(()=>null),
+    set: (k, v) => tx("readwrite", st => st.put(v, k)),
+    del: k => tx("readwrite", st => st.delete(k)),
+    keys: () => tx("readonly", st => st.getAllKeys()).catch(()=>[]),
+  };
+})();
+// in-memory cache of which media exist, and object URLs
+const media = {audio:new Map(), photo:new Map()};
+async function loadMediaIndex(){
+  const keys = await DB.keys() || [];
+  for(const k of keys){
+    const [id, kind] = String(k).split("|");
+    const v = await DB.get(k);
+    if(!v) continue;
+    if(kind === "audio") media.audio.set(id, v instanceof Blob ? URL.createObjectURL(v) : v);
+    if(kind === "photo") media.photo.set(id, v);
+  }
+}
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const el = (tag, attrs={}, html="") => { const n = document.createElement(tag); for(const k in attrs){ if(k==="style") n.style.cssText = attrs[k]; else if(k.startsWith("on")) n.addEventListener(k.slice(2), attrs[k]); else n.setAttribute(k, attrs[k]); } if(html) n.innerHTML = html; return n; };
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+const stripNikud = s => s.replace(/[֑-ׇ]/g, "");
+const childName = () => settings.name.trim() || "חָמוּד";
+const wordText = w => w.w === "__NAME__" ? childName() : w.w;
+const today = () => new Date().toISOString().slice(0,10);
+const fmtDate = d => { if(!d) return ""; const [y,m,dd] = d.split("-"); return `${+dd}.${+m}`; };
+function toast(msg, ms=2200){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("on"), ms); }
+function allCats(){ return OURS.words.length ? [OURS, ...CATS] : CATS; }
+function allWords(){ return allCats().flatMap(c => c.words.map(w => Object.assign({cat:c}, w))); }
+function wordById(id){ return allWords().find(w => w.id === id); }
+function picHTML(w){ const p = media.photo.get(w.id); return p ? `<img src="${p}" alt="">` : esc(w.e || "💬"); }
+const NATIVE = window.PitputNative || null;
+
+/* =====================================================================
+   AUDIO: TTS (native bridge -> Android TextToSpeech, or Web Speech), recordings, sfx
+   ===================================================================== */
+const Speech = (() => {
+  let n = 0; const pending = {};
+  window.__ttsDone = id => { const f = pending[id]; if(f){ delete pending[id]; f(); } };
+  let heVoice = null;
+  function findVoice(){ if(!window.speechSynthesis) return; heVoice = speechSynthesis.getVoices().find(v => /^(he|iw)/i.test(v.lang)) || null; }
+  if(window.speechSynthesis){ findVoice(); speechSynthesis.onvoiceschanged = findVoice; }
+  function prep(text){ return settings.nikud ? text : stripNikud(text); }
+  return {
+    speak(text, {rate=settings.rate, pitch=1.12}={}){
+      text = prep(text);
+      return new Promise(res => {
+        const fallback = setTimeout(() => res(), 1800 + text.length*140);
+        const done = () => { clearTimeout(fallback); res(); };
+        if(NATIVE && NATIVE.speak){
+          const id = "u" + (++n); pending[id] = done;
+          try{ NATIVE.speak(text, rate, pitch, id); }catch(e){ done(); }
+        } else if(window.speechSynthesis){
+          const u = new SpeechSynthesisUtterance(text); u.lang = "he-IL"; if(heVoice) u.voice = heVoice;
+          u.rate = rate; u.pitch = pitch; u.onend = done; u.onerror = done;
+          speechSynthesis.speak(u);
+        } else done();
+      });
+    },
+    stop(){ try{ NATIVE ? NATIVE.stopSpeaking() : (window.speechSynthesis && speechSynthesis.cancel()); }catch(e){} for(const k in pending){ pending[k](); } },
+    status(){ try{ return NATIVE ? NATIVE.ttsStatus() : (window.speechSynthesis ? (heVoice ? "ready" : "web-no-hebrew") : "none"); }catch(e){ return "unknown"; } }
+  };
+})();
+
+let curAudio = null;
+function playUrl(url){
+  return new Promise(res => {
+    stopAudio();
+    const a = new Audio(url); curAudio = a;
+    const done = () => { if(curAudio === a) curAudio = null; res(); };
+    a.onended = done; a.onerror = done;
+    a.play().catch(done);
+    setTimeout(done, 8000);
+  });
+}
+function stopAudio(){ if(curAudio){ try{ curAudio.pause(); }catch(e){} curAudio = null; } }
+function stopAllSound(){ stopAudio(); Speech.stop(); }
+
+// say a word: parent's recording if exists (and preferred), else TTS (+ animal sound)
+async function sayWord(w, {withSound=true}={}){
+  const rec = media.audio.get(w.id);
+  if(rec && settings.voice === "parent"){ await playUrl(rec); return; }
+  await Speech.speak(wordText(w) + "!");
+  if(withSound && w.s){ await sleep(150); await Speech.speak(w.s, {rate: settings.rate, pitch: 1.3}); }
+}
+async function sayPhrase(key, text){
+  const rec = media.audio.get(key);
+  if(rec && settings.voice === "parent") return playUrl(rec);
+  return Speech.speak(text);
+}
+
+// sfx (WebAudio)
+let actx = null;
+function ac(){ if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(actx && actx.state==="suspended") actx.resume(); return actx; }
+function tone(freq, t0, dur, type="sine", vol=.18, slide=0){
+  const c = ac(); if(!c) return;
+  const o = c.createOscillator(), g = c.createGain(); o.type = type;
+  o.frequency.setValueAtTime(freq, c.currentTime+t0);
+  if(slide) o.frequency.exponentialRampToValueAtTime(freq*slide, c.currentTime+t0+dur);
+  g.gain.setValueAtTime(0.0001, c.currentTime+t0);
+  g.gain.exponentialRampToValueAtTime(vol, c.currentTime+t0+.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime+t0+dur);
+  o.connect(g).connect(c.destination); o.start(c.currentTime+t0); o.stop(c.currentTime+t0+dur+.05);
+}
+const sfx = {
+  pop(){ tone(420, 0, .18, "sine", .22, 2.2); },
+  whoosh(){ tone(900, 0, .35, "triangle", .08, .35); },
+  chime(){ [523,659,784,1047].forEach((f,i)=>tone(f, i*.09, .35, "triangle", .14)); },
+  tick(){ tone(1200, 0, .05, "square", .03); }
+};
+
+/* =====================================================================
+   FX: emoji confetti
+   ===================================================================== */
+const FX = (() => {
+  const cv = $("#fx"), cx = cv.getContext("2d"); let parts = [], raf = 0;
+  function size(){ cv.width = innerWidth*devicePixelRatio; cv.height = innerHeight*devicePixelRatio; }
+  addEventListener("resize", size); size();
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    parts = parts.filter(p => p.life > 0);
+    for(const p of parts){
+      p.vy += .25*devicePixelRatio; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life--;
+      cx.save(); cx.globalAlpha = Math.min(1, p.life/30); cx.translate(p.x, p.y); cx.rotate(p.r);
+      cx.font = `${p.s}px sans-serif`; cx.textAlign="center"; cx.textBaseline="middle"; cx.fillText(p.e, 0, 0); cx.restore();
+    }
+    raf = parts.length ? requestAnimationFrame(loop) : 0;
+  }
+  return {
+    burst(emojis=["⭐","🎉","💛","✨","🌟","🎈"], n=36){
+      const d = devicePixelRatio;
+      for(let i=0;i<n;i++) parts.push({e:pick(emojis), x:innerWidth/2*d, y:innerHeight*.45*d,
+        vx:(Math.random()-.5)*22*d, vy:(-Math.random()*16-6)*d, r:0, vr:(Math.random()-.5)*.3,
+        s:(26+Math.random()*26)*d, life:70+Math.random()*40});
+      if(!raf) loop();
+    }
+  };
+})();
+
+/* =====================================================================
+   MIC: listens for ANY vocal attempt (energy-based, not speech recognition —
+   toddler words aren't recognizable by ASR, and every attempt deserves a party)
+   ===================================================================== */
+const Mic = (() => {
+  let stream = null, an = null, buf = null, src = null, state = "off"; // off|ok|denied
+  async function start(){
+    if(state === "ok") return true;
+    try{
+      stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true}});
+      const c = ac(); src = c.createMediaStreamSource(stream); an = c.createAnalyser(); an.fftSize = 1024;
+      buf = new Float32Array(an.fftSize); src.connect(an); state = "ok"; return true;
+    }catch(e){ state = "denied"; return false; }
+  }
+  function stop(){ if(stream){ stream.getTracks().forEach(t => t.stop()); } stream = null; an = null; state = state==="denied" ? "denied" : "off"; }
+  function level(){
+    if(!an) return 0; an.getFloatTimeDomainData(buf);
+    let s = 0; for(let i=0;i<buf.length;i++) s += buf[i]*buf[i];
+    return Math.sqrt(s/buf.length);
+  }
+  // resolves "voice" when sustained energy above adaptive threshold, "timeout" otherwise, "cancel" if token changes
+  function listen(ms, onLevel, token){
+    return new Promise(async res => {
+      if(state !== "ok"){ const t0=Date.now(); while(Date.now()-t0<ms){ if(token.dead) return res("cancel"); await sleep(100);} return res("timeout"); }
+      const mult = {low:4.5, mid:3.2, high:2.2}[settings.sens] || 3.2;
+      const floorMin = {low:.03, mid:.018, high:.011}[settings.sens] || .018;
+      const t0 = performance.now(); const calib = []; let above = 0, last = t0;
+      const tick = () => {
+        if(token.dead){ onLevel(0); return res("cancel"); }
+        const now = performance.now(), dt = now - last; last = now;
+        const lv = level();
+        if(now - t0 < 350){ calib.push(lv); onLevel(0); return requestAnimationFrame(tick); }
+        const base = calib.length ? calib.sort((a,b)=>a-b)[Math.floor(calib.length/2)] : 0;
+        const thr = Math.max(base*mult, floorMin);
+        onLevel(Math.min(1, lv/(thr*2.2)));
+        above = lv > thr ? above + dt : Math.max(0, above - dt*.5);
+        if(above > 140){ onLevel(0); return res("voice"); }
+        if(now - t0 > ms){ onLevel(0); return res("timeout"); }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+  return {start, stop, listen, get state(){ return state; }};
+})();
+
+/* =====================================================================
+   NAVIGATION + SESSION TIMER
+   ===================================================================== */
+let cur = "home", mode = "explore", curCat = null, flowToken = {dead:false};
+const KID = new Set(["cats","explore","turn","peek"]);
+let playMs = 0, lastTick = Date.now();
+setInterval(() => {
+  const now = Date.now(), dt = now - lastTick; lastTick = now;
+  if(KID.has(cur) && !document.hidden){
+    playMs += dt;
+    if(settings.minutes > 0 && playMs > settings.minutes*60000) go("bye");
+  }
+}, 1000);
+
+function killFlow(){ flowToken.dead = true; flowToken = {dead:false}; stopAllSound(); }
+function go(id){
+  if(id !== cur) killFlow();
+  if(cur === "turn" && id !== "turn") Mic.stop();
+  if(cur === "parent" && id !== "parent") closeCam();
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
+  cur = id;
+  if(id === "home") renderHome();
+  if(id === "cats") renderCats();
+  if(id === "parent") renderParent();
+  if(id === "bye"){ Speech.speak("בַּי בַּי! נְשַׂחֵק עוֹד מְעַט"); }
+  try{ NATIVE && NATIVE.setKeepScreenOn && NATIVE.setKeepScreenOn(KID.has(id)); }catch(e){}
+}
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-go]"); if(g){ sfx.tick(); go(g.dataset.go); }
+});
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+// Android back button (called from native). Return true if handled.
+let lastBack = 0;
+window.pitputBack = () => {
+  if($("#modal").classList.contains("on")){ closeModal(); return true; }
+  if(cur === "home"){
+    if(Date.now() - lastBack < 2000) return false;
+    lastBack = Date.now(); toast("לחצו שוב על 'חזור' כדי לצאת"); return true;
+  }
+  if(cur === "bye") return true; // toddler-proof
+  if(cur === "explore" || cur === "turn" || cur === "peek"){ go("cats"); return true; }
+  go("home"); return true;
+};
+
+// long-press helper (parent gate)
+function longPress(node, ms, onDone, onProgress){
+  let t0 = 0, raf = 0;
+  const step = () => { const p = Math.min(1, (performance.now()-t0)/ms); onProgress && onProgress(p); if(p >= 1){ end(); onDone(); } else raf = requestAnimationFrame(step); };
+  const startP = e => { e.preventDefault(); t0 = performance.now(); raf = requestAnimationFrame(step); };
+  const end = () => { cancelAnimationFrame(raf); onProgress && onProgress(0); };
+  node.addEventListener("pointerdown", startP); node.addEventListener("pointerup", end);
+  node.addEventListener("pointerleave", end); node.addEventListener("pointercancel", end);
+}
+
+/* =====================================================================
+   HOME
+   ===================================================================== */
+function renderHome(){
+  const said = Object.values(diary).filter(d => d.s === 2).length;
+  $("#hello").textContent = settings.name ? `שלום ${stripNikud(settings.name)}! 👋` + (said ? `  ·  כבר ${said} מילים` : "") : "משחקים יחד, מדברים יחד";
+  const day = Math.floor(Date.now()/86400000);
+  const [h, t] = TIPS[day % TIPS.length];
+  $("#homeTip").innerHTML = `💡 <b>${esc(h)}:</b> ${esc(t)}`;
+}
+document.querySelectorAll(".mode").forEach(b => b.addEventListener("click", () => {
+  ac(); sfx.pop(); mode = b.dataset.mode; go("cats");
+}));
+$("#mascot").addEventListener("click", () => { ac(); sfx.pop(); $("#mascot").animate([{transform:"scale(1)"},{transform:"scale(1.25) rotate(10deg)"},{transform:"scale(1)"}],{duration:500}); Speech.speak("הוּ הוּ! שָׁלוֹם " + childName()); });
+(() => {
+  const gate = $("#gate"), ring = gate.querySelector(".ring");
+  longPress(gate.querySelector(".icon-btn"), 1500, () => { sfx.chime(); go("parent"); }, p => ring.style.setProperty("--p", p*100));
+  gate.addEventListener("click", () => { gate.classList.add("hint"); setTimeout(()=>gate.classList.remove("hint"), 1800); });
+})();
+longPress($("#byeMore"), 1500, () => { playMs = 0; go("home"); });
+
+/* =====================================================================
+   CATEGORIES
+   ===================================================================== */
+function renderCats(){
+  $("#catsTitle").textContent = {explore:"🔍 מָה זֶה?", turn:"🎤 תּוֹרְךָ!", peek:"☁️ קוּקוּ!"}[mode];
+  const g = $("#catGrid"); g.innerHTML = "";
+  const mix = el("button", {class:"cat", style:"background:#fff"}, `<span class="e">🎲</span>הַכֹּל`);
+  mix.onclick = () => startMode(null); g.appendChild(mix);
+  for(const c of allCats()){
+    if(!c.words.length) continue;
+    const b = el("button", {class:"cat", style:`background:${c.c}`}, `<span class="e">${c.e}</span>${esc(c.name)}`);
+    b.onclick = () => startMode(c); g.appendChild(b);
+  }
+}
+function startMode(cat){
+  ac(); sfx.pop(); curCat = cat;
+  if(mode === "explore") startExplore();
+  if(mode === "turn") startTurn();
+  if(mode === "peek") startPeek();
+}
+function poolFor(cat){
+  return cat ? cat.words.map(w => Object.assign({cat}, w)) : allWords();
+}
+
+/* =====================================================================
+   MODE 1: EXPLORE ("מה זה?")
+   ===================================================================== */
+let exList = [], exIdx = 0;
+function cardHTML(w, showSound=true){
+  return `<div class="card pop" style="--cc:${w.cat.c}">
+    <div class="pic">${picHTML(w)}</div>
+    <div class="word">${esc(wordText(w))}</div>
+    <div class="snd">${showSound && w.s ? esc(w.s) : ""}</div>
+    <div class="ear" id="ear">👂</div></div>`;
+}
+function startExplore(){
+  exList = curCat ? poolFor(curCat) : shuffle(allWords()).slice(0, 15);
+  exIdx = 0; go("explore"); showExplore();
+}
+function showExplore(){
+  const w = exList[exIdx];
+  $("#exStage").innerHTML = cardHTML(w);
+  const card = $("#exStage .card");
+  card.addEventListener("click", () => { bounce(card); sfx.pop(); sayWord(w); });
+  swipe(card, dir => { dir > 0 ? exGo(1) : exGo(-1); });
+  const dots = $("#exDots"); dots.innerHTML = exList.length <= 20 ? exList.map((_, i) => `<i class="${i===exIdx?"on":""}"></i>`).join("") : `<b>${exIdx+1}/${exList.length}</b>`;
+  stopAllSound(); setTimeout(() => cur === "explore" && sayWord(w), 350);
+}
+function exGo(d){ sfx.whoosh(); exIdx = (exIdx + d + exList.length) % exList.length; if(exIdx === 0 && d > 0){ FX.burst(); sfx.chime(); } showExplore(); }
+$("#exNext").onclick = () => exGo(1);
+$("#exPrev").onclick = () => exGo(-1);
+$("#exSay").onclick = () => { const c = $("#exStage .card"); bounce(c); sayWord(exList[exIdx]); };
+function bounce(card){ card.classList.remove("boing","pop"); void card.offsetWidth; card.classList.add("boing"); }
+function swipe(node, cb){
+  let x0 = null;
+  node.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, {passive:true});
+  node.addEventListener("touchend", e => { if(x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if(Math.abs(dx) > 60) cb(dx > 0 ? 1 : -1); // RTL: swipe right = forward });
+}
+
+/* =====================================================================
+   MODE 2: YOUR TURN ("תורך!")
+   Show picture -> ask "מה זה?" -> WAIT & listen (the pause is the point) ->
+   any voice = party + model the word back (expansion). Silence = model the word,
+   then a second, shorter wait. Prioritises words he understands but doesn't say yet.
+   ===================================================================== */
+let tuList = [], tuIdx = 0, tuWord = null;
+function turnPool(){
+  const pool = poolFor(curCat);
+  const st = w => (diary[w.id] && diary[w.id].s) || 0;
+  const understands = shuffle(pool.filter(w => st(w) === 1));
+  const fresh = shuffle(pool.filter(w => st(w) === 0));
+  const known = shuffle(pool.filter(w => st(w) === 2));
+  // mostly "almost-there" words, then new ones, sprinkle known ones for easy wins
+  const out = [];
+  while(out.length < 12 && (understands.length || fresh.length || known.length)){
+    if(understands.length) out.push(understands.shift());
+    if(fresh.length) out.push(fresh.shift());
+    if(out.length % 4 === 3 && known.length) out.push(known.shift());
+    if(!understands.length && !fresh.length && known.length) out.push(known.shift());
+  }
+  return out;
+}
+async function startTurn(){
+  tuList = turnPool(); tuIdx = 0; go("turn");
+  $("#tuPrompt").textContent = "";
+  const ok = await Mic.start();
+  if(!ok) toast("בלי מיקרופון: לחצו ⭐ כשהוא אומר מילה", 3500);
+  runTurn();
+}
+function setLevel(v){ const e = $("#ear"); if(e) e.style.setProperty("--lvl", v.toFixed(2)); const c = $("#tuStage .card"); if(c) c.style.transform = `scale(${1 + v*0.06})`; }
+async function runTurn(){
+  killFlow(); const tok = flowToken;
+  if(tuIdx >= tuList.length){ tuList = turnPool(); tuIdx = 0; }
+  const w = tuWord = tuList[tuIdx];
+  $("#tuStage").innerHTML = cardHTML(w, false);
+  const card = $("#tuStage .card"), ear = $("#ear"), pr = $("#tuPrompt");
+  card.addEventListener("click", () => { bounce(card); sfx.pop(); });
+  swipe(card, () => tuNext());
+  const wordEl = card.querySelector(".word"); wordEl.style.visibility = "hidden";
+  await sleep(500); if(tok.dead) return;
+  pr.textContent = "מָה זֶה? 🤔";
+  await sayPhrase("__whatis", WHATIS); if(tok.dead) return;
+  ear.classList.add("on","wait"); pr.textContent = "מַקְשִׁיבִים... 👂";
+  let r = await Mic.listen(6500, setLevel, tok); if(r === "cancel") return;
+  ear.classList.remove("wait");
+  if(r === "voice"){ await celebrate(w, tok, false); return; }
+  // model the word, then give him another chance
+  wordEl.style.visibility = "visible"; bounce(card); pr.textContent = "";
+  await sayWord(w); if(tok.dead) return;
+  await sleep(250); if(tok.dead) return;
+  pr.textContent = "עַכְשָׁו אַתָּה! 👂"; ear.classList.add("wait");
+  r = await Mic.listen(4500, setLevel, tok); if(r === "cancel") return;
+  ear.classList.remove("on","wait");
+  if(r === "voice"){ await celebrate(w, tok, false); return; }
+  pr.textContent = ""; await sleep(900); if(tok.dead) return;
+  tuIdx++; runTurn();
+}
+async function celebrate(w, tok, fromParent){
+  const card = $("#tuStage .card"); const pr = $("#tuPrompt");
+  const ear = $("#ear"); ear && ear.classList.remove("on","wait");
+  if(card){ card.querySelector(".word").style.visibility = "visible"; bounce(card); }
+  sfx.chime(); FX.burst();
+  pr.textContent = "🎉";
+  const p = pick(PRAISE);
+  await sayPhrase("__praise", Math.random() < .35 ? `${p.replace("!","")} ${childName()}!` : p); if(tok.dead) return;
+  await sleep(150);
+  await sayWord(w); if(tok.dead) return;   // expansion: he hears the target word right after his attempt
+  // remember attempts for the parent
+  const att = LS.get("attempts", {}); att[w.id] = (att[w.id]||0) + 1; LS.set("attempts", att);
+  if(fromParent) markSaid(w.id);
+  await sleep(1200); if(tok.dead) return;
+  tuIdx++; runTurn();
+}
+function tuNext(){ sfx.whoosh(); tuIdx++; runTurn(); }
+$("#tuNext").onclick = tuNext;
+$("#tuAgain").onclick = () => { if(!tuWord) return; killFlow(); const tok = flowToken; const c = $("#tuStage .card"); if(c){ c.querySelector(".word").style.visibility="visible"; bounce(c); }
+  sayWord(tuWord).then(async () => { if(tok.dead) return; const ear=$("#ear"); ear && ear.classList.add("on","wait"); $("#tuPrompt").textContent = "עַכְשָׁו אַתָּה! 👂";
+    const r = await Mic.listen(5000, setLevel, tok); if(r==="voice") celebrate(tuWord, tok, false); else if(r==="timeout"){ ear && ear.classList.remove("on","wait"); $("#tuPrompt").textContent=""; } }); };
+$("#tuSaid").onclick = () => { if(!tuWord) return; killFlow(); celebrate(tuWord, flowToken, true); };
+function markSaid(id){
+  const d = diary[id] || (diary[id] = {s:0});
+  if(d.s !== 2){ d.s = 2; d.d2 = today(); if(!d.d1) d.d1 = d.d2; saveDiary(); const n = Object.values(diary).filter(x=>x.s===2).length; toast(`נרשם ביומן ⭐ (${n} מילים)`); milestone(n); }
+}
+function milestone(n){
+  if([10,25,50,75,100,150,200].includes(n)){ setTimeout(()=>{ FX.burst(["🏆","🎉","⭐","🥳"], 60); toast(`🏆 ${n} מילים! איזה אלוף!`, 4000); }, 600); }
+}
+
+/* =====================================================================
+   MODE 3: PEEKABOO ("קוקו!")
+   ===================================================================== */
+async function startPeek(){
+  go("peek"); dealPeek();
+}
+function dealPeek(){
+  const pool = shuffle(poolFor(curCat)).slice(0, 6);
+  const g = $("#peekGrid"); g.innerHTML = ""; let opened = 0;
+  pool.forEach((w, i) => {
+    const h = el("button", {class:"hole"}, `<div class="pic">${picHTML(w)}</div><div class="w">${esc(wordText(w))}</div><div class="cloud"><span style="animation-delay:${i*.3}s">☁️</span></div>`);
+    h.onclick = async () => {
+      if(h.classList.contains("open")){ sfx.pop(); sayWord(w); return; }
+      h.classList.add("open"); sfx.whoosh(); opened++;
+      stopAllSound();
+      await Speech.speak("קוּקוּ!", {pitch:1.3}); await sayWord(w);
+      if(opened === pool.length){ await sleep(400); FX.burst(); sfx.chime(); await Speech.speak("יֵשׁ! מָצָאנוּ אֶת כֻּלָּם!"); await sleep(1400); if(cur === "peek") dealPeek(); }
+    };
+    g.appendChild(h);
+  });
+  if(pool.length < 6) g.style.gridTemplateRows = `repeat(${Math.ceil(pool.length/2)},1fr)`; else g.style.gridTemplateRows = "";
+}
+
+/* =====================================================================
+   PARENT AREA
+   ===================================================================== */
+let ptab = "diary", wordsFilter = "family";
+document.querySelectorAll("#ptabs .tab").forEach(t => t.addEventListener("click", () => { ptab = t.dataset.p; renderParent(); }));
+function renderParent(){
+  document.querySelectorAll("#ptabs .tab").forEach(t => t.classList.toggle("on", t.dataset.p === ptab));
+  document.querySelectorAll("#parent .pane").forEach(p => p.classList.toggle("on", p.id === "p-"+ptab));
+  ({diary:renderDiary, words:renderWords, tips:renderTips, settings:renderSettings})[ptab]();
+}
+
+// ---------- diary ----------
+function renderDiary(){
+  const p = $("#p-diary");
+  const ws = allWords();
+  const said = ws.filter(w => diary[w.id] && diary[w.id].s === 2);
+  const und = ws.filter(w => diary[w.id] && diary[w.id].s === 1);
+  const extraSaid = said.length;
+  const pct = Math.min(100, extraSaid/50*100);
+  const recent = said.slice().sort((a,b) => (diary[b.id].d2||"").localeCompare(diary[a.id].d2||"")).slice(0, 8);
+  const att = LS.get("attempts", {});
+  const tries = Object.values(att).reduce((a,b)=>a+b, 0);
+  p.innerHTML = `
+    <div class="box progress">
+      <div class="ringbig" style="--v:${pct}"><div>${extraSaid}<small>מילים</small></div></div>
+      <div><h3>אוצר המילים של ${esc(stripNikud(childName()))}</h3>
+        <div class="muted">אומר: <b>${said.length}</b> · מבין: <b>${und.length}</b> · ניסיונות קוליים במשחק: <b>${tries}</b><br>
+        יעד דרך: 50 מילים (בממוצע סביב גיל שנתיים, עם טווח נורמה רחב).</div></div>
+    </div>
+    <div class="box"><h3>מילים חדשות לאחרונה</h3>
+      ${recent.length ? recent.map(w => `<div class="row"><div class="pic">${picHTML(w)}</div><div class="nm">${esc(wordText(w))}<small>${fmtDate(diary[w.id].d2)}</small></div></div>`).join("") : `<div class="muted">עדיין ריק. בלשונית "מילים" מסמנים מה הוא מבין ומה כבר אומר — או לוחצים ⭐ במשחק "תורך!".</div>`}
+    </div>
+    <div class="box"><h3>רגעים ✍️ ("עוד מים!", "אבא בַּי")</h3>
+      <div class="muted">צירופים של שתי מילים הם השלב הבא — רשמו אותם כאן כשהם קורים.</div>
+      <div style="display:flex;gap:8px;margin-top:8px"><input id="momIn" class="grow" placeholder="מה הוא אמר היום?" style="padding:12px;border-radius:12px;border:2px solid var(--line);font-size:17px;min-width:0"><button class="btn" id="momAdd">הוסף</button></div>
+      <div id="momList" style="margin-top:6px">${moments.slice().reverse().map((m,i) => `<div class="moment"><time>${new Date(m.t).toLocaleDateString("he-IL",{day:"numeric",month:"numeric"})}</time><span>${esc(m.txt)}</span><button class="x" data-del="${moments.length-1-i}">✕</button></div>`).join("")}</div>
+    </div>
+    <div class="box"><h3>מתי כדאי להתייעץ?</h3><div class="muted">ילדים מתפתחים בקצב שונה מאוד. אם סביב גיל שנתיים יש פחות מ-20–25 מילים, אין צירופים של שתי מילים, או שיש ירידה במילים שכבר היו — שווה לשתף את טיפת חלב / רופא הילדים ולשקול פגישה עם קלינאית תקשורת. התייעצות מוקדמת אף פעם לא מזיקה.</div></div>`;
+  $("#momAdd").onclick = () => { const v = $("#momIn").value.trim(); if(!v) return; moments.push({t:Date.now(), txt:v}); saveMoments(); sfx.chime(); renderDiary(); };
+  p.querySelectorAll("[data-del]").forEach(b => b.onclick = () => { moments.splice(+b.dataset.del, 1); saveMoments(); renderDiary(); });
+}
+
+// ---------- words & voices ----------
+function renderWords(){
+  const p = $("#p-words");
+  const cats = allCats();
+  if(!cats.find(c => c.id === wordsFilter)) wordsFilter = cats[0].id;
+  const c = cats.find(c => c.id === wordsFilter);
+  p.innerHTML = `
+    <div class="box"><h3>הקול שלכם > קול רובוטי</h3>
+      <div class="muted">ילדים מגיבים הכי טוב לקול של אמא ואבא. הקליטו כל מילה (🎙️), צלמו את החפץ האמיתי שלו (📷), וסמנו: <b>מבין</b> = מצביע/מגיב, <b>אומר</b> = אומר בעצמו (גם "תוּ" על תפוח נחשב!).</div>
+      <div class="acts" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <button class="btn light" data-special="__whatis">🎙️ "מה זה?" בקול שלכם</button>
+        <button class="btn light" data-special="__praise">🎙️ "כל הכבוד!" בקול שלכם</button>
+        <button class="btn" id="addWord">➕ מילה משלנו</button>
+      </div>
+    </div>
+    <div class="chips">${cats.map(x => `<button class="chip ${x.id===wordsFilter?"on":""}" data-f="${x.id}">${x.e} ${esc(x.name)}</button>`).join("")}</div>
+    <div class="box" id="wordRows"></div>`;
+  p.querySelectorAll("[data-f]").forEach(b => b.onclick = () => { wordsFilter = b.dataset.f; renderWords(); });
+  p.querySelectorAll("[data-special]").forEach(b => b.onclick = () => openRecorder({id:b.dataset.special, w: b.dataset.special==="__whatis" ? WHATIS : "כָּל הַכָּבוֹד!", e:"🗣️"}));
+  $("#addWord").onclick = openAddWord;
+  const rows = $("#wordRows");
+  for(const w0 of c.words){
+    const w = Object.assign({cat:c}, w0);
+    const st = (diary[w.id] && diary[w.id].s) || 0;
+    const r = el("div", {class:"row"}, `
+      <div class="pic">${picHTML(w)}</div>
+      <div class="nm">${esc(wordText(w))}${w.s ? `<small>${esc(w.s)}</small>` : ""}</div>
+      <div class="seg"><button class="${st===1?"s1":""}" data-s="1">מבין</button><button class="${st===2?"s2":""}" data-s="2">אומר</button></div>
+      <button class="mini ${media.audio.has(w.id)?"has":""}" data-a="rec">🎙️</button>
+      <button class="mini ${media.photo.has(w.id)?"has":""}" data-a="pic">📷</button>`);
+    r.querySelector(".nm").onclick = () => sayWord(w);
+    r.querySelectorAll("[data-s]").forEach(b => b.onclick = () => {
+      const s = +b.dataset.s; const d = diary[w.id] || (diary[w.id] = {s:0});
+      if(d.s === s){ d.s = s === 2 ? 1 : 0; } else { d.s = s; if(s===1 && !d.d1) d.d1 = today(); if(s===2){ d.d2 = today(); if(!d.d1) d.d1 = d.d2; sfx.chime(); milestone(Object.values(diary).filter(x=>x.s===2).length); } }
+      saveDiary(); renderWords();
+    });
+    r.querySelector('[data-a="rec"]').onclick = () => openRecorder(w);
+    r.querySelector('[data-a="pic"]').onclick = () => openCamera(w);
+    if(c.id === "ours"){ const del = el("button", {class:"mini"}, "🗑️"); del.onclick = () => deleteCustom(w); r.appendChild(del); }
+    rows.appendChild(r);
+  }
+}
+
+// ---------- modal infra ----------
+function openModal(html){ $("#sheet").innerHTML = html; $("#modal").classList.add("on"); }
+function closeModal(){ $("#modal").classList.remove("on"); closeCam(); stopRec(true); if(cur === "parent") renderParent(); }
+$("#modal").addEventListener("click", e => { if(e.target.id === "modal") closeModal(); });
+
+// ---------- recorder ----------
+let rec = null, recChunks = [], recStream = null, recTimer = 0;
+function stopRec(discard){
+  clearTimeout(recTimer);
+  if(rec && rec.state !== "inactive"){ rec._discard = !!discard; try{ rec.stop(); }catch(e){} }
+  if(recStream){ recStream.getTracks().forEach(t => t.stop()); recStream = null; }
+}
+function openRecorder(w){
+  const has = media.audio.has(w.id);
+  openModal(`<h3>🎙️ ${esc(wordText(w))}</h3>
+    <div class="muted">לחצו על העיגול ואמרו את המילה בקול שמח וברור${w.s ? ` — אפשר להוסיף גם "${esc(w.s)}"` : ""}. ההקלטה נעצרת לבד אחרי 4 שניות.</div>
+    <button class="recdot" id="recBtn">הקלטה</button>
+    <div class="acts"><button class="btn light" id="recPlay" ${has?"":"disabled style='opacity:.4'"}>▶ השמעה</button>
+    <button class="btn warn" id="recDel" ${has?"":"disabled style='opacity:.4'"}>🗑️ מחיקה</button>
+    <button class="btn light" id="recClose">סגירה</button></div>`);
+  $("#recClose").onclick = closeModal;
+  $("#recPlay").onclick = () => media.audio.has(w.id) && playUrl(media.audio.get(w.id));
+  $("#recDel").onclick = async () => { await DB.del(w.id+"|audio"); media.audio.delete(w.id); toast("ההקלטה נמחקה"); closeModal(); };
+  $("#recBtn").onclick = async () => {
+    const btn = $("#recBtn");
+    if(rec && rec.state === "recording"){ stopRec(false); return; }
+    try{
+      recStream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}});
+    }catch(e){ toast("אין הרשאת מיקרופון"); return; }
+    const mime = ["audio/webm;codecs=opus","audio/webm","audio/mp4"].find(m => window.MediaRecorder && MediaRecorder.isTypeSupported(m)) || "";
+    rec = new MediaRecorder(recStream, mime ? {mimeType:mime} : undefined); recChunks = [];
+    rec.ondataavailable = e => e.data.size && recChunks.push(e.data);
+    rec.onstop = async () => {
+      btn.classList.remove("live"); btn.textContent = "הקלטה";
+      if(recStream){ recStream.getTracks().forEach(t => t.stop()); recStream = null; }
+      if(rec._discard || !recChunks.length) return;
+      const blob = new Blob(recChunks, {type: rec.mimeType || "audio/webm"});
+      await DB.set(w.id+"|audio", blob);
+      const old = media.audio.get(w.id); if(old && old.startsWith("blob:")) URL.revokeObjectURL(old);
+      media.audio.set(w.id, URL.createObjectURL(blob));
+      sfx.chime(); toast("נשמר! 💛");
+      ["recPlay","recDel"].forEach(id => { const b = $("#"+id); if(b){ b.disabled = false; b.style.opacity = 1; } });
+      await sleep(200); playUrl(media.audio.get(w.id));
+    };
+    rec.start(); btn.classList.add("live"); btn.textContent = "■ עצירה";
+    recTimer = setTimeout(() => stopRec(false), 4000);
+  };
+}
+
+// ---------- camera ----------
+let camStream = null;
+function closeCam(){ if(camStream){ camStream.getTracks().forEach(t => t.stop()); camStream = null; } }
+async function savePhoto(w, dataUrl){
+  await DB.set(w.id+"|photo", dataUrl); media.photo.set(w.id, dataUrl); sfx.chime(); toast("התמונה נשמרה 📸"); closeModal();
+}
+function squareJpeg(src, sw, sh){
+  const s = Math.min(sw, sh), cv = document.createElement("canvas"); cv.width = cv.height = 480;
+  cv.getContext("2d").drawImage(src, (sw-s)/2, (sh-s)/2, s, s, 0, 0, 480, 480);
+  return cv.toDataURL("image/jpeg", .82);
+}
+async function openCamera(w){
+  const has = media.photo.has(w.id);
+  openModal(`<h3>📷 ${esc(wordText(w))}</h3>
+    <div class="muted">צלמו את הדבר האמיתי מהעולם שלו: הכוס שלו, הכלב של סבתא, סבתא עצמה 🙂</div>
+    <video class="cam" id="camV" autoplay playsinline muted style="margin-top:10px"></video>
+    <div class="acts"><button class="btn" id="camShot">📸 צילום</button>
+    <button class="btn light" id="camFlip">🔄</button>
+    <button class="btn light" id="camGal">🖼️ מהגלריה</button>
+    ${has ? `<button class="btn warn" id="camDel">🗑️</button>` : ""}
+    <button class="btn light" id="camClose">סגירה</button></div>`);
+  let facing = "environment";
+  const startCam = async () => {
+    closeCam();
+    try{ camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:facing, width:{ideal:960}, height:{ideal:960}}, audio:false}); $("#camV").srcObject = camStream; }
+    catch(e){ toast("אין גישה למצלמה — אפשר לבחור מהגלריה"); }
+  };
+  startCam();
+  $("#camFlip").onclick = () => { facing = facing === "environment" ? "user" : "environment"; startCam(); };
+  $("#camClose").onclick = closeModal;
+  $("#camShot").onclick = () => { const v = $("#camV"); if(!v.videoWidth) return; sfx.pop(); savePhoto(w, squareJpeg(v, v.videoWidth, v.videoHeight)); };
+  $("#camGal").onclick = () => { const f = $("#fileImage"); f.value = ""; f.onchange = () => {
+      const file = f.files[0]; if(!file) return; const img = new Image();
+      img.onload = () => { savePhoto(w, squareJpeg(img, img.naturalWidth, img.naturalHeight)); URL.revokeObjectURL(img.src); };
+      img.src = URL.createObjectURL(file); }; f.click(); };
+  if(has) $("#camDel").onclick = async () => { await DB.del(w.id+"|photo"); media.photo.delete(w.id); toast("התמונה נמחקה"); closeModal(); };
+}
+
+// ---------- custom words ----------
+function openAddWord(){
+  openModal(`<h3>➕ מילה משלנו</h3>
+    <div class="muted">שם של הגננת, של הכלב, "בַּמְבָּה", "מוֹצֵץ"... אחרי השמירה אפשר להקליט ולצלם.</div>
+    <label class="field"><span>המילה (אפשר עם ניקוד)</span><input id="nwW" maxlength="24"></label>
+    <label class="field"><span>אימוג'י (לא חובה)</span><input id="nwE" maxlength="8" placeholder="💛"></label>
+    <div class="acts"><button class="btn" id="nwSave">שמירה</button><button class="btn light" id="nwCancel">ביטול</button></div>`);
+  $("#nwCancel").onclick = closeModal;
+  $("#nwSave").onclick = () => {
+    const w = $("#nwW").value.trim(); if(!w) return;
+    const nw = {id:"c"+Date.now().toString(36), w, e:$("#nwE").value.trim() || "💛"};
+    OURS.words.push(nw); saveCustom(); wordsFilter = "ours"; closeModal(); toast("נוספה ל'שלנו' 💛");
+  };
+}
+async function deleteCustom(w){
+  if(!confirm(`למחוק את "${stripNikud(w.w)}"?`)) return;
+  OURS.words = OURS.words.filter(x => x.id !== w.id); saveCustom();
+  await DB.del(w.id+"|audio"); await DB.del(w.id+"|photo"); media.audio.delete(w.id); media.photo.delete(w.id);
+  delete diary[w.id]; saveDiary(); renderWords();
+}
+
+// ---------- tips ----------
+function renderTips(){
+  $("#p-tips").innerHTML = `
+    <div class="box"><h3>איך משחקים עם פטפוט</h3>
+      <ol class="tiplist">
+        <li><b>יושבים יחד.</b> הוא על הברכיים, הטלפון ביניכם. אתם השותפים — האפליקציה רק הכלי.</li>
+        <li><b>"מה זה?"</b> — מסתכלים, מצביעים, אומרים יחד. עושים את הקול של החיה בהגזמה.</li>
+        <li><b>"תורך!"</b> — האפליקציה שואלת ו<b>מחכה בשקט</b>. כל קול שהוא משמיע מקבל חגיגה. אל תמהרו לענות במקומו.</li>
+        <li><b>"קוקו!"</b> — הסתרה וגילוי. מצוין לצחוק ולמילים "אוֹי", "הִנֵּה", "עוֹד".</li>
+        <li><b>אחרי 10 דקות</b> הינשוף הולך לישון. זה בכוונה — הקסם האמיתי קורה בדיבור שאחרי, בעולם.</li>
+      </ol></div>
+    <div class="box"><h3>טריקים של קלינאיות תקשורת</h3><ul class="tiplist">${TIPS.map(([h,t]) => `<li><b>${esc(h)}:</b> ${esc(t)}</li>`).join("")}</ul></div>`;
+}
+
+// ---------- settings + backup ----------
+function renderSettings(){
+  const st = Speech.status();
+  const ttsWarn = (st === "no-hebrew" || st === "web-no-hebrew" || st === "none")
+    ? `<div class="warnbox">⚠️ לא נמצא קול עברי במנוע ההקראה של הטלפון. התקינו "Speech Services by Google" ובחרו בה עברית (הורדת נתוני קול).<br>${NATIVE && NATIVE.openTtsSettings ? `<button class="btn" id="ttsSet" style="margin-top:8px">פתיחת הגדרות הקראה</button>` : ""}<br>בינתיים — הקלטות שלכם עובדות תמיד.</div>` : "";
+  $("#p-settings").innerHTML = `
+    ${ttsWarn}
+    <div class="box"><h3>הילד</h3>
+      <label class="field"><span>השם שלו (עם ניקוד אם אפשר — כך ההקראה מדויקת)</span><input id="sName" value="${esc(settings.name)}" placeholder="למשל: יוֹנָתָן"></label>
+      <div class="muted">השם מופיע ככרטיס בקטגוריית משפחה ובשבחים ("כל הכבוד יונתן!"). צלמו אותו שם 📷 — ילדים מתים לראות את עצמם.</div></div>
+    <div class="box"><h3>זמן משחק</h3>
+      <div class="chips" id="sMin">${[5,10,15,20,0].map(m => `<button class="chip ${settings.minutes===m?"on":""}" data-v="${m}">${m ? m+" דק'" : "ללא הגבלה"}</button>`).join("")}</div>
+      <div class="muted">ההמלצה לגיל הזה: מעט מסך, תמיד יחד. בסוף הזמן הינשוף נרדם, ורק הורה (לחיצה ארוכה) מעיר אותו.</div></div>
+    <div class="box"><h3>קול</h3>
+      <div class="chips" id="sVoice"><button class="chip ${settings.voice==="parent"?"on":""}" data-v="parent">ההקלטות שלנו קודם</button><button class="chip ${settings.voice==="tts"?"on":""}" data-v="tts">רק קול ממוחשב</button></div>
+      <div class="chips" id="sRate">${[[0.7,"איטי מאוד"],[0.85,"איטי"],[1,"רגיל"]].map(([v,l]) => `<button class="chip ${settings.rate===v?"on":""}" data-v="${v}">${l}</button>`).join("")}</div>
+      <div class="chips" id="sNik"><button class="chip ${settings.nikud?"on":""}" data-v="1">הקראה עם ניקוד</button><button class="chip ${!settings.nikud?"on":""}" data-v="0">בלי ניקוד</button></div>
+      <button class="btn light" id="sTest">🔊 בדיקה</button></div>
+    <div class="box"><h3>רגישות המיקרופון ב"תורך!"</h3>
+      <div class="chips" id="sSens">${[["low","נמוכה (בית רועש)"],["mid","רגילה"],["high","גבוהה (לחישות)"]].map(([v,l]) => `<button class="chip ${settings.sens===v?"on":""}" data-v="${v}">${l}</button>`).join("")}</div>
+      <div class="muted">האפליקציה לא מנסה "להבין" את המילה — היא מזהה שהוא <b>ניסה</b>, וזה מה שחוגגים.</div></div>
+    <div class="box"><h3>💞 סנכרון בין הטלפונים</h3>
+      <div class="muted">ייצאו קובץ (יומן, הקלטות, תמונות ומילים) ושלחו בווטסאפ לטלפון השני. שם: "ייבוא" → בוחרים את הקובץ. הייבוא ממזג — לא מוחק כלום.</div>
+      <div class="acts" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn" id="bExp">📤 ייצוא ושיתוף</button><button class="btn light" id="bImp">📥 ייבוא</button></div></div>
+    <div class="box"><div class="muted">פטפוט · גרסה 1.0 · הכל נשמר מקומית בטלפון, בלי אינטרנט, בלי פרסומות, בלי איסוף מידע.</div></div>`;
+  const bindChips = (id, key, conv) => $("#"+id).querySelectorAll(".chip").forEach(b => b.onclick = () => { settings[key] = conv(b.dataset.v); saveSettings(); renderSettings(); });
+  bindChips("sMin", "minutes", Number); bindChips("sVoice", "voice", String); bindChips("sRate", "rate", Number);
+  bindChips("sSens", "sens", String); bindChips("sNik", "nikud", v => v === "1");
+  $("#sName").onchange = e => { settings.name = e.target.value.trim(); saveSettings(); toast("נשמר"); };
+  $("#sTest").onclick = () => Speech.speak(`שָׁלוֹם ${childName()}! כֶּלֶב! הַב הַב!`);
+  const ts = $("#ttsSet"); if(ts) ts.onclick = () => NATIVE.openTtsSettings();
+  $("#bExp").onclick = exportAll; $("#bImp").onclick = () => { const f = $("#fileImport"); f.value = ""; f.onchange = () => f.files[0] && importAll(f.files[0]); f.click(); };
+}
+const blobToDataURL = b => new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(b); });
+async function exportAll(){
+  toast("מכין קובץ...");
+  const keys = await DB.keys() || []; const m = {};
+  for(const k of keys){ const v = await DB.get(k); if(v) m[k] = v instanceof Blob ? await blobToDataURL(v) : v; }
+  const data = {app:"pitput", v:1, at:new Date().toISOString(), settings, diary, moments, custom:OURS.words, attempts:LS.get("attempts",{}), media:m};
+  const json = JSON.stringify(data);
+  const name = `pitput-${today()}.json`;
+  if(NATIVE && NATIVE.shareFile){ NATIVE.shareFile(name, json); }
+  else { const a = el("a", {href:URL.createObjectURL(new Blob([json], {type:"application/json"})), download:name}); document.body.appendChild(a); a.click(); a.remove(); }
+}
+async function dataURLToBlob(u){ return (await fetch(u)).blob(); }
+async function importAll(file){
+  try{
+    const data = JSON.parse(await file.text());
+    if(data.app !== "pitput") throw 0;
+    // merge diary: keep the "higher" status and the earliest dates
+    for(const [id, d] of Object.entries(data.diary || {})){
+      const mine = diary[id];
+      if(!mine){ diary[id] = d; continue; }
+      if((d.s||0) > (mine.s||0)) mine.s = d.s;
+      for(const k of ["d1","d2"]) if(d[k] && (!mine[k] || d[k] < mine[k])) mine[k] = d[k];
+    }
+    saveDiary();
+    const seen = new Set(moments.map(m => m.t + m.txt));
+    for(const mm of data.moments || []) if(!seen.has(mm.t + mm.txt)) moments.push(mm);
+    moments.sort((a,b) => a.t - b.t); saveMoments();
+    for(const cw of data.custom || []) if(!OURS.words.find(x => x.id === cw.id)) OURS.words.push(cw);
+    saveCustom();
+    const att = LS.get("attempts", {}); for(const [k,v] of Object.entries(data.attempts||{})) att[k] = Math.max(att[k]||0, v); LS.set("attempts", att);
+    if(!settings.name && data.settings && data.settings.name){ settings.name = data.settings.name; saveSettings(); }
+    let n = 0;
+    for(const [k, v] of Object.entries(data.media || {})){
+      const [id, kind] = k.split("|");
+      if(kind === "audio"){ const b = await dataURLToBlob(v); await DB.set(k, b); media.audio.set(id, URL.createObjectURL(b)); n++; }
+      if(kind === "photo"){ await DB.set(k, v); media.photo.set(id, v); n++; }
+    }
+    sfx.chime(); FX.burst(["💞","💛","⭐"]); toast(`יובא! ${n} הקלטות ותמונות 💞`, 3000); renderParent();
+  }catch(e){ toast("הקובץ לא נראה כמו גיבוי של פטפוט"); }
+}
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+// unlock audio on first touch (Android autoplay rules)
+addEventListener("pointerdown", () => ac(), {once:true});
+let hiddenAt = 0;
+document.addEventListener("visibilitychange", () => {
+  if(document.hidden){ hiddenAt = Date.now(); stopAllSound(); if(cur === "turn") Mic.stop(); return; }
+  if(Date.now() - hiddenAt > 30*60000){ playMs = 0; if(cur === "bye") go("home"); }  // a new sitting later = a fresh session
+  if(cur === "turn") Mic.start();
+});
+loadMediaIndex().finally(() => renderHome());
+renderHome();
+</script>
+</body>
+</html>

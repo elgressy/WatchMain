@@ -12,3 +12,6 @@ build/
 *.aab
 *.jks
 *.keystore
+
+# Pitput debug signing key is intentionally committed (stable updates across CI builds)
+!pitput/signing/pitput-debug.jks
