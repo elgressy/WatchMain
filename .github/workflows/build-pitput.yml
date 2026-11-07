@@ -29,10 +29,12 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - uses: android-actions/setup-android@v3
-
+      # ubuntu-latest ships the Android SDK at $ANDROID_HOME; setup-android@v3 currently breaks on it.
       - name: Accept SDK licenses
-        run: yes | sdkmanager --licenses > /dev/null || true
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKM=$(ls -d "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | tail -1)
+          yes | "$SDKM" --licenses > /dev/null || true
 
       - name: Build APK
         run: |
