@@ -26,8 +26,12 @@ waiting time, expansion, modelling instead of correcting, and celebrating every 
 - Real animal, vehicle and household recordings (`assets/sounds/`, ~1 MB, offline) play right after each word.
   Sources and licenses are in `assets/sounds/CREDITS.txt` (MIT, and the Google Sound Library under CC BY 4.0).
   The bicycle bell and the seagull call are synthesized.
-- Made for **Shachaf (שַׁחַף = seagull)**: the mascot is a seagull, the background is a sunset sea with gliding gulls,
-  his own card squawks, and the greetings and the goodnight screen use his name. The name can be changed in Settings.
+- Made for **Shachaf**. His card in the family shows a boy (or his photo), and the app greets him by name when it opens
+  (בוקר טוב / שלום / ערב טוב). The family appears by name: אמא סיון, אלמוג (the big sister), גל (the sister). Names, photos and
+  voice recordings for each family member are edited in Settings → המשפחה. Photos stay on the phone and never go into the repo.
+- Gentle gaming: stars for every card, attempt and reveal; a level every 10 stars unlocks a sticker in "המדבקות שלי".
+- Photosensitivity-safe (WCAG 2.3.1): no flashing, no strobing, no full-screen brightness changes. "Calm mode" also turns off
+  confetti and background motion.
 
 Everything is offline and stored locally. There are no ads and no tracking.
 

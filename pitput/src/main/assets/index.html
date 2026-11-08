@@ -33,8 +33,6 @@ input,select,textarea{font:inherit;user-select:text;-webkit-user-select:text}
 .wave.w2{height:80%;animation-duration:10s;animation-direction:reverse;opacity:.9}
 .wave.w3{height:58%;animation-duration:7s;opacity:.95}
 @keyframes sway{from{transform:translateX(-50%)}to{transform:translateX(0)}}
-.gull-fly{position:absolute;font-size:0;width:44px;height:16px;animation:flyby linear infinite;opacity:.75}
-.gull-fly svg{width:100%;height:100%}
 @keyframes flyby{from{transform:translateX(-30vw)}to{transform:translateX(130vw)}}
 .sky i{position:absolute;border-radius:50%;opacity:.55;filter:blur(1px);animation:rise linear infinite}
 .sky i.b{background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), rgba(255,255,255,.15) 40%, rgba(255,255,255,.05) 70%);border:1px solid rgba(255,255,255,.25)}
@@ -76,9 +74,9 @@ h1,h2,h3{margin:0}
 @keyframes bob{50%{transform:translateY(-8px) rotate(-2deg)}}
 .owl-wrap.listen .owl{animation:tilt 1.6s ease-in-out infinite}
 @keyframes tilt{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(-4deg) translateY(-3px)}}
-.owl-wrap.party .owl{animation:dance .5s ease-in-out 4}
-.owl-wrap.party .wingL{animation:flapL .25s ease-in-out 8}
-.owl-wrap.party .wingR{animation:flapR .25s ease-in-out 8}
+.owl-wrap.party .owl{animation:dance .7s ease-in-out 3}
+.owl-wrap.party .wingL{animation:flapL .4s ease-in-out 5}
+.owl-wrap.party .wingR{animation:flapR .4s ease-in-out 5}
 @keyframes dance{25%{transform:translateY(-22px) rotate(-10deg)}75%{transform:translateY(-22px) rotate(10deg)}}
 @keyframes flapL{50%{transform:rotate(35deg)}}
 @keyframes flapR{50%{transform:rotate(-35deg)}}
@@ -88,13 +86,18 @@ h1,h2,h3{margin:0}
 
 /* ---------- home ---------- */
 #home{align-items:center}
-#homeOwl{margin-top:2vh;width:min(42vw,180px)}
+#homeOwl{margin-top:1vh;width:min(36vw,160px)}
 .brand{font-size:56px;font-weight:700;line-height:1;margin-top:4px;letter-spacing:.5px;
   background:linear-gradient(90deg,var(--yellow),var(--orange),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent;
   filter:drop-shadow(0 4px 0 rgba(0,0,0,.35))}
+.bubble{position:absolute;z-index:4;top:96%;left:50%;margin-left:-160px;width:320px;text-align:center;white-space:nowrap;background:#fff;color:var(--ink);font-weight:700;font-size:24px;padding:10px 20px;border-radius:22px;
+  box-shadow:0 6px 0 #A99BD6;opacity:0;transform:scale(.6);pointer-events:none;transition:opacity .3s, transform .4s cubic-bezier(.3,1.6,.5,1)}
+.bubble::before{content:"";position:absolute;top:-12px;left:50%;margin-left:-12px;border:12px solid transparent;border-top:0;border-bottom-color:#fff}
+.bubble.on{opacity:1;transform:none}
+#homeOwl + .bubble{order:0}
 .brand-sub{font-size:26px;font-weight:700;color:#fff;margin-top:-2px;text-shadow:0 3px 0 rgba(0,0,0,.3)}
 .hello{color:#E6DBFF;font-size:19px;margin-top:6px;text-align:center;font-weight:500}
-.modes{display:grid;gap:18px;width:100%;max-width:520px;margin-top:3.2vh}
+.modes{display:grid;gap:14px;width:100%;max-width:520px;margin-top:2.2vh}
 .mode{display:flex;align-items:center;gap:14px;padding:16px 18px;font-size:32px;font-weight:700;text-align:right;
   text-shadow:0 2px 0 rgba(0,0,0,.2)}
 .mode .e{font-size:44px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.28);display:grid;place-items:center;flex:none;
@@ -106,7 +109,7 @@ h1,h2,h3{margin:0}
 .mode .e{animation:bob 2.6s ease-in-out infinite}
 .mode:nth-child(2) .e{animation-delay:-.8s}.mode:nth-child(3) .e{animation-delay:-1.6s}
 .tip{margin-top:auto;width:100%;max-width:520px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-radius:20px;padding:12px 14px;font-size:15px;line-height:1.5;color:#EDE6FF}
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-radius:20px;padding:10px 14px;font-size:14px;line-height:1.45;color:#EDE6FF;margin-top:auto;max-height:22vh;overflow:hidden}
 .tip b{color:var(--yellow)}
 .gate{position:absolute;top:max(14px,env(safe-area-inset-top));left:16px;z-index:3}
 .gate .ring{position:absolute;inset:-5px;border-radius:50%;pointer-events:none;
@@ -252,15 +255,53 @@ video.cam{width:100%;border-radius:18px;background:#000;aspect-ratio:1;object-fi
   padding:12px 18px;border-radius:16px;font-size:16px;opacity:0;transition:.25s;z-index:80;pointer-events:none;max-width:90vw;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 .toast.on{opacity:1;transform:translateX(-50%)}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:60}
-.flash{position:fixed;inset:0;pointer-events:none;z-index:59;background:radial-gradient(circle,rgba(255,230,120,.55),transparent 65%);opacity:0}
-.flash.go{animation:flash .7s ease-out}
-@keyframes flash{20%{opacity:1}}
+/* ---------- gaming layer (photosensitivity-safe: no flashing, no strobing, no full-screen
+   brightness changes; every animation is a slow move/scale, well under 3 changes per second) ---------- */
+.hud{position:fixed;z-index:6;top:max(18px,calc(env(safe-area-inset-top) + 4px));left:50%;transform:translateX(-50%);
+  display:none;align-items:center;gap:6px;padding:7px 14px 7px 12px;border-radius:999px;background:rgba(20,10,60,.55);
+  border:2px solid rgba(255,255,255,.25);color:#fff;font-weight:700;font-size:20px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.hud.on{display:flex}
+.hud-lvl{font-size:13px;font-weight:600;color:#FFE38A;margin-inline-start:4px}
+.hud-bar{width:54px;height:8px;border-radius:99px;background:rgba(255,255,255,.2);overflow:hidden}
+.hud-bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#FFE066,#FFB800);transition:width .6s ease}
+.hud.bump .hud-star{animation:bump .5s ease}
+@keyframes bump{40%{transform:scale(1.5) rotate(-12deg)}}
+.flystar{position:fixed;z-index:70;font-size:30px;pointer-events:none;transition:transform .8s cubic-bezier(.5,-0.3,.6,1), opacity .8s}
+.reward{position:fixed;inset:0;z-index:75;display:none;align-items:center;justify-content:center;background:rgba(20,10,55,.9);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.reward.on{display:flex}
+.reward-card{position:relative;text-align:center;animation:rewardIn .7s cubic-bezier(.3,1.5,.5,1)}
+@keyframes rewardIn{from{transform:scale(.3) rotate(-20deg);opacity:0}}
+.reward .rays{position:absolute;left:50%;top:50%;width:420px;height:420px;margin:-230px 0 0 -210px;border-radius:50%;
+  background:repeating-conic-gradient(rgba(255,226,120,.22) 0 12deg, transparent 12deg 24deg);animation:spin 20s linear infinite;
+  -webkit-mask:radial-gradient(circle,#000 30%,transparent 70%);mask:radial-gradient(circle,#000 30%,transparent 70%)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.reward .stk{position:relative;font-size:150px;line-height:1;filter:drop-shadow(0 12px 10px rgba(0,0,0,.35))}
+.reward .rt{position:relative;font-size:34px;font-weight:700;color:#FFE066;text-shadow:0 3px 0 rgba(0,0,0,.35);margin-top:10px}
+.reward .rn{position:relative;font-size:26px;font-weight:600;color:#fff}
+#album .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;overflow:auto;padding:12px 2px 30px}
+.slot{aspect-ratio:1;border-radius:24px;display:grid;place-items:center;font-size:46px;background:rgba(255,255,255,.12);border:2px dashed rgba(255,255,255,.3)}
+.slot.got{background:linear-gradient(180deg,#fff,#EDE5FF);border:0;box-shadow:0 6px 0 #9C88D9;animation:popin .45s cubic-bezier(.3,1.6,.5,1) backwards}
+.slot.lock{font-size:30px;color:rgba(255,255,255,.4);font-weight:700}
+.album-head{text-align:center;margin-top:4px}
+.album-head h2{font-size:30px;color:#FFE066;text-shadow:0 3px 0 rgba(0,0,0,.3)}
+.album-head div{color:#E6DBFF;font-size:16px;margin-top:4px}
+.mode.small{font-size:24px;padding:10px 16px;--c1:#FFE066;--c2:#FFB800;--c3:#C27C00;color:#4A2A00;text-shadow:none}
+.mode.small .e{width:52px;height:52px;font-size:32px}
+/* calm mode (settings) and OS "reduce motion": no confetti, no dancing, no drifting */
+body.calm .sky i, body.calm .wave, body.calm .sun, body.calm .reward .rays{animation:none!important}
+body.calm .owl-wrap.party .owl, body.calm .owl-wrap.party .wingL, body.calm .owl-wrap.party .wingR{animation:none!important}
+@media (prefers-reduced-motion: reduce){ .wave,.sun,.reward .rays,.owl-wrap.party .owl{animation:none!important} }
 @media (prefers-reduced-motion: reduce){ .sky i{animation:none} }
 </style>
 </head>
 <body>
 <div class="sky" id="sky"></div>
-<div class="flash" id="flash"></div>
+<button class="hud" id="hud" aria-label="כוכבים">
+  <span class="hud-star" id="hudStar">⭐</span><b id="hudStars">0</b>
+  <span class="hud-lvl">שָׁלָב <b id="hudLvl">1</b></span>
+  <span class="hud-bar"><i id="hudBar"></i></span>
+</button>
+<div class="reward" id="reward"><div class="reward-card"><div class="rays"></div><div class="stk" id="rewardStk"></div><div class="rt">מַדְבֵּקָה חֲדָשָׁה!</div><div class="rn" id="rewardName"></div></div></div>
 
 <!-- ============ HOME ============ -->
 <section class="screen on" id="home">
@@ -269,13 +310,14 @@ video.cam{width:100%;border-radius:18px;background:#000;aspect-ratio:1;object-fi
     <button class="icon-btn candy" aria-label="אזור הורים">⚙️</button>
     <div class="gate-hint">לחיצה ארוכה = הורים</div>
   </div>
-  <div class="owl-wrap idle" id="homeOwl"></div>
+  <div class="owl-wrap idle" id="homeOwl"><div class="bubble" id="bubble"></div></div>
   <div class="brand">פִּטְפּוּט</div><div class="brand-sub" id="brandSub">שֶׁל שַׁחַף</div>
   <div class="hello" id="hello">מְשַׂחֲקִים יַחַד, מְדַבְּרִים יַחַד</div>
   <div class="modes">
     <button class="mode candy" data-mode="explore"><span class="e">🔍</span><span>מָה זֶה?<small>מסתכלים, שומעים, אומרים</small></span></button>
-    <button class="mode candy" data-mode="turn"><span class="e">🎤</span><span>תּוֹרְךָ!<small>השחף מקשיב ומחכה לו</small></span></button>
+    <button class="mode candy" data-mode="turn"><span class="e">🎤</span><span>תּוֹרְךָ!<small>הינשוף מקשיב ומחכה לו</small></span></button>
     <button class="mode candy" data-mode="peek"><span class="e">☁️</span><span>קוּקוּ!<small>מה מתחבא מאחורי הענן?</small></span></button>
+    <button class="mode small candy" id="toAlbum"><span class="e">🏆</span><span>הַמַּדְבֵּקוֹת שֶׁלִּי</span></button>
   </div>
   <div class="tip" id="homeTip"></div>
 </section>
@@ -284,7 +326,7 @@ video.cam{width:100%;border-radius:18px;background:#000;aspect-ratio:1;object-fi
 <section class="screen" id="cats">
   <div class="top">
     <button class="icon-btn candy" data-go="home">🏠</button>
-    <div class="title" id="catsTitle"></div>
+    <div></div>
     <div style="width:58px"></div>
   </div>
   <div class="cats" id="catGrid"></div>
@@ -294,7 +336,7 @@ video.cam{width:100%;border-radius:18px;background:#000;aspect-ratio:1;object-fi
 <section class="screen" id="explore">
   <div class="top">
     <button class="icon-btn candy" data-go="cats">➡️</button>
-    <div class="dots" id="exDots"></div>
+    <div></div>
     <button class="icon-btn candy" data-go="home">🏠</button>
   </div>
   <div class="stage" id="exStage"></div>
@@ -310,7 +352,7 @@ video.cam{width:100%;border-radius:18px;background:#000;aspect-ratio:1;object-fi
 <section class="screen" id="turn">
   <div class="top">
     <button class="icon-btn candy" data-go="cats">➡️</button>
-    <div class="title">🎤 תּוֹרְךָ!</div>
+    <div></div>
     <button class="icon-btn candy" data-go="home">🏠</button>
   </div>
   <div class="turn-head"><div class="owl-wrap idle" id="tuOwl"><span class="halo"></span></div><div class="prompt" id="tuPrompt"></div></div>
@@ -326,10 +368,21 @@ video.cam{width:100%;border-radius:18px;background:#000;aspect-ratio:1;object-fi
 <section class="screen" id="peek">
   <div class="top">
     <button class="icon-btn candy" data-go="cats">➡️</button>
-    <div class="title">☁️ קוּקוּ!</div>
+    <div></div>
     <button class="icon-btn candy" data-go="home">🏠</button>
   </div>
   <div class="peek" id="peekGrid"></div>
+</section>
+
+<!-- ============ ALBUM ============ -->
+<section class="screen" id="album">
+  <div class="top">
+    <div style="width:58px"></div>
+    <div></div>
+    <button class="icon-btn candy" data-go="home">🏠</button>
+  </div>
+  <div class="album-head"><h2 id="albumTitle"></h2><div id="albumHint"></div></div>
+  <div class="grid" id="albumGrid"></div>
 </section>
 
 <!-- ============ BYE ============ -->
@@ -377,9 +430,10 @@ window.addEventListener("error", e => { const t = document.getElementById("toast
 // c1/c2 = tile gradient, c3 = 3D shadow edge. Words chosen from what Israeli toddlers actually hear and say.
 const CATS = [
   {id:"family", name:"מִשְׁפָּחָה", e:"👨‍👩‍👦", c1:"#FFB86B", c2:"#FF7E4F", c3:"#C2502A", words:[
-    {id:"ima", w:"אִמָּא", e:"👩"}, {id:"aba", w:"אַבָּא", e:"👨"}, {id:"me", w:"__NAME__", e:"😊"},
+    {id:"me", w:"__NAME__", e:"👦"}, {id:"ima", w:"אִמָּא", e:"👩"}, {id:"aba", w:"אַבָּא", e:"👨"},
+    {id:"sis1", w:"__SIS1__", e:"👱‍♀️"}, {id:"sis2", w:"__SIS2__", e:"👧"},
     {id:"savta", w:"סַבְתָּא", e:"👵"}, {id:"saba", w:"סַבָּא", e:"👴"}, {id:"tinok", w:"תִּינוֹק", e:"👶"},
-    {id:"ach", w:"אָח", e:"👦"}, {id:"achot", w:"אָחוֹת", e:"👧"}, {id:"ganenet", w:"גַּנֶּנֶת", e:"👩‍🏫"},
+    {id:"ganenet", w:"גַּנֶּנֶת", e:"👩‍🏫"},
     {id:"chaver", w:"חָבֵר", e:"🧒"}]},
   {id:"go", name:"נוֹסְעִים", e:"🚗", c1:"#5EE7FF", c2:"#2F8BFF", c3:"#1D58B8", words:[
     {id:"oto", w:"אוֹטוֹ", e:"🚗", s:"בִּיפּ בִּיפּ"}, {id:"otobus", w:"אוֹטוֹבּוּס", e:"🚌", s:"בְּרְרְרְ"},
@@ -390,7 +444,7 @@ const CATS = [
     {id:"ambulans", w:"אַמְבּוּלַנְס", e:"🚑", s:"נִי נוּ"}, {id:"masok", w:"מַסּוֹק", e:"🚁", s:"טְרְרְרְ"},
     {id:"sira", w:"סִירָה", e:"⛵", s:"דִּינְג דִּינְג"}, {id:"ofanoa", w:"אוֹפַנּוֹעַ", e:"🏍️", s:"בְּרוּם בְּרוּם"}, {id:"raketa", w:"טִיל", e:"🚀", s:"פִשְׁשְׁשׁ"}]},
   {id:"animals", name:"חַיּוֹת", e:"🐾", c1:"#9BF06B", c2:"#2FBF71", c3:"#1C8A4E", words:[
-    {id:"shachaf", w:"שַׁחַף", e:"🐦", svg:"gull", s:"קְיָאוּ קְיָאוּ"}, {id:"kelev", w:"כֶּלֶב", e:"🐶", s:"הַב הַב"}, {id:"chatul", w:"חָתוּל", e:"🐱", s:"מְיָאוּ"},
+    {id:"kelev", w:"כֶּלֶב", e:"🐶", s:"הַב הַב"}, {id:"chatul", w:"חָתוּל", e:"🐱", s:"מְיָאוּ"},
     {id:"para", w:"פָּרָה", e:"🐮", s:"מוּוּ"}, {id:"barvaz", w:"בַּרְוָז", e:"🦆", s:"גָּה גָּה"},
     {id:"tarnegol", w:"תַּרְנְגוֹל", e:"🐓", s:"קוּקוּרִיקוּ"}, {id:"kivsa", w:"כִּבְשָׂה", e:"🐑", s:"מֶה"},
     {id:"sus", w:"סוּס", e:"🐴", s:"קְלוֹפּ קְלוֹפּ"}, {id:"arye", w:"אַרְיֵה", e:"🦁", s:"אַרְרְרְ"},
@@ -467,12 +521,13 @@ const LS = {
   get(k, d){ try{ const v = localStorage.getItem("pitput."+k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem("pitput."+k, JSON.stringify(v)); }catch(e){} }
 };
-const settings = Object.assign({name:"שַׁחַף", minutes:10, rate:0.85, sens:"mid", voice:"parent", nikud:true}, LS.get("settings", {}));
+const settings = Object.assign({name:"שַׁחַף", calm:false, family:{ima:"סִיוָן", aba:"", sis1:"אַלְמוֹג", sis2:"גַּל"}, minutes:10, rate:0.85, sens:"mid", voice:"parent", nikud:true}, LS.get("settings", {}));
 const diary = LS.get("diary", {});      // wordId -> {s:0|1|2, d1:date understands, d2:date says}
 const moments = LS.get("moments", []);  // [{t:ts, txt}]
 OURS.words = LS.get("custom", []);      // [{id, w, e}]
 if(!settings.name || !settings.name.trim()) settings.name = "שַׁחַף";   // made for Shachaf
-const saveSettings = () => LS.set("settings", settings);
+const saveSettings = () => { LS.set("settings", settings); document.body.classList.toggle("calm", !!settings.calm); };
+document.body.classList.toggle("calm", !!settings.calm);
 const saveDiary = () => LS.set("diary", diary);
 const saveMoments = () => LS.set("moments", moments);
 const saveCustom = () => LS.set("custom", OURS.words);
@@ -528,17 +583,37 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">"
 const stripNikud = s => s.replace(/[֑-ׇ]/g, "");
 const childName = () => settings.name.trim() || "שַׁחַף";
 const isShachaf = () => stripNikud(childName()) === "שחף";
-const wordText = w => w.w === "__NAME__" ? childName() : w.w;
+const fam = k => ((settings.family || {})[k] || "").trim();
+const wordText = w => w.w === "__NAME__" ? childName() : w.w === "__SIS1__" ? fam("sis1") : w.w === "__SIS2__" ? fam("sis2") : w.w;
+// small line under the word: family relation / animal sound text
+function subOf(w){
+  if(w.id === "me") return "זֶה אֲנִי! 😊";
+  if(w.id === "ima" && fam("ima")) return fam("ima");
+  if(w.id === "aba" && fam("aba")) return fam("aba");
+  if(w.id === "sis1") return "הָאָחוֹת הַגְּדוֹלָה";
+  if(w.id === "sis2") return "הָאָחוֹת";
+  return w.s || "";
+}
+// what is said aloud for family cards: the word + a short warm sentence
+function sayTextOf(w){
+  const n = childName();
+  if(w.id === "me") return `${n}! זֶה אַתָּה!`;
+  if(w.id === "ima") return fam("ima") ? `אִמָּא! אִמָּא ${fam("ima")}!` : "אִמָּא!";
+  if(w.id === "aba") return fam("aba") ? `אַבָּא! אַבָּא ${fam("aba")}!` : "אַבָּא!";
+  if(w.id === "sis1") return `${fam("sis1")}! הָאָחוֹת הַגְּדוֹלָה שֶׁל ${n}!`;
+  if(w.id === "sis2") return `${fam("sis2")}! הָאָחוֹת שֶׁל ${n}!`;
+  return wordText(w) + "!";
+}
 const today = () => new Date().toISOString().slice(0,10);
 const fmtDate = d => { if(!d) return ""; const [y,m,dd] = d.split("-"); return `${+dd}.${+m}`; };
 function toast(msg, ms=2200){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("on"), ms); }
 function allCats(){ return OURS.words.length ? [OURS, ...CATS] : CATS; }
-function allWords(){ return allCats().flatMap(c => c.words.map(w => Object.assign({cat:c}, w))); }
+const hiddenWord = w => (w.w === "__SIS1__" && !fam("sis1")) || (w.w === "__SIS2__" && !fam("sis2"));
+function allWords(){ return allCats().flatMap(c => c.words.filter(w => !hiddenWord(w)).map(w => Object.assign({cat:c}, w))); }
 function wordById(id){ return allWords().find(w => w.id === id); }
 let svgN = 0;
 function picHTML(w){
   const p = media.photo.get(w.id); if(p) return `<img src="${p}" alt="">`;
-  if(w.svg === "gull" || (w.id === "me" && isShachaf())) return owlSVG("c" + (++svgN));
   return esc(w.e || "💬");
 }
 const NATIVE = window.PitputNative || null;
@@ -591,17 +666,16 @@ function stopAllSound(){ stopAudio(); Speech.stop(); }
 // say a word: parent's recording if exists (and preferred), else TTS (+ animal sound)
 // real recordings bundled in assets/sounds/<id>.mp3 (see sounds/CREDITS.txt)
 const SOUND_IDS = new Set(("kelev chatul para barvaz tarnegol kivsa sus arye pil kof tzfardea tzipor nachash dov gamal tarnegolet ez chazir " +
-  "achbar tuki yona dolphin yanshuf avaz dvora shachaf dinozaur oto otobus rakevet matos masait tractor mishtara kabait ambulans masok sira " +
+  "achbar tuki yona dolphin yanshuf avaz dvora dinozaur oto otobus rakevet matos masait tractor mishtara kabait ambulans masok sira " +
   "ofanoa raketa ofanayim tof telefon kadur delet ambatya balon geshem yam").split(" "));
 function soundFor(w){
-  if(w.id === "me") return isShachaf() ? "sounds/shachaf.mp3" : null;   // his own card squawks like a seagull 🐦
   return SOUND_IDS.has(w.id) ? `sounds/${w.id}.mp3` : null;
 }
 // say a word: parent's recording if exists (and preferred), else TTS — then the REAL animal/vehicle sound
 async function sayWord(w, {withSound=true}={}){
   const rec = media.audio.get(w.id);
   if(rec && settings.voice === "parent") await playUrl(rec);
-  else await Speech.speak(wordText(w) + "!");
+  else await Speech.speak(sayTextOf(w));
   const snd = withSound && soundFor(w);
   if(snd){ await sleep(120); await playUrl(snd); }
 }
@@ -711,7 +785,7 @@ const Mic = (() => {
    NAVIGATION + SESSION TIMER
    ===================================================================== */
 let cur = "home", mode = "explore", curCat = null, flowToken = {dead:false};
-const KID = new Set(["cats","explore","turn","peek"]);
+const KID = new Set(["cats","explore","turn","peek","album"]);
 let playMs = 0, lastTick = Date.now();
 setInterval(() => {
   const now = Date.now(), dt = now - lastTick; lastTick = now;
@@ -720,6 +794,62 @@ setInterval(() => {
     if(settings.minutes > 0 && playMs > settings.minutes*60000) go("bye");
   }
 }, 1000);
+
+/* ---------------- GAME: stars → levels → stickers ---------------- */
+const STICKERS = [["🦁","אַרְיֵה"],["🚒","כַּבָּאִית"],["🐘","פִּיל"],["🚀","טִיל"],["🦒","גִּ'ירָפָה"],["🚂","רַכֶּבֶת"],["🐼","פַּנְדָּה"],["⚽","כַּדּוּר"],
+  ["🦖","דִּינוֹזָאוּר"],["🚁","מַסּוֹק"],["🐬","דּוֹלְפִין"],["🌈","קֶשֶׁת"],["🐯","נָמֵר"],["🚜","טְרַקְטוֹר"],["🦄","חַד קֶרֶן"],["🍦","גְּלִידָה"],
+  ["🐙","תְּמָנוּן"],["🏎️","מְכוֹנִית מֵרוֹץ"],["🐧","פִּינְגְּוִין"],["🎈","בָּלוֹן"],["🐢","צָב"],["🚓","מִשְׁטָרָה"],["🦋","פַּרְפַּר"],["⭐","כּוֹכָב"],
+  ["🐨","קוֹאָלָה"],["🚌","אוֹטוֹבּוּס"],["🐳","לִוְיָתָן"],["🍓","תּוּת"],["🦊","שׁוּעָל"],["🛸","חֲלָלִית"],["🐝","דְּבוֹרָה"],["👑","כֶּתֶר"]];
+const STARS_PER_LEVEL = 10;
+const game = Object.assign({stars:0}, LS.get("game", {}));
+const level = () => Math.floor(game.stars / STARS_PER_LEVEL) + 1;
+const stickersOwned = () => Math.min(STICKERS.length, level() - 1);
+function renderHud(){
+  $("#hudStars").textContent = game.stars; $("#hudLvl").textContent = level();
+  $("#hudBar").style.width = (game.stars % STARS_PER_LEVEL) / STARS_PER_LEVEL * 100 + "%";
+}
+function award(n, fromEl){
+  const before = level();
+  game.stars += n; LS.set("game", game);
+  const hud = $("#hud").getBoundingClientRect();
+  const src = fromEl && fromEl.getBoundingClientRect ? fromEl.getBoundingClientRect() : {left: innerWidth/2, top: innerHeight/2, width: 0, height: 0};
+  for(let i = 0; i < Math.min(n, 3); i++){
+    const st = el("div", {class:"flystar"}, "⭐");
+    st.style.left = (src.left + src.width/2 - 15 + (i-1)*26) + "px"; st.style.top = (src.top + src.height/2 - 15) + "px";
+    document.body.appendChild(st);
+    setTimeout(() => { st.style.transform = `translate(${hud.left + 18 - (src.left + src.width/2) - (i-1)*26}px, ${hud.top + 6 - (src.top + src.height/2)}px) scale(.6)`; st.style.opacity = ".2"; }, 30 + i*120);
+    setTimeout(() => st.remove(), 950 + i*120);
+  }
+  setTimeout(() => {
+    renderHud(); tone(1320, 0, .12, "triangle", .08); tone(1760, .07, .14, "triangle", .07);
+    const h = $("#hud"); h.classList.remove("bump"); void h.offsetWidth; h.classList.add("bump");
+    if(level() > before && stickersOwned() > 0) showReward(stickersOwned() - 1);
+  }, 900);
+}
+let rewardTimer = 0;
+async function showReward(i){
+  const [e, name] = STICKERS[i];
+  $("#rewardStk").textContent = e; $("#rewardName").textContent = name;
+  $("#reward").classList.add("on"); fxPlay("_magic", .8);
+  if(!settings.calm) FX.burst(["⭐","✨","💛"], 24);
+  await sleep(500); Speech.speak(`יֵשׁ! מַדְבֵּקָה חֲדָשָׁה! ${name}!`);
+  clearTimeout(rewardTimer); rewardTimer = setTimeout(closeReward, 4500);
+}
+function closeReward(){ clearTimeout(rewardTimer); $("#reward").classList.remove("on"); }
+$("#reward").addEventListener("click", closeReward);
+function renderAlbum(){
+  const got = stickersOwned(), left = STARS_PER_LEVEL - game.stars % STARS_PER_LEVEL;
+  $("#albumTitle").textContent = `הַמַּדְבֵּקוֹת שֶׁל ${childName()}`;
+  $("#albumHint").textContent = got >= STICKERS.length ? "אספת את כל המדבקות! 👑" : `עוד ${left} ⭐ למדבקה הבאה`;
+  const g = $("#albumGrid"); g.innerHTML = "";
+  STICKERS.forEach(([e, name], i) => {
+    const b = el("button", {class: "slot " + (i < got ? "got" : "lock"), style: `animation-delay:${i*.03}s`}, i < got ? e : "?");
+    if(i < got) b.onclick = () => { b.animate([{transform:"scale(1)"},{transform:"scale(1.25) rotate(-8deg)"},{transform:"scale(1)"}], {duration:450}); Speech.speak(name + "!"); };
+    g.appendChild(b);
+  });
+}
+$("#hud").addEventListener("click", () => { if(cur === "home"){ sfx.pop(); go("album"); } });
+renderHud();
 
 function killFlow(){ flowToken.dead = true; flowToken = {dead:false}; stopAllSound(); }
 function go(id){
@@ -731,6 +861,8 @@ function go(id){
   if(id === "home") renderHome();
   if(id === "cats") renderCats();
   if(id === "parent") renderParent();
+  if(id === "album") renderAlbum();
+  $("#hud").classList.toggle("on", KID.has(id) || id === "home");
   if(id === "bye"){ $("#byeTitle").textContent = `לַיְלָה טוֹב, ${childName()}!`; Speech.speak(`לַיְלָה טוֹב ${childName()}! נְשַׂחֵק עוֹד מְעַט`); }
   try{ NATIVE && NATIVE.setKeepScreenOn && NATIVE.setKeepScreenOn(KID.has(id)); }catch(e){}
 }
@@ -748,6 +880,7 @@ window.pitputBack = () => {
     lastBack = Date.now(); toast("לחצו שוב על 'חזור' כדי לצאת"); return true;
   }
   if(cur === "bye") return true; // toddler-proof
+  if($("#reward").classList.contains("on")){ closeReward(); return true; }
   if(cur === "explore" || cur === "turn" || cur === "peek"){ go("cats"); return true; }
   go("home"); return true;
 };
@@ -773,36 +906,37 @@ function renderHome(){
   const [h, t] = TIPS[day % TIPS.length];
   $("#homeTip").innerHTML = `💡 <b>${esc(h)}:</b> ${esc(t)}`;
 }
-document.querySelectorAll(".mode").forEach(b => b.addEventListener("click", () => {
+$("#toAlbum").addEventListener("click", e => { e.stopPropagation(); ac(); fxPlay("_xylo", .55); go("album"); });
+document.querySelectorAll(".mode[data-mode]").forEach(b => b.addEventListener("click", () => {
   ac(); fxPlay("_xylo", .55); mode = b.dataset.mode; go("cats");
 }));
 
 /* =====================================================================
    OWL MASCOT (inline SVG): blinks, eyes follow the finger, listens, dances
    ===================================================================== */
-function owlSVG(u){   // the seagull — "שַׁחַף", Shachaf's buddy (classes kept from the owl for animations)
+function owlSVG(u){   // the owl mascot (Shachaf is the boy; the owl is his friend)
   return `<svg class="owl" viewBox="0 0 200 210" aria-hidden="true">
     <defs>
-      <radialGradient id="gb${u}" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D5E2F2"/></radialGradient>
-      <linearGradient id="gw${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B9C8DC"/><stop offset=".72" stop-color="#93A6C2"/><stop offset=".73" stop-color="#2E3A4F"/><stop offset="1" stop-color="#2E3A4F"/></linearGradient>
+      <radialGradient id="ob${u}" cx="40%" cy="30%" r="75%"><stop offset="0" stop-color="#FFB25B"/><stop offset="1" stop-color="#F0662B"/></radialGradient>
+      <radialGradient id="obl${u}" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#FFF4DC"/><stop offset="1" stop-color="#FFD59A"/></radialGradient>
     </defs>
-    <ellipse cx="100" cy="202" rx="54" ry="7" fill="rgba(0,0,0,.25)"/>
-    <path class="wingL" d="M44 96 Q4 104 10 168 Q34 160 50 140 Z" fill="url(#gw${u})"/>
-    <path class="wingR" d="M156 96 Q196 104 190 168 Q166 160 150 140 Z" fill="url(#gw${u})"/>
-    <path d="M100 26 Q164 26 166 104 Q168 188 100 190 Q32 188 34 104 Q36 26 100 26 Z" fill="url(#gb${u})"/>
-    <path d="M92 28 Q96 10 106 14 Q100 18 104 28 Z" fill="#fff"/>
-    <ellipse cx="100" cy="150" rx="40" ry="34" fill="#fff" opacity=".8"/>
-    <circle cx="74" cy="84" r="22" fill="#fff" stroke="#2A1A4A" stroke-width="3"/><circle cx="126" cy="84" r="22" fill="#fff" stroke="#2A1A4A" stroke-width="3"/>
+    <ellipse cx="100" cy="200" rx="56" ry="8" fill="rgba(0,0,0,.25)"/>
+    <path class="wingL" d="M38 112 Q8 140 30 178 Q44 160 52 132 Z" fill="#D9541F"/>
+    <path class="wingR" d="M162 112 Q192 140 170 178 Q156 160 148 132 Z" fill="#D9541F"/>
+    <path d="M52 40 L62 8 L84 34 Q100 28 116 34 L138 8 L148 40 Q172 66 170 120 Q166 190 100 192 Q34 190 30 120 Q28 66 52 40 Z" fill="url(#ob${u})"/>
+    <ellipse cx="100" cy="142" rx="44" ry="44" fill="url(#obl${u})"/>
+    <path d="M80 130 q6 6 12 0 M108 130 q6 6 12 0 M90 150 q6 6 12 0 M94 166 q6 6 12 0" stroke="#F0A35B" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="70" cy="82" r="31" fill="#fff"/><circle cx="130" cy="82" r="31" fill="#fff"/>
+    <circle cx="70" cy="82" r="31" fill="none" stroke="#FFD59A" stroke-width="5"/><circle cx="130" cy="82" r="31" fill="none" stroke="#FFD59A" stroke-width="5"/>
     <g class="pupils">
-      <circle cx="74" cy="86" r="12" fill="#2A1A4A"/><circle cx="126" cy="86" r="12" fill="#2A1A4A"/>
-      <circle cx="78" cy="81" r="4.5" fill="#fff"/><circle cx="130" cy="81" r="4.5" fill="#fff"/>
+      <circle cx="70" cy="84" r="15" fill="#2A1A4A"/><circle cx="130" cy="84" r="15" fill="#2A1A4A"/>
+      <circle cx="75" cy="78" r="5.5" fill="#fff"/><circle cx="135" cy="78" r="5.5" fill="#fff"/>
     </g>
-    <rect class="lid" x="50" y="60" width="48" height="48" rx="24" fill="#D5E2F2"/>
-    <rect class="lid" x="102" y="60" width="48" height="48" rx="24" fill="#D5E2F2"/>
-    <path d="M82 106 Q100 98 118 106 L106 136 Q100 142 94 136 Z" fill="#FFC93C" stroke="#E0A400" stroke-width="2" stroke-linejoin="round"/>
-    <circle cx="100" cy="128" r="4.5" fill="#E63946"/>
-    <circle cx="52" cy="112" r="8" fill="#FF8FB1" opacity=".55"/><circle cx="148" cy="112" r="8" fill="#FF8FB1" opacity=".55"/>
-    <path d="M70 186 l-12 14 h24 Z M130 186 l-12 14 h24 Z" fill="#FF8A3D" stroke="#E0651F" stroke-width="2" stroke-linejoin="round"/>
+    <rect class="lid" x="38" y="50" width="64" height="64" rx="32" fill="#F0662B"/>
+    <rect class="lid" x="98" y="50" width="64" height="64" rx="32" fill="#F0662B"/>
+    <path d="M90 104 L110 104 L100 122 Z" fill="#FFC93C" stroke="#E0A400" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="44" cy="112" r="7" fill="#FF6F91" opacity=".55"/><circle cx="156" cy="112" r="7" fill="#FF6F91" opacity=".55"/>
+    <path d="M80 190 l-6 10 M86 190 l0 11 M92 190 l6 10 M108 190 l-6 10 M114 190 l0 11 M120 190 l6 10" stroke="#FFC93C" stroke-width="5" stroke-linecap="round"/>
   </svg>`;
 }
 const Owl = {
@@ -823,8 +957,8 @@ function lookAt(x, y){
   });
 }
 $("#homeOwl").addEventListener("click", async () => {
-  ac(); Owl.party("#homeOwl"); FX.burst(["🪶","⭐","🌊","💙"], 16);
-  stopAllSound(); await playUrl("sounds/shachaf.mp3"); Speech.speak("שָׁלוֹם " + childName() + "!");
+  ac(); Owl.party("#homeOwl"); FX.burst(["🪶","⭐","💜"], 14);
+  stopAllSound(); await playUrl("sounds/yanshuf.mp3"); Speech.speak("שָׁלוֹם " + childName() + "!");
 });
 
 // night sky: drifting bubbles + twinkling stars
@@ -832,9 +966,6 @@ $("#homeOwl").addEventListener("click", async () => {
   const sky = $("#sky"); let h = "";
   for(let i=0;i<14;i++){ const s = 14 + Math.random()*46; h += `<i class="b" style="width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${14+Math.random()*16}s;animation-delay:${-Math.random()*30}s"></i>`; }
   for(let i=0;i<26;i++){ const s = 2 + Math.random()*3; h += `<i class="s" style="width:${s}px;height:${s}px;left:${Math.random()*100}%;top:${Math.random()*45}%;animation-duration:${2+Math.random()*3}s;animation-delay:${-Math.random()*4}s"></i>`; }
-  // little seagulls gliding across the sunset (Shachaf = seagull)
-  const gull = `<svg viewBox="0 0 44 16"><path d="M2 12 Q11 1 22 10 Q33 1 42 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>`;
-  [[18, 26, -4], [30, 34, -20], [12, 41, -31]].forEach(([top, dur, delay]) => { h += `<span class="gull-fly" style="top:${top}%;left:0;animation-duration:${dur}s;animation-delay:${delay}s">${gull}</span>`; });
   // (quotes are percent-encoded so the url() can sit inside a style="" attribute)
   const wave = c => `url('data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 100" preserveAspectRatio="none"><path d="M0 30 Q75 0 150 30 T300 30 T450 30 T600 30 V100 H0Z" fill="${c}"/></svg>`).replace(/'/g, "%27")}')`;
   h += `<div class="sun"></div><div class="sea"><div class="wave w1" style="background-image:${wave("#2A3F9E")}"></div><div class="wave w2" style="background-image:${wave("#2F6FD8")}"></div><div class="wave w3" style="background-image:${wave("#46A6F5")}"></div></div>`;
@@ -854,7 +985,6 @@ longPress($("#byeMore"), 1500, () => { playMs = 0; go("home"); });
 const MIX = {c1:"#FFFFFF", c2:"#E6DCFF", c3:"#9C88D9"};
 function candyVars(c){ return `--c1:${c.c1};--c2:${c.c2};--c3:${c.c3}`; }
 function renderCats(){
-  $("#catsTitle").textContent = {explore:"🔍 מָה זֶה?", turn:"🎤 תּוֹרְךָ!", peek:"☁️ קוּקוּ!"}[mode];
   const g = $("#catGrid"); g.innerHTML = "";
   const mix = el("button", {class:"cat candy", style:candyVars(MIX)+";color:var(--ink);text-shadow:none"}, `<span class="e">🎲</span>הַכֹּל`);
   mix.onclick = () => startMode(null); g.appendChild(mix);
@@ -870,7 +1000,7 @@ function startMode(cat){
   if(mode === "peek") startPeek();
 }
 function poolFor(cat){
-  return cat ? cat.words.map(w => Object.assign({cat}, w)) : allWords();
+  return cat ? cat.words.filter(w => !hiddenWord(w)).map(w => Object.assign({cat}, w)) : allWords();
 }
 
 /* =====================================================================
@@ -882,7 +1012,7 @@ function cardHTML(w, showSound=true, anim="pop"){
     <div class="spot"></div>
     <div class="pic">${picHTML(w)}</div>
     <div class="word">${esc(wordText(w))}</div>
-    <div class="snd">${showSound && w.s ? esc(w.s) : ""}</div></div>`;
+    <div class="snd">${showSound ? esc(subOf(w)) : ""}</div></div>`;
 }
 function startExplore(){
   exList = curCat ? poolFor(curCat) : shuffle(allWords()).slice(0, 15);
@@ -894,12 +1024,12 @@ function showExplore(anim){
   const card = $("#exStage .card");
   card.addEventListener("click", () => { bounce(card); sfx.pop(); sayWord(w); });
   swipe(card, dir => exGo(dir));
-  const dots = $("#exDots"); dots.innerHTML = exList.length <= 20 ? exList.map((_, i) => `<i class="${i===exIdx?"on":""}"></i>`).join("") : `<b>${exIdx+1}/${exList.length}</b>`;
   stopAllSound(); setTimeout(() => cur === "explore" && sayWord(w), 350);
 }
 function exGo(d){
+  if(d > 0) award(1, $("#exStage .card"));
   sfx.whoosh(); exIdx = (exIdx + d + exList.length) % exList.length;
-  if(exIdx === 0 && d > 0){ FX.burst(); fxPlay("_magic", .8); }
+  if(exIdx === 0 && d > 0){ if(!settings.calm) FX.burst(); fxPlay("_magic", .8); }
   showExplore(d > 0 ? "in-next" : "in-prev");
 }
 $("#exNext").onclick = () => exGo(1);
@@ -919,7 +1049,7 @@ function swipe(node, cb){
 
 /* =====================================================================
    MODE 2: YOUR TURN ("תורך!")
-   Show picture -> ask "מה זה?" -> the seagull WAITS & listens (the pause is the point) ->
+   Show picture -> ask "מה זה?" -> the owl WAITS & listens (the pause is the point) ->
    any voice = party + model the word back (expansion). Silence = model the word,
    then a second, shorter wait. Prioritises words he understands but doesn't say yet.
    ===================================================================== */
@@ -981,12 +1111,11 @@ async function runTurn(){
   pr.textContent = ""; await sleep(900); if(tok.dead) return;
   tuIdx++; runTurn();
 }
-function flash(){ const f = $("#flash"); f.classList.remove("go"); void f.offsetWidth; f.classList.add("go"); }
 async function celebrate(w, tok, fromParent){
   const card = $("#tuStage .card"); const pr = $("#tuPrompt");
   setLevel(0);
   if(card){ card.querySelector(".word").style.visibility = "visible"; bounce(card); }
-  fxPlay("_claps", .9); fxPlay("_cheer", .45); FX.burst(); flash(); Owl.party("#tuOwl");
+  fxPlay("_claps", .9); fxPlay("_cheer", .45); if(!settings.calm) FX.burst(); Owl.party("#tuOwl"); award(3, card);
   pr.textContent = "🎉 יֵשׁ!";
   const p = pick(PRAISE);
   await sayPhrase("__praise", Math.random() < .35 ? `${p.replace("!","")} ${childName()}!` : p); if(tok.dead) return;
@@ -1031,10 +1160,10 @@ function dealPeek(){
     const h = el("button", {class:"hole"}, `<div class="pic">${picHTML(w)}</div><div class="w">${esc(wordText(w))}</div><div class="cloud"><span style="animation-delay:${i*.3}s">☁️</span></div>`);
     h.onclick = async () => {
       if(h.classList.contains("open")){ sfx.pop(); sayWord(w); return; }
-      h.classList.add("open"); fxPlay("_boing", .7); opened++;
+      h.classList.add("open"); fxPlay("_boing", .7); opened++; award(1, h);
       stopAllSound();
       await Speech.speak("קוּקוּ!", {pitch:1.3}); await sayWord(w);
-      if(opened === pool.length){ await sleep(400); FX.burst(); fxPlay("_cheer", .5); fxPlay("_claps", .8); await Speech.speak("יֵשׁ! מָצָאנוּ אֶת כֻּלָּם!"); await sleep(1400); if(cur === "peek") dealPeek(); }
+      if(opened === pool.length){ await sleep(400); if(!settings.calm) FX.burst(); fxPlay("_cheer", .5); fxPlay("_claps", .8); await Speech.speak("יֵשׁ! מָצָאנוּ אֶת כֻּלָּם!"); await sleep(1400); if(cur === "peek") dealPeek(); }
     };
     g.appendChild(h);
   });
@@ -1243,7 +1372,7 @@ function renderTips(){
         <li><b>"מה זה?"</b> — מסתכלים, מצביעים, אומרים יחד. עושים את הקול של החיה בהגזמה.</li>
         <li><b>"תורך!"</b> — האפליקציה שואלת ו<b>מחכה בשקט</b>. כל קול שהוא משמיע מקבל חגיגה. אל תמהרו לענות במקומו.</li>
         <li><b>"קוקו!"</b> — הסתרה וגילוי. מצוין לצחוק ולמילים "אוֹי", "הִנֵּה", "עוֹד".</li>
-        <li><b>אחרי 10 דקות</b> השחף הולך לישון. זה בכוונה — הקסם האמיתי קורה בדיבור שאחרי, בעולם.</li>
+        <li><b>אחרי 10 דקות</b> הינשוף הולך לישון. זה בכוונה — הקסם האמיתי קורה בדיבור שאחרי, בעולם.</li>
       </ol></div>
     <div class="box"><h3>טריקים של קלינאיות תקשורת</h3><ul class="tiplist">${TIPS.map(([h,t]) => `<li><b>${esc(h)}:</b> ${esc(t)}</li>`).join("")}</ul></div>`;
 }
@@ -1255,12 +1384,19 @@ function renderSettings(){
     ? `<div class="warnbox">⚠️ לא נמצא קול עברי במנוע ההקראה של הטלפון. התקינו "Speech Services by Google" ובחרו בה עברית (הורדת נתוני קול).<br>${NATIVE && NATIVE.openTtsSettings ? `<button class="btn" id="ttsSet" style="margin-top:8px">פתיחת הגדרות הקראה</button>` : ""}<br>בינתיים — הקלטות שלכם עובדות תמיד.</div>` : "";
   $("#p-settings").innerHTML = `
     ${ttsWarn}
-    <div class="box"><h3>הילד</h3>
-      <label class="field"><span>השם שלו (עם ניקוד אם אפשר — כך ההקראה מדויקת)</span><input id="sName" value="${esc(settings.name)}" placeholder="למשל: יוֹנָתָן"></label>
-      <div class="muted">השם מופיע ככרטיס בקטגוריית משפחה ובשבחים ("כל הכבוד יונתן!"). צלמו אותו שם 📷 — ילדים מתים לראות את עצמם.</div></div>
+    <div class="box"><h3>👨‍👩‍👧‍👧 המשפחה</h3>
+      <div class="muted">השמות מופיעים בכרטיסי המשפחה ונאמרים בקול ("אִמָּא! אִמָּא סִיוָן!"). כתבו עם ניקוד — כך ההקראה מדויקת. לחצו 📷 כדי להעלות תמונה של כל אחד מהגלריה או לצלם.</div>
+      ${[["me","sName","הילד", settings.name],["ima","fIma","אמא", fam("ima")],["aba","fAba","אבא (לא חובה)", fam("aba")],["sis1","fSis1","האחות הגדולה", fam("sis1")],["sis2","fSis2","האחות האמצעית", fam("sis2")]]
+        .map(([id, inp, lbl, val]) => `<div class="row"><div class="pic">${picHTML(Object.assign({}, wordById(id) || {id, e:"👤"}))}</div>
+          <label class="field grow" style="margin:0"><span>${lbl}</span><input id="${inp}" value="${esc(val)}"></label>
+          <button class="mini ${media.photo.has(id)?"has":""}" data-fphoto="${id}">📷</button><button class="mini ${media.audio.has(id)?"has":""}" data-frec="${id}">🎙️</button></div>`).join("")}
+    </div>
+    <div class="box"><h3>🛡️ בטיחות עיניים</h3>
+      <div class="muted">האפליקציה בנויה בלי הבהובים ובלי שינויי בהירות של המסך כולו (לפי תקן WCAG 2.3.1 למניעת התקפים). "מצב רגוע" מבטל גם את הקונפטי, הריקודים והתנועה ברקע.</div>
+      <div class="chips" id="sCalm"><button class="chip ${!settings.calm?"on":""}" data-v="0">רגיל</button><button class="chip ${settings.calm?"on":""}" data-v="1">מצב רגוע</button></div></div>
     <div class="box"><h3>זמן משחק</h3>
       <div class="chips" id="sMin">${[5,10,15,20,0].map(m => `<button class="chip ${settings.minutes===m?"on":""}" data-v="${m}">${m ? m+" דק'" : "ללא הגבלה"}</button>`).join("")}</div>
-      <div class="muted">ההמלצה לגיל הזה: מעט מסך, תמיד יחד. בסוף הזמן השחף נרדם, ורק הורה (לחיצה ארוכה) מעיר אותו.</div></div>
+      <div class="muted">ההמלצה לגיל הזה: מעט מסך, תמיד יחד. בסוף הזמן הינשוף נרדם, ורק הורה (לחיצה ארוכה) מעיר אותו.</div></div>
     <div class="box"><h3>קול</h3>
       <div class="chips" id="sVoice"><button class="chip ${settings.voice==="parent"?"on":""}" data-v="parent">ההקלטות שלנו קודם</button><button class="chip ${settings.voice==="tts"?"on":""}" data-v="tts">רק קול ממוחשב</button></div>
       <div class="chips" id="sRate">${[[0.7,"איטי מאוד"],[0.85,"איטי"],[1,"רגיל"]].map(([v,l]) => `<button class="chip ${settings.rate===v?"on":""}" data-v="${v}">${l}</button>`).join("")}</div>
@@ -1272,11 +1408,16 @@ function renderSettings(){
     <div class="box"><h3>💞 סנכרון בין הטלפונים</h3>
       <div class="muted">ייצאו קובץ (יומן, הקלטות, תמונות ומילים) ושלחו בווטסאפ לטלפון השני. שם: "ייבוא" → בוחרים את הקובץ. הייבוא ממזג — לא מוחק כלום.</div>
       <div class="acts" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn" id="bExp">📤 ייצוא ושיתוף</button><button class="btn light" id="bImp">📥 ייבוא</button></div></div>
-    <div class="box"><div class="muted">פטפוט של שחף · גרסה 1.2 · הכל נשמר מקומית בטלפון, בלי אינטרנט, בלי פרסומות, בלי איסוף מידע.</div></div>`;
+    <div class="box"><div class="muted">פטפוט של שחף · גרסה 1.3 · הכל נשמר מקומית בטלפון, בלי אינטרנט, בלי פרסומות, בלי איסוף מידע.</div></div>`;
   const bindChips = (id, key, conv) => $("#"+id).querySelectorAll(".chip").forEach(b => b.onclick = () => { settings[key] = conv(b.dataset.v); saveSettings(); renderSettings(); });
   bindChips("sMin", "minutes", Number); bindChips("sVoice", "voice", String); bindChips("sRate", "rate", Number);
-  bindChips("sSens", "sens", String); bindChips("sNik", "nikud", v => v === "1");
-  $("#sName").onchange = e => { settings.name = e.target.value.trim(); saveSettings(); toast("נשמר"); };
+  bindChips("sSens", "sens", String); bindChips("sCalm", "calm", v => v === "1"); bindChips("sNik", "nikud", v => v === "1");
+  $("#sName").onchange = e => { settings.name = e.target.value.trim() || "שַׁחַף"; saveSettings(); toast("נשמר"); renderSettings(); };
+  [["fIma","ima"],["fAba","aba"],["fSis1","sis1"],["fSis2","sis2"]].forEach(([inp, k]) => $("#"+inp).onchange = e => {
+    settings.family = Object.assign({}, settings.family, {[k]: e.target.value.trim()}); saveSettings(); toast("נשמר"); renderSettings(); });
+  const famWord = id => { const w = allCats()[0].words.find(x => x.id === id) ? Object.assign({cat: CATS[0]}, CATS[0].words.find(x => x.id === id)) : null; return w; };
+  $("#p-settings").querySelectorAll("[data-fphoto]").forEach(b => b.onclick = () => { const w = famWord(b.dataset.fphoto); if(w) openCamera(w); });
+  $("#p-settings").querySelectorAll("[data-frec]").forEach(b => b.onclick = () => { const w = famWord(b.dataset.frec); if(w) openRecorder(w); });
   $("#sTest").onclick = () => Speech.speak(`שָׁלוֹם ${childName()}! כֶּלֶב! הַב הַב!`);
   const ts = $("#ttsSet"); if(ts) ts.onclick = () => NATIVE.openTtsSettings();
   $("#bExp").onclick = exportAll; $("#bImp").onclick = () => { const f = $("#fileImport"); f.value = ""; f.onchange = () => f.files[0] && importAll(f.files[0]); f.click(); };
@@ -1286,7 +1427,7 @@ async function exportAll(){
   toast("מכין קובץ...");
   const keys = await DB.keys() || []; const m = {};
   for(const k of keys){ const v = await DB.get(k); if(v) m[k] = v instanceof Blob ? await blobToDataURL(v) : v; }
-  const data = {app:"pitput", v:1, at:new Date().toISOString(), settings, diary, moments, custom:OURS.words, attempts:LS.get("attempts",{}), media:m};
+  const data = {app:"pitput", v:1, at:new Date().toISOString(), settings, game, diary, moments, custom:OURS.words, attempts:LS.get("attempts",{}), media:m};
   const json = JSON.stringify(data);
   const name = `pitput-${today()}.json`;
   if(NATIVE && NATIVE.shareFile){ NATIVE.shareFile(name, json); }
@@ -1311,7 +1452,8 @@ async function importAll(file){
     for(const cw of data.custom || []) if(!OURS.words.find(x => x.id === cw.id)) OURS.words.push(cw);
     saveCustom();
     const att = LS.get("attempts", {}); for(const [k,v] of Object.entries(data.attempts||{})) att[k] = Math.max(att[k]||0, v); LS.set("attempts", att);
-    if(!settings.name && data.settings && data.settings.name){ settings.name = data.settings.name; saveSettings(); }
+    if(data.settings && data.settings.family){ settings.family = Object.assign({}, data.settings.family, settings.family); saveSettings(); }
+    if(data.game && data.game.stars > game.stars){ game.stars = data.game.stars; LS.set("game", game); renderHud(); }
     let n = 0;
     for(const [k, v] of Object.entries(data.media || {})){
       const [id, kind] = k.split("|");
@@ -1330,10 +1472,25 @@ addEventListener("pointerdown", () => ac(), {once:true});
 let hiddenAt = 0;
 document.addEventListener("visibilitychange", () => {
   if(document.hidden){ hiddenAt = Date.now(); stopAllSound(); if(cur === "turn") Mic.stop(); return; }
-  if(Date.now() - hiddenAt > 30*60000){ playMs = 0; if(cur === "bye") go("home"); }  // a new sitting later = a fresh session
+  if(Date.now() - hiddenAt > 30*60000){ playMs = 0; if(cur === "bye") go("home"); setTimeout(greet, 500); }  // a new sitting later = a fresh session
   if(cur === "turn") Mic.start();
 });
 loadMediaIndex().finally(() => renderHome());
+// ---- say hello to Shachaf when the app opens (and when he comes back after a while) ----
+function greetingText(){
+  const h = new Date().getHours(), n = childName();
+  const part = h >= 5 && h < 12 ? "בֹּקֶר טוֹב" : h >= 17 && h < 21 ? "עֶרֶב טוֹב" : h >= 21 || h < 5 ? "לַיְלָה טוֹב" : "שָׁלוֹם";
+  return {show: `${part}, ${n}! 👋`, say: `${part} ${n}! בּוֹא נְשַׂחֵק!`};
+}
+async function greet(){
+  if(cur !== "home") return;
+  const g = greetingText(), b = $("#bubble");
+  b.textContent = g.show; b.classList.add("on"); Owl.party("#homeOwl");
+  for(let i = 0; i < 30 && Speech.status() === "init"; i++) await sleep(100);   // wait for Android TTS to warm up
+  if(cur === "home") await Speech.speak(g.say);
+  setTimeout(() => b.classList.remove("on"), 4000);
+}
+setTimeout(greet, 700);
 renderHome();
 </script>
 </body>

@@ -11,4 +11,4 @@ balon, geshem, yam, _cheer, _claps, _magic, _xylo, _boing):
   from the Google Sound Library (https://developers.google.com/assistant/tools/sound-library),
   licensed CC BY 4.0. Trimmed and loudness-normalized.
 
-ofanayim (bicycle bell) and shachaf (seagull call): synthesized for this app.
+ofanayim (bicycle bell): synthesized for this app.
