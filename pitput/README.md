@@ -1,4 +1,4 @@
-# פטפוט (Pitput) — first Hebrew words, played together
+# פטפוט של שחף (Pitput) — first Hebrew words, played together
 
 An Android app for a ~2-year-old and his parents. It's built for **co-play**: a parent and the toddler
 sit together for 5–10 minutes. The design follows what speech-language therapists recommend:
@@ -21,6 +21,13 @@ waiting time, expansion, modelling instead of correcting, and celebrating every 
 - **Sync between phones**: export a backup JSON (diary, recordings, photos) through the share sheet, then import it on
   the other phone. The import merges and never deletes.
 - 150+ words with nikud in 8 categories, including "magic" core words (עוד, די, הנה, בי בי…).
+
+## Sounds & personalization
+- Real animal, vehicle and household recordings (`assets/sounds/`, ~1 MB, offline) play right after each word.
+  Sources and licenses are in `assets/sounds/CREDITS.txt` (MIT, and the Google Sound Library under CC BY 4.0).
+  The bicycle bell and the seagull call are synthesized.
+- Made for **Shachaf (שַׁחַף = seagull)**: the mascot is a seagull, the background is a sunset sea with gliding gulls,
+  his own card squawks, and the greetings and the goodnight screen use his name. The name can be changed in Settings.
 
 Everything is offline and stored locally. There are no ads and no tracking.
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1B1150">
-<title>פטפוט</title>
+<title>פטפוט של שחף</title>
 <style>
 @font-face{font-family:"Fredoka";src:url(fonts/fredoka-hebrew.woff2) format("woff2");font-weight:300 700;unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}
 @font-face{font-family:"Fredoka";src:url(fonts/fredoka-latin.woff2) format("woff2");font-weight:300 700;unicode-range:U+0000-00FF,U+2000-206F}
@@ -23,12 +23,23 @@ input,select,textarea{font:inherit;user-select:text;-webkit-user-select:text}
 
 /* ---------- night sky background ---------- */
 .sky{position:fixed;inset:0;z-index:0;overflow:hidden;
-  background:radial-gradient(120% 80% at 80% 0%, var(--sky3) 0%, transparent 60%),
-             radial-gradient(100% 70% at 0% 100%, #C2185B 0%, transparent 55%),
-             linear-gradient(170deg, var(--sky2), var(--sky1) 70%)}
+  background:linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 34%, #8E2C9E 58%, #E0457B 72%, #FF8A4C 82%)}
+.sun{position:absolute;left:50%;bottom:13vh;width:46vw;max-width:260px;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(circle,#FFE38A 0%,#FFB347 45%,rgba(255,138,76,0) 70%);opacity:.9;animation:sunglow 6s ease-in-out infinite}
+@keyframes sunglow{50%{transform:translateX(-50%) scale(1.06)}}
+.sea{position:absolute;left:0;right:0;bottom:0;height:22vh}
+.wave{position:absolute;left:0;width:200%;bottom:0;background-repeat:repeat-x;background-size:50% 100%;animation:sway linear infinite}
+.wave.w1{height:100%;animation-duration:16s;opacity:.95}
+.wave.w2{height:80%;animation-duration:10s;animation-direction:reverse;opacity:.9}
+.wave.w3{height:58%;animation-duration:7s;opacity:.95}
+@keyframes sway{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.gull-fly{position:absolute;font-size:0;width:44px;height:16px;animation:flyby linear infinite;opacity:.75}
+.gull-fly svg{width:100%;height:100%}
+@keyframes flyby{from{transform:translateX(-30vw)}to{transform:translateX(130vw)}}
 .sky i{position:absolute;border-radius:50%;opacity:.55;filter:blur(1px);animation:rise linear infinite}
 .sky i.b{background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), rgba(255,255,255,.15) 40%, rgba(255,255,255,.05) 70%);border:1px solid rgba(255,255,255,.25)}
 .sky i.s{background:#fff;opacity:.9;filter:none;animation:twinkle ease-in-out infinite}
+.sky i.b{z-index:1}
 @keyframes rise{from{transform:translateY(110vh)}to{transform:translateY(-20vh)}}
 @keyframes twinkle{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}
 
@@ -81,6 +92,7 @@ h1,h2,h3{margin:0}
 .brand{font-size:56px;font-weight:700;line-height:1;margin-top:4px;letter-spacing:.5px;
   background:linear-gradient(90deg,var(--yellow),var(--orange),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent;
   filter:drop-shadow(0 4px 0 rgba(0,0,0,.35))}
+.brand-sub{font-size:26px;font-weight:700;color:#fff;margin-top:-2px;text-shadow:0 3px 0 rgba(0,0,0,.3)}
 .hello{color:#E6DBFF;font-size:19px;margin-top:6px;text-align:center;font-weight:500}
 .modes{display:grid;gap:18px;width:100%;max-width:520px;margin-top:3.2vh}
 .mode{display:flex;align-items:center;gap:14px;padding:16px 18px;font-size:32px;font-weight:700;text-align:right;
@@ -258,11 +270,11 @@ video.cam{width:100%;border-radius:18px;background:#000;aspect-ratio:1;object-fi
     <div class="gate-hint">לחיצה ארוכה = הורים</div>
   </div>
   <div class="owl-wrap idle" id="homeOwl"></div>
-  <div class="brand">פִּטְפּוּט</div>
+  <div class="brand">פִּטְפּוּט</div><div class="brand-sub" id="brandSub">שֶׁל שַׁחַף</div>
   <div class="hello" id="hello">מְשַׂחֲקִים יַחַד, מְדַבְּרִים יַחַד</div>
   <div class="modes">
     <button class="mode candy" data-mode="explore"><span class="e">🔍</span><span>מָה זֶה?<small>מסתכלים, שומעים, אומרים</small></span></button>
-    <button class="mode candy" data-mode="turn"><span class="e">🎤</span><span>תּוֹרְךָ!<small>הינשוף מקשיב ומחכה לו</small></span></button>
+    <button class="mode candy" data-mode="turn"><span class="e">🎤</span><span>תּוֹרְךָ!<small>השחף מקשיב ומחכה לו</small></span></button>
     <button class="mode candy" data-mode="peek"><span class="e">☁️</span><span>קוּקוּ!<small>מה מתחבא מאחורי הענן?</small></span></button>
   </div>
   <div class="tip" id="homeTip"></div>
@@ -324,7 +336,7 @@ video.cam{width:100%;border-radius:18px;background:#000;aspect-ratio:1;object-fi
 <section class="screen" id="bye">
   <div class="zzz">Z z z</div>
   <div class="owl-wrap" id="byeOwl"></div>
-  <h2>לַיְלָה טוֹב, יָנְשׁוּף!</h2>
+  <h2 id="byeTitle">לַיְלָה טוֹב, שַׁחַף!</h2>
   <div class="hello">שיחקנו מספיק במסך 💜<br>עכשיו בואו נמצא את המילים בבית, בגן ובחוץ!</div>
   <button class="pill candy" id="byeMore" style="margin-top:22px">עוד קצת (לחיצה ארוכה של הורה)</button>
 </section>
@@ -370,24 +382,27 @@ const CATS = [
     {id:"ach", w:"אָח", e:"👦"}, {id:"achot", w:"אָחוֹת", e:"👧"}, {id:"ganenet", w:"גַּנֶּנֶת", e:"👩‍🏫"},
     {id:"chaver", w:"חָבֵר", e:"🧒"}]},
   {id:"go", name:"נוֹסְעִים", e:"🚗", c1:"#5EE7FF", c2:"#2F8BFF", c3:"#1D58B8", words:[
-    {id:"oto", w:"אוֹטוֹ", e:"🚗", s:"בִּיפּ בִּיפּ"}, {id:"otobus", w:"אוֹטוֹבּוּס", e:"🚌"},
+    {id:"oto", w:"אוֹטוֹ", e:"🚗", s:"בִּיפּ בִּיפּ"}, {id:"otobus", w:"אוֹטוֹבּוּס", e:"🚌", s:"בְּרְרְרְ"},
     {id:"rakevet", w:"רַכֶּבֶת", e:"🚂", s:"טְשׁוּ טְשׁוּ"}, {id:"matos", w:"מָטוֹס", e:"✈️", s:"וּוּוּשׁ"},
     {id:"ofanayim", w:"אוֹפַנַּיִם", e:"🚲", s:"טְרִין טְרִין"}, {id:"korkinet", w:"קוֹרְקִינֶט", e:"🛴"},
-    {id:"masait", w:"מַשָּׂאִית", e:"🚚"}, {id:"tractor", w:"טְרַקְטוֹר", e:"🚜", s:"בְּרְרְרְ"},
+    {id:"masait", w:"מַשָּׂאִית", e:"🚚", s:"טוּוּוּט"}, {id:"tractor", w:"טְרַקְטוֹר", e:"🚜", s:"בְּרְרְרְ"},
     {id:"mishtara", w:"מִשְׁטָרָה", e:"🚓", s:"וִיוּ וִיוּ"}, {id:"kabait", w:"כַּבָּאִית", e:"🚒", s:"נִי נוּ נִי נוּ"},
     {id:"ambulans", w:"אַמְבּוּלַנְס", e:"🚑", s:"נִי נוּ"}, {id:"masok", w:"מַסּוֹק", e:"🚁", s:"טְרְרְרְ"},
-    {id:"sira", w:"סִירָה", e:"⛵"}, {id:"ofanoa", w:"אוֹפַנּוֹעַ", e:"🏍️", s:"בְּרוּם בְּרוּם"}, {id:"raketa", w:"טִיל", e:"🚀"}]},
+    {id:"sira", w:"סִירָה", e:"⛵", s:"דִּינְג דִּינְג"}, {id:"ofanoa", w:"אוֹפַנּוֹעַ", e:"🏍️", s:"בְּרוּם בְּרוּם"}, {id:"raketa", w:"טִיל", e:"🚀", s:"פִשְׁשְׁשׁ"}]},
   {id:"animals", name:"חַיּוֹת", e:"🐾", c1:"#9BF06B", c2:"#2FBF71", c3:"#1C8A4E", words:[
-    {id:"kelev", w:"כֶּלֶב", e:"🐶", s:"הַב הַב"}, {id:"chatul", w:"חָתוּל", e:"🐱", s:"מְיָאוּ"},
+    {id:"shachaf", w:"שַׁחַף", e:"🐦", svg:"gull", s:"קְיָאוּ קְיָאוּ"}, {id:"kelev", w:"כֶּלֶב", e:"🐶", s:"הַב הַב"}, {id:"chatul", w:"חָתוּל", e:"🐱", s:"מְיָאוּ"},
     {id:"para", w:"פָּרָה", e:"🐮", s:"מוּוּ"}, {id:"barvaz", w:"בַּרְוָז", e:"🦆", s:"גָּה גָּה"},
     {id:"tarnegol", w:"תַּרְנְגוֹל", e:"🐓", s:"קוּקוּרִיקוּ"}, {id:"kivsa", w:"כִּבְשָׂה", e:"🐑", s:"מֶה"},
     {id:"sus", w:"סוּס", e:"🐴", s:"קְלוֹפּ קְלוֹפּ"}, {id:"arye", w:"אַרְיֵה", e:"🦁", s:"אַרְרְרְ"},
-    {id:"pil", w:"פִּיל", e:"🐘"}, {id:"kof", w:"קוֹף", e:"🐵", s:"אוּ אוּ אָה אָה"},
+    {id:"pil", w:"פִּיל", e:"🐘", s:"טְרוּוּ"}, {id:"kof", w:"קוֹף", e:"🐵", s:"אוּ אוּ אָה אָה"},
     {id:"tzfardea", w:"צְפַרְדֵּעַ", e:"🐸", s:"קְוָוה קְוָוה"}, {id:"tzipor", w:"צִפּוֹר", e:"🐦", s:"צִיף צִיף"},
     {id:"dag", w:"דָּג", e:"🐟", s:"בְּלוּבּ בְּלוּבּ"}, {id:"dvora", w:"דְּבוֹרָה", e:"🐝", s:"בְּזְזְז"},
     {id:"nachash", w:"נָחָשׁ", e:"🐍", s:"סְסְסְ"}, {id:"dov", w:"דֹּב", e:"🐻"},
     {id:"arnav", w:"אַרְנָב", e:"🐰"}, {id:"parpar", w:"פַּרְפַּר", e:"🦋"}, {id:"gamal", w:"גָּמָל", e:"🐪"},
-    {id:"tzav", w:"צָב", e:"🐢"}, {id:"dinozaur", w:"דִּינוֹזָאוּר", e:"🦖", s:"רָאאאוּר"}]},
+    {id:"tzav", w:"צָב", e:"🐢"}, {id:"tarnegolet", w:"תַּרְנְגֹלֶת", e:"🐔", s:"פּוֹק פּוֹק"},
+    {id:"ez", w:"עֵז", e:"🐐", s:"מֶהֶה"}, {id:"chazir", w:"חֲזִיר", e:"🐷", s:"אוֹינְק"}, {id:"achbar", w:"עַכְבָּר", e:"🐭", s:"צִיק צִיק"},
+    {id:"tuki", w:"תֻּכִּי", e:"🦜"}, {id:"yona", w:"יוֹנָה", e:"🕊️", s:"קוּ קוּ"}, {id:"dolphin", w:"דּוֹלְפִין", e:"🐬"},
+    {id:"yanshuf", w:"יַנְשׁוּף", e:"🦉", s:"הוּ הוּ"}, {id:"avaz", w:"אַוָּז", e:"🪿", s:"גָּה גָּה"}, {id:"dinozaur", w:"דִּינוֹזָאוּר", e:"🦖", s:"רָאאאוּר"}]},
   {id:"food", name:"אֹכֶל", e:"🍌", c1:"#FFE45C", c2:"#FFB300", c3:"#B87A00", words:[
     {id:"banana", w:"בַּנָּנָה", e:"🍌"}, {id:"tapuach", w:"תַּפּוּחַ", e:"🍎"}, {id:"mayim", w:"מַיִם", e:"💧"},
     {id:"shoko", w:"שׁוֹקוֹ", e:"🥛"}, {id:"bamba", w:"בַּמְבָּה", e:"🥜"}, {id:"pita", w:"פִּתָּה", e:"🫓"},
@@ -397,12 +412,12 @@ const CATS = [
     {id:"tapuz", w:"תַּפּוּז", e:"🍊"}, {id:"uga", w:"עוּגָה", e:"🎂"}, {id:"ugiya", w:"עוּגִיָּה", e:"🍪"},
     {id:"glida", w:"גְּלִידָה", e:"🍦"}, {id:"pizza", w:"פִּיצָה", e:"🍕"}, {id:"sufganiya", w:"סֻפְגָּנִיָּה", e:"🍩"}]},
   {id:"home", name:"בַּבַּיִת", e:"🏠", c1:"#C59BFF", c2:"#8A4DFF", c3:"#5A2BB8", words:[
-    {id:"kadur", w:"כַּדּוּר", e:"⚽"}, {id:"dubi", w:"דֻּבִּי", e:"🧸"}, {id:"balon", w:"בָּלוֹן", e:"🎈"},
+    {id:"kadur", w:"כַּדּוּר", e:"⚽", s:"בּוֹינְג"}, {id:"dubi", w:"דֻּבִּי", e:"🧸"}, {id:"balon", w:"בָּלוֹן", e:"🎈", s:"פָּק!"},
     {id:"sefer", w:"סֵפֶר", e:"📖"}, {id:"naalayim", w:"נַעֲלַיִם", e:"👟"}, {id:"kova", w:"כּוֹבַע", e:"🧢"},
     {id:"mita", w:"מִטָּה", e:"🛏️"}, {id:"kise", w:"כִּסֵּא", e:"🪑"}, {id:"kos", w:"כּוֹס", e:"🥤"},
-    {id:"kapit", w:"כַּפִּית", e:"🥄"}, {id:"bakbuk", w:"בַּקְבּוּק", e:"🍼"}, {id:"ambatya", w:"אַמְבַּטְיָה", e:"🛁"},
-    {id:"telefon", w:"טֶלֶפוֹן", e:"📱"}, {id:"mafteach", w:"מַפְתֵּחַ", e:"🔑"}, {id:"or", w:"אוֹר", e:"💡"},
-    {id:"delet", w:"דֶּלֶת", e:"🚪"}, {id:"mishkafayim", w:"מִשְׁקָפַיִם", e:"👓"}, {id:"tof", w:"תֹּף", e:"🥁", s:"בּוּם בּוּם"},
+    {id:"kapit", w:"כַּפִּית", e:"🥄"}, {id:"bakbuk", w:"בַּקְבּוּק", e:"🍼"}, {id:"ambatya", w:"אַמְבַּטְיָה", e:"🛁", s:"בּוּעוֹת"},
+    {id:"telefon", w:"טֶלֶפוֹן", e:"📱", s:"צִלְצוּל"}, {id:"mafteach", w:"מַפְתֵּחַ", e:"🔑"}, {id:"or", w:"אוֹר", e:"💡"},
+    {id:"delet", w:"דֶּלֶת", e:"🚪", s:"טוּק טוּק"}, {id:"mishkafayim", w:"מִשְׁקָפַיִם", e:"👓"}, {id:"tof", w:"תֹּף", e:"🥁", s:"בּוּם בּוּם"},
     {id:"ner", w:"נֵר", e:"🕯️"}, {id:"gan", w:"גַּן", e:"🏫"}]},
   {id:"body", name:"הַגּוּף שֶׁלִּי", e:"👃", c1:"#FF9AD5", c2:"#FF4FA3", c3:"#B8236F", words:[
     {id:"einayim", w:"עֵינַיִם", e:"👀"}, {id:"af", w:"אַף", e:"👃"}, {id:"pe", w:"פֶּה", e:"👄"},
@@ -410,8 +425,8 @@ const CATS = [
     {id:"shinayim", w:"שִׁנַּיִם", e:"🦷"}, {id:"lashon", w:"לָשׁוֹן", e:"👅"}, {id:"pupik", w:"פּוּפִּיק", e:"🫃"}]},
   {id:"out", name:"בַּחוּץ", e:"🌳", c1:"#6BF0D8", c2:"#14B8A6", c3:"#0B7D71", words:[
     {id:"shemesh", w:"שֶׁמֶשׁ", e:"☀️"}, {id:"yareach", w:"יָרֵחַ", e:"🌙"}, {id:"kochav", w:"כּוֹכָב", e:"⭐"},
-    {id:"perach", w:"פֶּרַח", e:"🌸"}, {id:"etz", w:"עֵץ", e:"🌳"}, {id:"geshem", w:"גֶּשֶׁם", e:"🌧️"},
-    {id:"yam", w:"יָם", e:"🌊"}, {id:"chol", w:"חוֹל", e:"🏖️"}, {id:"anan", w:"עָנָן", e:"☁️"},
+    {id:"perach", w:"פֶּרַח", e:"🌸"}, {id:"etz", w:"עֵץ", e:"🌳"}, {id:"geshem", w:"גֶּשֶׁם", e:"🌧️", s:"טִיף טִיף"},
+    {id:"yam", w:"יָם", e:"🌊", s:"שְׁשְׁשׁ"}, {id:"chol", w:"חוֹל", e:"🏖️"}, {id:"anan", w:"עָנָן", e:"☁️"},
     {id:"bayit", w:"בַּיִת", e:"🏠"}, {id:"keshet", w:"קֶשֶׁת", e:"🌈"}, {id:"magalsha", w:"מַגְלֵשָׁה", e:"🛝", s:"ווּוּי"}]},
   {id:"magic", name:"מִלּוֹת קֶסֶם", e:"✨", c1:"#FF8A8A", c2:"#F43F5E", c3:"#A51D3A", words:[
     {id:"od", w:"עוֹד", e:"➕"}, {id:"dai", w:"דַּי", e:"🛑"}, {id:"lo", w:"לֹא", e:"🙅‍♂️"},
@@ -452,10 +467,11 @@ const LS = {
   get(k, d){ try{ const v = localStorage.getItem("pitput."+k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem("pitput."+k, JSON.stringify(v)); }catch(e){} }
 };
-const settings = Object.assign({name:"", minutes:10, rate:0.85, sens:"mid", voice:"parent", nikud:true}, LS.get("settings", {}));
+const settings = Object.assign({name:"שַׁחַף", minutes:10, rate:0.85, sens:"mid", voice:"parent", nikud:true}, LS.get("settings", {}));
 const diary = LS.get("diary", {});      // wordId -> {s:0|1|2, d1:date understands, d2:date says}
 const moments = LS.get("moments", []);  // [{t:ts, txt}]
 OURS.words = LS.get("custom", []);      // [{id, w, e}]
+if(!settings.name || !settings.name.trim()) settings.name = "שַׁחַף";   // made for Shachaf
 const saveSettings = () => LS.set("settings", settings);
 const saveDiary = () => LS.set("diary", diary);
 const saveMoments = () => LS.set("moments", moments);
@@ -510,7 +526,8 @@ const pick = a => a[Math.floor(Math.random()*a.length)];
 const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
 const stripNikud = s => s.replace(/[֑-ׇ]/g, "");
-const childName = () => settings.name.trim() || "חָמוּד";
+const childName = () => settings.name.trim() || "שַׁחַף";
+const isShachaf = () => stripNikud(childName()) === "שחף";
 const wordText = w => w.w === "__NAME__" ? childName() : w.w;
 const today = () => new Date().toISOString().slice(0,10);
 const fmtDate = d => { if(!d) return ""; const [y,m,dd] = d.split("-"); return `${+dd}.${+m}`; };
@@ -518,7 +535,12 @@ function toast(msg, ms=2200){ const t=$("#toast"); t.textContent=msg; t.classLis
 function allCats(){ return OURS.words.length ? [OURS, ...CATS] : CATS; }
 function allWords(){ return allCats().flatMap(c => c.words.map(w => Object.assign({cat:c}, w))); }
 function wordById(id){ return allWords().find(w => w.id === id); }
-function picHTML(w){ const p = media.photo.get(w.id); return p ? `<img src="${p}" alt="">` : esc(w.e || "💬"); }
+let svgN = 0;
+function picHTML(w){
+  const p = media.photo.get(w.id); if(p) return `<img src="${p}" alt="">`;
+  if(w.svg === "gull" || (w.id === "me" && isShachaf())) return owlSVG("c" + (++svgN));
+  return esc(w.e || "💬");
+}
 const NATIVE = window.PitputNative || null;
 
 /* =====================================================================
@@ -567,12 +589,24 @@ function stopAudio(){ if(curAudio){ try{ curAudio.pause(); }catch(e){} curAudio 
 function stopAllSound(){ stopAudio(); Speech.stop(); }
 
 // say a word: parent's recording if exists (and preferred), else TTS (+ animal sound)
+// real recordings bundled in assets/sounds/<id>.mp3 (see sounds/CREDITS.txt)
+const SOUND_IDS = new Set(("kelev chatul para barvaz tarnegol kivsa sus arye pil kof tzfardea tzipor nachash dov gamal tarnegolet ez chazir " +
+  "achbar tuki yona dolphin yanshuf avaz dvora shachaf dinozaur oto otobus rakevet matos masait tractor mishtara kabait ambulans masok sira " +
+  "ofanoa raketa ofanayim tof telefon kadur delet ambatya balon geshem yam").split(" "));
+function soundFor(w){
+  if(w.id === "me") return isShachaf() ? "sounds/shachaf.mp3" : null;   // his own card squawks like a seagull 🐦
+  return SOUND_IDS.has(w.id) ? `sounds/${w.id}.mp3` : null;
+}
+// say a word: parent's recording if exists (and preferred), else TTS — then the REAL animal/vehicle sound
 async function sayWord(w, {withSound=true}={}){
   const rec = media.audio.get(w.id);
-  if(rec && settings.voice === "parent"){ await playUrl(rec); return; }
-  await Speech.speak(wordText(w) + "!");
-  if(withSound && w.s){ await sleep(150); await Speech.speak(w.s, {rate: settings.rate, pitch: 1.3}); }
+  if(rec && settings.voice === "parent") await playUrl(rec);
+  else await Speech.speak(wordText(w) + "!");
+  const snd = withSound && soundFor(w);
+  if(snd){ await sleep(120); await playUrl(snd); }
 }
+// one-shot effects on their own channel (don't cut the word/sound that's playing)
+function fxPlay(name, vol=1){ try{ const a = new Audio(`sounds/${name}.mp3`); a.volume = vol; a.play().catch(()=>{}); }catch(e){} }
 async function sayPhrase(key, text){
   const rec = media.audio.get(key);
   if(rec && settings.voice === "parent") return playUrl(rec);
@@ -697,7 +731,7 @@ function go(id){
   if(id === "home") renderHome();
   if(id === "cats") renderCats();
   if(id === "parent") renderParent();
-  if(id === "bye"){ Speech.speak("לַיְלָה טוֹב! נְשַׂחֵק עוֹד מְעַט"); }
+  if(id === "bye"){ $("#byeTitle").textContent = `לַיְלָה טוֹב, ${childName()}!`; Speech.speak(`לַיְלָה טוֹב ${childName()}! נְשַׂחֵק עוֹד מְעַט`); }
   try{ NATIVE && NATIVE.setKeepScreenOn && NATIVE.setKeepScreenOn(KID.has(id)); }catch(e){}
 }
 document.addEventListener("click", e => {
@@ -733,41 +767,42 @@ function longPress(node, ms, onDone, onProgress){
    ===================================================================== */
 function renderHome(){
   const said = Object.values(diary).filter(d => d.s === 2).length;
-  $("#hello").textContent = settings.name ? `שָׁלוֹם ${settings.name}! 👋` + (said ? `  ·  כְּבָר ${said} מִלִּים ⭐` : "") : "מְשַׂחֲקִים יַחַד, מְדַבְּרִים יַחַד";
+  $("#brandSub").textContent = `שֶׁל ${childName()}`;
+  $("#hello").textContent = `שָׁלוֹם ${childName()}! 👋` + (said ? `  ·  כְּבָר ${said} מִלִּים ⭐` : "");
   const day = Math.floor(Date.now()/86400000);
   const [h, t] = TIPS[day % TIPS.length];
   $("#homeTip").innerHTML = `💡 <b>${esc(h)}:</b> ${esc(t)}`;
 }
 document.querySelectorAll(".mode").forEach(b => b.addEventListener("click", () => {
-  ac(); sfx.pop(); mode = b.dataset.mode; go("cats");
+  ac(); fxPlay("_xylo", .55); mode = b.dataset.mode; go("cats");
 }));
 
 /* =====================================================================
    OWL MASCOT (inline SVG): blinks, eyes follow the finger, listens, dances
    ===================================================================== */
-function owlSVG(u){
+function owlSVG(u){   // the seagull — "שַׁחַף", Shachaf's buddy (classes kept from the owl for animations)
   return `<svg class="owl" viewBox="0 0 200 210" aria-hidden="true">
     <defs>
-      <radialGradient id="ob${u}" cx="40%" cy="30%" r="75%"><stop offset="0" stop-color="#FFB25B"/><stop offset="1" stop-color="#F0662B"/></radialGradient>
-      <radialGradient id="obl${u}" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#FFF4DC"/><stop offset="1" stop-color="#FFD59A"/></radialGradient>
+      <radialGradient id="gb${u}" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D5E2F2"/></radialGradient>
+      <linearGradient id="gw${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B9C8DC"/><stop offset=".72" stop-color="#93A6C2"/><stop offset=".73" stop-color="#2E3A4F"/><stop offset="1" stop-color="#2E3A4F"/></linearGradient>
     </defs>
-    <ellipse cx="100" cy="200" rx="56" ry="8" fill="rgba(0,0,0,.25)"/>
-    <path class="wingL" d="M38 112 Q8 140 30 178 Q44 160 52 132 Z" fill="#D9541F"/>
-    <path class="wingR" d="M162 112 Q192 140 170 178 Q156 160 148 132 Z" fill="#D9541F"/>
-    <path d="M52 40 L62 8 L84 34 Q100 28 116 34 L138 8 L148 40 Q172 66 170 120 Q166 190 100 192 Q34 190 30 120 Q28 66 52 40 Z" fill="url(#ob${u})"/>
-    <ellipse cx="100" cy="142" rx="44" ry="44" fill="url(#obl${u})"/>
-    <path d="M80 130 q6 6 12 0 M108 130 q6 6 12 0 M90 150 q6 6 12 0 M94 166 q6 6 12 0" stroke="#F0A35B" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <circle cx="70" cy="82" r="31" fill="#fff"/><circle cx="130" cy="82" r="31" fill="#fff"/>
-    <circle cx="70" cy="82" r="31" fill="none" stroke="#FFD59A" stroke-width="5"/><circle cx="130" cy="82" r="31" fill="none" stroke="#FFD59A" stroke-width="5"/>
+    <ellipse cx="100" cy="202" rx="54" ry="7" fill="rgba(0,0,0,.25)"/>
+    <path class="wingL" d="M44 96 Q4 104 10 168 Q34 160 50 140 Z" fill="url(#gw${u})"/>
+    <path class="wingR" d="M156 96 Q196 104 190 168 Q166 160 150 140 Z" fill="url(#gw${u})"/>
+    <path d="M100 26 Q164 26 166 104 Q168 188 100 190 Q32 188 34 104 Q36 26 100 26 Z" fill="url(#gb${u})"/>
+    <path d="M92 28 Q96 10 106 14 Q100 18 104 28 Z" fill="#fff"/>
+    <ellipse cx="100" cy="150" rx="40" ry="34" fill="#fff" opacity=".8"/>
+    <circle cx="74" cy="84" r="22" fill="#fff" stroke="#2A1A4A" stroke-width="3"/><circle cx="126" cy="84" r="22" fill="#fff" stroke="#2A1A4A" stroke-width="3"/>
     <g class="pupils">
-      <circle cx="70" cy="84" r="15" fill="#2A1A4A"/><circle cx="130" cy="84" r="15" fill="#2A1A4A"/>
-      <circle cx="75" cy="78" r="5.5" fill="#fff"/><circle cx="135" cy="78" r="5.5" fill="#fff"/>
+      <circle cx="74" cy="86" r="12" fill="#2A1A4A"/><circle cx="126" cy="86" r="12" fill="#2A1A4A"/>
+      <circle cx="78" cy="81" r="4.5" fill="#fff"/><circle cx="130" cy="81" r="4.5" fill="#fff"/>
     </g>
-    <rect class="lid" x="38" y="50" width="64" height="64" rx="32" fill="#F0662B"/>
-    <rect class="lid" x="98" y="50" width="64" height="64" rx="32" fill="#F0662B"/>
-    <path d="M90 104 L110 104 L100 122 Z" fill="#FFC93C" stroke="#E0A400" stroke-width="2" stroke-linejoin="round"/>
-    <circle cx="44" cy="112" r="7" fill="#FF6F91" opacity=".55"/><circle cx="156" cy="112" r="7" fill="#FF6F91" opacity=".55"/>
-    <path d="M80 190 l-6 10 M86 190 l0 11 M92 190 l6 10 M108 190 l-6 10 M114 190 l0 11 M120 190 l6 10" stroke="#FFC93C" stroke-width="5" stroke-linecap="round"/>
+    <rect class="lid" x="50" y="60" width="48" height="48" rx="24" fill="#D5E2F2"/>
+    <rect class="lid" x="102" y="60" width="48" height="48" rx="24" fill="#D5E2F2"/>
+    <path d="M82 106 Q100 98 118 106 L106 136 Q100 142 94 136 Z" fill="#FFC93C" stroke="#E0A400" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="100" cy="128" r="4.5" fill="#E63946"/>
+    <circle cx="52" cy="112" r="8" fill="#FF8FB1" opacity=".55"/><circle cx="148" cy="112" r="8" fill="#FF8FB1" opacity=".55"/>
+    <path d="M70 186 l-12 14 h24 Z M130 186 l-12 14 h24 Z" fill="#FF8A3D" stroke="#E0651F" stroke-width="2" stroke-linejoin="round"/>
   </svg>`;
 }
 const Owl = {
@@ -787,13 +822,22 @@ function lookAt(x, y){
     p.style.transform = `translate(${(dx/d*k).toFixed(1)}px, ${(dy/d*k).toFixed(1)}px)`;
   });
 }
-$("#homeOwl").addEventListener("click", () => { ac(); sfx.pop(); Owl.party("#homeOwl"); FX.burst(["🪶","⭐","💜"], 14); Speech.speak("הוּ הוּ! שָׁלוֹם " + childName() + "!"); });
+$("#homeOwl").addEventListener("click", async () => {
+  ac(); Owl.party("#homeOwl"); FX.burst(["🪶","⭐","🌊","💙"], 16);
+  stopAllSound(); await playUrl("sounds/shachaf.mp3"); Speech.speak("שָׁלוֹם " + childName() + "!");
+});
 
 // night sky: drifting bubbles + twinkling stars
 (() => {
   const sky = $("#sky"); let h = "";
   for(let i=0;i<14;i++){ const s = 14 + Math.random()*46; h += `<i class="b" style="width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${14+Math.random()*16}s;animation-delay:${-Math.random()*30}s"></i>`; }
-  for(let i=0;i<26;i++){ const s = 2 + Math.random()*3; h += `<i class="s" style="width:${s}px;height:${s}px;left:${Math.random()*100}%;top:${Math.random()*70}%;animation-duration:${2+Math.random()*3}s;animation-delay:${-Math.random()*4}s"></i>`; }
+  for(let i=0;i<26;i++){ const s = 2 + Math.random()*3; h += `<i class="s" style="width:${s}px;height:${s}px;left:${Math.random()*100}%;top:${Math.random()*45}%;animation-duration:${2+Math.random()*3}s;animation-delay:${-Math.random()*4}s"></i>`; }
+  // little seagulls gliding across the sunset (Shachaf = seagull)
+  const gull = `<svg viewBox="0 0 44 16"><path d="M2 12 Q11 1 22 10 Q33 1 42 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>`;
+  [[18, 26, -4], [30, 34, -20], [12, 41, -31]].forEach(([top, dur, delay]) => { h += `<span class="gull-fly" style="top:${top}%;left:0;animation-duration:${dur}s;animation-delay:${delay}s">${gull}</span>`; });
+  // (quotes are percent-encoded so the url() can sit inside a style="" attribute)
+  const wave = c => `url('data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 100" preserveAspectRatio="none"><path d="M0 30 Q75 0 150 30 T300 30 T450 30 T600 30 V100 H0Z" fill="${c}"/></svg>`).replace(/'/g, "%27")}')`;
+  h += `<div class="sun"></div><div class="sea"><div class="wave w1" style="background-image:${wave("#2A3F9E")}"></div><div class="wave w2" style="background-image:${wave("#2F6FD8")}"></div><div class="wave w3" style="background-image:${wave("#46A6F5")}"></div></div>`;
   sky.innerHTML = h;
 })();
 
@@ -855,7 +899,7 @@ function showExplore(anim){
 }
 function exGo(d){
   sfx.whoosh(); exIdx = (exIdx + d + exList.length) % exList.length;
-  if(exIdx === 0 && d > 0){ FX.burst(); sfx.chime(); }
+  if(exIdx === 0 && d > 0){ FX.burst(); fxPlay("_magic", .8); }
   showExplore(d > 0 ? "in-next" : "in-prev");
 }
 $("#exNext").onclick = () => exGo(1);
@@ -875,7 +919,7 @@ function swipe(node, cb){
 
 /* =====================================================================
    MODE 2: YOUR TURN ("תורך!")
-   Show picture -> ask "מה זה?" -> the owl WAITS & listens (the pause is the point) ->
+   Show picture -> ask "מה זה?" -> the seagull WAITS & listens (the pause is the point) ->
    any voice = party + model the word back (expansion). Silence = model the word,
    then a second, shorter wait. Prioritises words he understands but doesn't say yet.
    ===================================================================== */
@@ -942,7 +986,7 @@ async function celebrate(w, tok, fromParent){
   const card = $("#tuStage .card"); const pr = $("#tuPrompt");
   setLevel(0);
   if(card){ card.querySelector(".word").style.visibility = "visible"; bounce(card); }
-  sfx.chime(); FX.burst(); flash(); Owl.party("#tuOwl");
+  fxPlay("_claps", .9); fxPlay("_cheer", .45); FX.burst(); flash(); Owl.party("#tuOwl");
   pr.textContent = "🎉 יֵשׁ!";
   const p = pick(PRAISE);
   await sayPhrase("__praise", Math.random() < .35 ? `${p.replace("!","")} ${childName()}!` : p); if(tok.dead) return;
@@ -987,10 +1031,10 @@ function dealPeek(){
     const h = el("button", {class:"hole"}, `<div class="pic">${picHTML(w)}</div><div class="w">${esc(wordText(w))}</div><div class="cloud"><span style="animation-delay:${i*.3}s">☁️</span></div>`);
     h.onclick = async () => {
       if(h.classList.contains("open")){ sfx.pop(); sayWord(w); return; }
-      h.classList.add("open"); sfx.whoosh(); opened++;
+      h.classList.add("open"); fxPlay("_boing", .7); opened++;
       stopAllSound();
       await Speech.speak("קוּקוּ!", {pitch:1.3}); await sayWord(w);
-      if(opened === pool.length){ await sleep(400); FX.burst(); sfx.chime(); await Speech.speak("יֵשׁ! מָצָאנוּ אֶת כֻּלָּם!"); await sleep(1400); if(cur === "peek") dealPeek(); }
+      if(opened === pool.length){ await sleep(400); FX.burst(); fxPlay("_cheer", .5); fxPlay("_claps", .8); await Speech.speak("יֵשׁ! מָצָאנוּ אֶת כֻּלָּם!"); await sleep(1400); if(cur === "peek") dealPeek(); }
     };
     g.appendChild(h);
   });
@@ -1199,7 +1243,7 @@ function renderTips(){
         <li><b>"מה זה?"</b> — מסתכלים, מצביעים, אומרים יחד. עושים את הקול של החיה בהגזמה.</li>
         <li><b>"תורך!"</b> — האפליקציה שואלת ו<b>מחכה בשקט</b>. כל קול שהוא משמיע מקבל חגיגה. אל תמהרו לענות במקומו.</li>
         <li><b>"קוקו!"</b> — הסתרה וגילוי. מצוין לצחוק ולמילים "אוֹי", "הִנֵּה", "עוֹד".</li>
-        <li><b>אחרי 10 דקות</b> הינשוף הולך לישון. זה בכוונה — הקסם האמיתי קורה בדיבור שאחרי, בעולם.</li>
+        <li><b>אחרי 10 דקות</b> השחף הולך לישון. זה בכוונה — הקסם האמיתי קורה בדיבור שאחרי, בעולם.</li>
       </ol></div>
     <div class="box"><h3>טריקים של קלינאיות תקשורת</h3><ul class="tiplist">${TIPS.map(([h,t]) => `<li><b>${esc(h)}:</b> ${esc(t)}</li>`).join("")}</ul></div>`;
 }
@@ -1216,7 +1260,7 @@ function renderSettings(){
       <div class="muted">השם מופיע ככרטיס בקטגוריית משפחה ובשבחים ("כל הכבוד יונתן!"). צלמו אותו שם 📷 — ילדים מתים לראות את עצמם.</div></div>
     <div class="box"><h3>זמן משחק</h3>
       <div class="chips" id="sMin">${[5,10,15,20,0].map(m => `<button class="chip ${settings.minutes===m?"on":""}" data-v="${m}">${m ? m+" דק'" : "ללא הגבלה"}</button>`).join("")}</div>
-      <div class="muted">ההמלצה לגיל הזה: מעט מסך, תמיד יחד. בסוף הזמן הינשוף נרדם, ורק הורה (לחיצה ארוכה) מעיר אותו.</div></div>
+      <div class="muted">ההמלצה לגיל הזה: מעט מסך, תמיד יחד. בסוף הזמן השחף נרדם, ורק הורה (לחיצה ארוכה) מעיר אותו.</div></div>
     <div class="box"><h3>קול</h3>
       <div class="chips" id="sVoice"><button class="chip ${settings.voice==="parent"?"on":""}" data-v="parent">ההקלטות שלנו קודם</button><button class="chip ${settings.voice==="tts"?"on":""}" data-v="tts">רק קול ממוחשב</button></div>
       <div class="chips" id="sRate">${[[0.7,"איטי מאוד"],[0.85,"איטי"],[1,"רגיל"]].map(([v,l]) => `<button class="chip ${settings.rate===v?"on":""}" data-v="${v}">${l}</button>`).join("")}</div>
@@ -1228,7 +1272,7 @@ function renderSettings(){
     <div class="box"><h3>💞 סנכרון בין הטלפונים</h3>
       <div class="muted">ייצאו קובץ (יומן, הקלטות, תמונות ומילים) ושלחו בווטסאפ לטלפון השני. שם: "ייבוא" → בוחרים את הקובץ. הייבוא ממזג — לא מוחק כלום.</div>
       <div class="acts" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn" id="bExp">📤 ייצוא ושיתוף</button><button class="btn light" id="bImp">📥 ייבוא</button></div></div>
-    <div class="box"><div class="muted">פטפוט · גרסה 1.1 · הכל נשמר מקומית בטלפון, בלי אינטרנט, בלי פרסומות, בלי איסוף מידע.</div></div>`;
+    <div class="box"><div class="muted">פטפוט של שחף · גרסה 1.2 · הכל נשמר מקומית בטלפון, בלי אינטרנט, בלי פרסומות, בלי איסוף מידע.</div></div>`;
   const bindChips = (id, key, conv) => $("#"+id).querySelectorAll(".chip").forEach(b => b.onclick = () => { settings[key] = conv(b.dataset.v); saveSettings(); renderSettings(); });
   bindChips("sMin", "minutes", Number); bindChips("sVoice", "voice", String); bindChips("sRate", "rate", Number);
   bindChips("sSens", "sens", String); bindChips("sNik", "nikud", v => v === "1");

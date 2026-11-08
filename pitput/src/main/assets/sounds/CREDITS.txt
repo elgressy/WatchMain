@@ -1,0 +1,14 @@
+Pitput sound credits
+====================
+Animal calls (kelev, chatul, para, barvaz, tarnegol, kivsa, sus, arye, pil, kof, tzfardea, tzipor, nachash,
+dov, gamal, tarnegolet, ez, chazir, achbar, tuki, yona, dolphin, yanshuf, avaz):
+  from "Animals" by Gustavo Cardoso (https://github.com/gustavocardoso/animals), MIT License,
+  Copyright (c) 2019 Gustavo Cardoso. Trimmed and loudness-normalized.
+
+Vehicles, household, nature and celebration sounds (dvora, oto, otobus, rakevet, matos, masait, tractor,
+mishtara, kabait, ambulans, masok, sira, ofanoa, raketa, dinozaur, tof, telefon, kadur, delet, ambatya,
+balon, geshem, yam, _cheer, _claps, _magic, _xylo, _boing):
+  from the Google Sound Library (https://developers.google.com/assistant/tools/sound-library),
+  licensed CC BY 4.0. Trimmed and loudness-normalized.
+
+ofanayim (bicycle bell) and shachaf (seagull call): synthesized for this app.
