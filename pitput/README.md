@@ -27,7 +27,7 @@ waiting time, expansion, modelling instead of correcting, and celebrating every 
   Sources and licenses are in `assets/sounds/CREDITS.txt` (MIT, and the Google Sound Library under CC BY 4.0).
   The bicycle bell and the seagull call are synthesized.
 - Made for **Shachaf**. His card in the family shows a boy (or his photo), and the app greets him by name when it opens
-  (בוקר טוב / שלום / ערב טוב). The family appears by name: אמא סיון, אלמוג (the big sister), גל (the sister). Names, photos and
+  (בוקר טוב / שלום / ערב טוב). The family appears by name: אמא סיון, אבא אדם, אלמוג (the big sister), גל (the sister), סבתא תקווה and סבא דוד (Sivan's parents), and ממי and פפי (Adam's parents). Names, photos and
   voice recordings for each family member are edited in Settings → המשפחה. Photos stay on the phone and never go into the repo.
 - Gentle gaming: stars for every card, attempt and reveal; a level every 10 stars unlocks a sticker in "המדבקות שלי".
 - Photosensitivity-safe (WCAG 2.3.1): no flashing, no strobing, no full-screen brightness changes. "Calm mode" also turns off
