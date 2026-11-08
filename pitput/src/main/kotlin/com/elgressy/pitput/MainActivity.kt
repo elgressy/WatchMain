@@ -6,6 +6,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.view.View
@@ -28,6 +33,7 @@ import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.webkit.WebViewAssetLoader
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.util.Locale
@@ -155,6 +161,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
+        stopAsr()
         tts?.stop()
         webView.onPause()
     }
@@ -165,10 +172,129 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
+        stopAsr()
         tts?.shutdown()
         tts = null
         webView.destroy()
         super.onDestroy()
+    }
+
+    // ------------------------------------- speech recognition ("your turn": did he say the word?)
+    // Uses the phone's recognition service (Google, he-IL). JS gets events via window.__asr(id, type, payload):
+    // "speech", "rms" (0..1), "partial" [..], "result" [..], "error" <SpeechRecognizer.ERROR_* code>.
+
+    private var recognizer: SpeechRecognizer? = null
+    private var asrId: String? = null
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private var asrTimeout: Runnable? = null
+    private var lastRmsAt = 0L
+    private var pendingAsr: Pair<String, Long>? = null
+
+    private val audioPermLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { ok ->
+        val p = pendingAsr
+        pendingAsr = null
+        if (p != null) {
+            if (ok) startAsr(p.first, p.second) else emitAsr(p.first, "error", "9")
+        }
+    }
+
+    private fun emitAsr(id: String, type: String, payloadJson: String) {
+        val js = "window.__asr && window.__asr(${JSONObject.quote(id)}, ${JSONObject.quote(type)}, $payloadJson)"
+        runOnUiThread { if (::webView.isInitialized) webView.evaluateJavascript(js, null) }
+    }
+
+    private fun resultsJson(b: Bundle?): String =
+        JSONArray(b?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: arrayListOf<String>()).toString()
+
+    private fun startAsr(id: String, maxMs: Long) {
+        stopAsr()
+        if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+            emitAsr(id, "error", "5")
+            return
+        }
+        if (!granted(Manifest.permission.RECORD_AUDIO)) {
+            pendingAsr = id to maxMs
+            audioPermLauncher.launch(Manifest.permission.RECORD_AUDIO)
+            return
+        }
+        val rec = try { SpeechRecognizer.createSpeechRecognizer(this) } catch (e: Exception) { null }
+        if (rec == null) {
+            emitAsr(id, "error", "5")
+            return
+        }
+        recognizer = rec
+        asrId = id
+        rec.setRecognitionListener(object : RecognitionListener {
+            override fun onReadyForSpeech(params: Bundle?) {}
+            override fun onBeginningOfSpeech() {
+                if (asrId == id) emitAsr(id, "speech", "true")
+            }
+            override fun onRmsChanged(rmsdB: Float) {
+                val now = System.currentTimeMillis()
+                if (asrId == id && now - lastRmsAt > 70) {
+                    lastRmsAt = now
+                    val v = ((rmsdB + 2f) / 12f).coerceIn(0f, 1f)
+                    emitAsr(id, "rms", String.format(Locale.US, "%.2f", v))
+                }
+            }
+            override fun onBufferReceived(buffer: ByteArray?) {}
+            override fun onEndOfSpeech() {}
+            override fun onError(error: Int) {
+                if (asrId == id) {
+                    emitAsr(id, "error", error.toString())
+                    finishAsr(id)
+                }
+            }
+            override fun onResults(results: Bundle?) {
+                if (asrId == id) {
+                    emitAsr(id, "result", resultsJson(results))
+                    finishAsr(id)
+                }
+            }
+            override fun onPartialResults(partialResults: Bundle?) {
+                if (asrId == id) emitAsr(id, "partial", resultsJson(partialResults))
+            }
+            override fun onEvent(eventType: Int, params: Bundle?) {}
+        })
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "he-IL")
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "he-IL")
+            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
+            putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 1500L)
+            putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 1200L)
+            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
+        }
+        try {
+            rec.startListening(intent)
+        } catch (e: Exception) {
+            emitAsr(id, "error", "5")
+            finishAsr(id)
+            return
+        }
+        val t = Runnable { if (asrId == id) try { recognizer?.stopListening() } catch (_: Exception) {} }
+        asrTimeout = t
+        mainHandler.postDelayed(t, maxMs)
+    }
+
+    /** Release after a final callback (posted, so we never destroy from inside the listener call). */
+    private fun finishAsr(id: String) {
+        mainHandler.post { if (asrId == id) stopAsr() }
+    }
+
+    private fun stopAsr() {
+        asrTimeout?.let { mainHandler.removeCallbacks(it) }
+        asrTimeout = null
+        asrId = null
+        val rec = recognizer
+        recognizer = null
+        if (rec != null) {
+            try { rec.cancel() } catch (_: Exception) {}
+            try { rec.destroy() } catch (_: Exception) {}
+        }
     }
 
     // ------------------------------------------------------------------ TTS
@@ -258,6 +384,19 @@ class MainActivity : ComponentActivity() {
 
         @JavascriptInterface
         fun ttsStatus(): String = ttsState
+
+        @JavascriptInterface
+        fun asrAvailable(): Boolean = SpeechRecognizer.isRecognitionAvailable(this@MainActivity)
+
+        @JavascriptInterface
+        fun asrStart(id: String, maxMs: Int) {
+            runOnUiThread { startAsr(id, maxMs.toLong().coerceIn(1500L, 15000L)) }
+        }
+
+        @JavascriptInterface
+        fun asrStop() {
+            runOnUiThread { stopAsr() }
+        }
 
         @JavascriptInterface
         fun openTtsSettings() {

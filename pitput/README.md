@@ -6,9 +6,11 @@ waiting time, expansion, modelling instead of correcting, and celebrating every 
 
 ## Modes (kid side)
 - **🔍 מה זה?** Big picture cards (emoji, or your own photo). The word is said aloud in your recorded voice, or by Hebrew TTS as a fallback, plus the animal or vehicle sound.
-- **🎤 תורך!** The app asks "מה זה?" and then **waits and listens**. The mic only detects *any vocal attempt*
-  (energy-based; no speech recognition, since toddler words aren't recognizable). An attempt gets
-  confetti, praise, and the target word modelled right back. Silence: the app models the word and gives him a second chance.
+- **🎤 תורך!** The owl asks "מה זה?" and then **waits and listens** with the phone's speech recognizer (Google, he-IL).
+  The answer is fuzzy-matched to the target, so clipped toddler words ("ננה" = בננה), the animal sound ("הב הב" = כלב), or
+  a family member's name count. Said it: cheering and 3 ⭐. Tried but not recognized: "כמעט!", the word is modelled,
+  another chance, and then 1 ⭐ for the effort. Never "wrong". The parent's ⭐ button always overrides. If no recognizer
+  is available it falls back to energy-based listening. Settings can switch to "every attempt wins".
   It prioritises words marked "understands" but not yet "says".
 - **☁️ קוקו!** Peekaboo clouds hide 6 words. Good for laughs and for words like "אוי", "הנה", "עוד".
 - A session timer (default 10 min) puts the owl to sleep. Only a parent long-press wakes it.

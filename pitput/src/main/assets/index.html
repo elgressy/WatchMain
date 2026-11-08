@@ -163,6 +163,7 @@ h1,h2,h3{margin:0}
 .turn-head{display:flex;align-items:center;justify-content:center;gap:10px;min-height:96px;margin-top:-4px}
 #tuOwl{width:92px}
 .prompt{font-size:28px;font-weight:700;min-height:40px;text-shadow:0 3px 0 rgba(0,0,0,.3)}
+.heard{font-size:14px;color:#E6DBFF;min-height:18px;opacity:.85}
 .parent-bar{display:flex;gap:12px;justify-content:center;padding-top:22px}
 .pill{padding:13px 18px;border-radius:999px;font-size:18px;font-weight:700;--c1:#fff;--c2:#ECE5FF;--c3:#A99BD6;color:var(--ink)}
 .pill.ok{--c1:#FFE066;--c2:#FFB800;--c3:#C27C00;color:#4A2A00}
@@ -355,7 +356,7 @@ body.calm .owl-wrap.party .owl, body.calm .owl-wrap.party .wingL, body.calm .owl
     <div></div>
     <button class="icon-btn candy" data-go="home">🏠</button>
   </div>
-  <div class="turn-head"><div class="owl-wrap idle" id="tuOwl"><span class="halo"></span></div><div class="prompt" id="tuPrompt"></div></div>
+  <div class="turn-head"><div class="owl-wrap idle" id="tuOwl"><span class="halo"></span></div><div><div class="prompt" id="tuPrompt"></div><div class="heard" id="tuHeard"></div></div></div>
   <div class="stage" id="tuStage"></div>
   <div class="parent-bar">
     <button class="pill candy" id="tuAgain">🔊 שׁוּב</button>
@@ -522,7 +523,7 @@ const LS = {
   get(k, d){ try{ const v = localStorage.getItem("pitput."+k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem("pitput."+k, JSON.stringify(v)); }catch(e){} }
 };
-const settings = Object.assign({name:"שַׁחַף", calm:false, minutes:10, rate:0.85, sens:"mid", voice:"parent", nikud:true}, LS.get("settings", {}));
+const settings = Object.assign({name:"שַׁחַף", calm:false, minutes:10, rate:0.85, sens:"mid", voice:"parent", nikud:true, judge:"words"}, LS.get("settings", {}));
 const diary = LS.get("diary", {});      // wordId -> {s:0|1|2, d1:date understands, d2:date says}
 const moments = LS.get("moments", []);  // [{t:ts, txt}]
 OURS.words = LS.get("custom", []);      // [{id, w, e}]
@@ -1084,28 +1085,123 @@ function turnPool(){
   }
   return out;
 }
+/* ---------------- WORD RECOGNITION ----------------
+   Android's own speech recognizer (Google, he-IL) via the native bridge. Results are fuzzy-matched to
+   the target, because toddlers clip words ("ננה" = בננה) and use sounds ("הב הב" = כלב).
+   Outcomes: "match" (said it) / "voice" (tried, not recognized) / "timeout" (silence) / "fail" (no recognizer). */
+const normHe = s => stripNikud(String(s)).replace(/[ךםןףץ]/g, c => ({"ך":"כ","ם":"מ","ן":"נ","ף":"פ","ץ":"צ"}[c]))
+  .replace(/[^א-ת ]/g, " ").replace(/\s+/g, " ").trim();
+function lev(a, b){
+  const d = Array.from({length: a.length + 1}, (_, i) => [i]);
+  for(let j = 1; j <= b.length; j++) d[0][j] = j;
+  for(let i = 1; i <= a.length; i++) for(let j = 1; j <= b.length; j++)
+    d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+function targetsFor(w){
+  const t = [wordText(w)];
+  const extra = {ima:"ima", aba:"aba", savta:"savta", saba:"saba"}[w.id];
+  if(extra && fam(extra)) t.push(fam(extra));
+  if(w.id === "me") t.push("אני");
+  if(w.s) t.push(w.s);
+  return t.map(normHe).filter(Boolean);
+}
+function closeWord(tok, target){
+  if(tok === target) return true;
+  if(target.length <= 2) return false;
+  const tk = tok.length > 3 ? tok.replace(/^[הו]/, "") : tok;       // "הכלב" / "וכלב"
+  if(tk === target) return true;
+  if(lev(tk, target) <= (target.length >= 5 ? 2 : 1)) return true;
+  // clipped toddler words: a good chunk of the start or the end ("ננה", "בננ")
+  return tk.length >= 2 && tk.length >= Math.ceil(target.length / 2) && (target.startsWith(tk) || target.endsWith(tk));
+}
+function heardMatches(heard, targets){
+  for(const h of heard){
+    const H = normHe(h), flat = H.replace(/ /g, ""), toks = H.split(" ").filter(Boolean);
+    for(const T of targets){
+      const Tf = T.replace(/ /g, "");
+      if(Tf.length >= 2 && flat.includes(Tf)) return true;
+      if(toks.some(tk => closeWord(tk, Tf))) return true;
+    }
+  }
+  return false;
+}
+const Asr = (() => {
+  let n = 0, active = null, disabled = false;
+  window.__asr = (id, type, data) => { if(active && active.id === id) active.on(type, data); };
+  const available = () => !disabled && !!(NATIVE && NATIVE.asrAvailable && (() => { try{ return NATIVE.asrAvailable(); }catch(e){ return false; } })());
+  function listen(ms, onLevel, token, targets){
+    return new Promise(res => {
+      const id = "a" + (++n); let heard = [], spoke = false, done = false;
+      const finish = kind => {
+        if(done) return; done = true; active = null; clearInterval(chk); clearTimeout(safety); onLevel(0);
+        try{ NATIVE.asrStop(); }catch(e){}
+        res({kind, heard});
+      };
+      active = {id, on(type, d){
+        if(type === "rms"){ onLevel(d); if(d > .6) spoke = true; }
+        else if(type === "speech") spoke = true;
+        else if(type === "partial" || type === "result"){
+          if(d && d.length) heard = d;
+          if(heardMatches(heard, targets)) finish("match");
+          else if(type === "result") finish(heard.length || spoke ? "voice" : "timeout");
+        }
+        else if(type === "error"){
+          // 6 speech timeout, 7 no match: normal "didn't get it"; anything else = recognizer not usable here
+          if(d === 6 || d === 7) finish(spoke ? "voice" : "timeout");
+          else { if(!spoke){ disabled = true; } finish(spoke ? "voice" : "fail"); }
+        }
+      }};
+      const chk = setInterval(() => { if(token.dead) finish("cancel"); }, 100);
+      const safety = setTimeout(() => finish(spoke ? "voice" : "timeout"), ms + 4000);
+      try{ NATIVE.asrStart(id, ms); }catch(e){ disabled = true; finish("fail"); }
+    });
+  }
+  return {available, listen, get disabled(){ return disabled; }};
+})();
+
+/* ---------------- MODE 2 flow ---------------- */
+const ALMOST = ["כִּמְעַט!", "יָפֶה! עוֹד פַּעַם?", "אֵיזֶה נִסָּיוֹן יָפֶה!"];
+let fallbackWarned = false;
 async function startTurn(){
   tuList = turnPool(); tuIdx = 0; go("turn");
-  $("#tuPrompt").textContent = "";
-  const ok = await Mic.start();
-  if(!ok) toast("בלי מיקרופון: לחצו ⭐ כשהוא אומר מילה", 3500);
+  $("#tuPrompt").textContent = ""; $("#tuHeard").textContent = "";
+  if(!Asr.available()){
+    const ok = await Mic.start();
+    if(!ok) toast("בלי מיקרופון: לחצו ⭐ כשהוא אומר מילה", 3500);
+    else if(settings.judge !== "any" && !fallbackWarned){ fallbackWarned = true; toast("זיהוי מילים לא זמין כאן — כל ניסיון מקבל כוכב, ו-⭐ כשהוא אומר נכון", 4500); }
+  }
   runTurn();
 }
 function setLevel(v){
   const o = $("#tuOwl"); if(o) o.style.setProperty("--lvl", v.toFixed(2));
   const c = $("#tuStage .card"); if(c) c.style.transform = `scale(${1 + v*0.07}) rotate(${(v*3).toFixed(1)}deg)`;
 }
-async function listenPhase(pr, text, ms, tok){
+// one listening window → {kind, heard}
+async function listenPhase(pr, text, ms, tok, w){
   pr.textContent = text; Owl.state("#tuOwl", "listen");
-  const r = await Mic.listen(ms, setLevel, tok);
-  if(r !== "cancel") Owl.state("#tuOwl", "idle");
+  let r;
+  if(Asr.available()){
+    r = await Asr.listen(ms, setLevel, tok, targetsFor(w));
+    if(r.kind === "fail"){                       // recognizer missing/offline → fall back to "any sound" listening
+      toast("זיהוי המילים לא זמין כרגע — עוברים להקשבה רגילה", 3500);
+      await Mic.start(); r = {kind: await Mic.listen(ms, setLevel, tok), heard: []};
+    }
+  } else {
+    r = {kind: await Mic.listen(ms, setLevel, tok), heard: []};
+  }
+  if(r.kind !== "cancel") Owl.state("#tuOwl", "idle");
+  // without real recognition (or in "every attempt wins" mode) a voice counts as a win
+  if(r.kind === "voice" && (settings.judge === "any")) r.kind = "match";
+  const hv = $("#tuHeard");
+  if(hv) hv.textContent = r.heard && r.heard.length ? `שָׁמַעְתִּי: "${r.heard[0]}"` : "";
   return r;
 }
 async function runTurn(){
   killFlow(); const tok = flowToken;
   if(tuIdx >= tuList.length){ tuList = turnPool(); tuIdx = 0; }
   const w = tuWord = tuList[tuIdx];
-  Owl.state("#tuOwl", "idle");
+  Owl.state("#tuOwl", "idle"); $("#tuHeard").textContent = "";
   $("#tuStage").innerHTML = cardHTML(w, false, tuIdx ? "in-next" : "pop");
   const card = $("#tuStage .card"), pr = $("#tuPrompt");
   card.addEventListener("click", () => { bounce(card); sfx.pop(); });
@@ -1114,28 +1210,39 @@ async function runTurn(){
   await sleep(500); if(tok.dead) return;
   pr.textContent = "מָה זֶה? 🤔";
   await sayPhrase("__whatis", WHATIS); if(tok.dead) return;
-  let r = await listenPhase(pr, "מַקְשִׁיב... 👂", 6500, tok); if(r === "cancel") return;
-  if(r === "voice"){ await celebrate(w, tok, false); return; }
-  // model the word, then give him another chance
-  wordEl.style.visibility = "visible"; bounce(card); pr.textContent = "";
+  let r = await listenPhase(pr, "מַקְשִׁיב... 👂", 7000, tok, w); if(r.kind === "cancel") return;
+  if(r.kind === "match"){ await celebrate(w, tok, false, "full"); return; }
+  // not yet: encourage (if he tried), model the word, and give him one more go
+  wordEl.style.visibility = "visible"; bounce(card);
+  if(r.kind === "voice"){ pr.textContent = "כִּמְעַט! 💪"; await Speech.speak(pick(ALMOST)); if(tok.dead) return; }
+  pr.textContent = "";
   await sayWord(w); if(tok.dead) return;
   await sleep(250); if(tok.dead) return;
-  r = await listenPhase(pr, "עַכְשָׁו אַתָּה! 👂", 4500, tok); if(r === "cancel") return;
-  if(r === "voice"){ await celebrate(w, tok, false); return; }
+  const r2 = await listenPhase(pr, "עַכְשָׁו אַתָּה! 👂", 6000, tok, w); if(r2.kind === "cancel") return;
+  if(r2.kind === "match"){ await celebrate(w, tok, false, "full"); return; }
+  if(r2.kind === "voice" || r.kind === "voice"){ await celebrate(w, tok, false, "try"); return; }
   pr.textContent = ""; await sleep(900); if(tok.dead) return;
   tuIdx++; runTurn();
 }
-async function celebrate(w, tok, fromParent){
+// level "full" = he said it (3 stars, cheering); "try" = he tried (1 star, warm words, word modelled again)
+async function celebrate(w, tok, fromParent, lvl = "full"){
   const card = $("#tuStage .card"); const pr = $("#tuPrompt");
   setLevel(0);
   if(card){ card.querySelector(".word").style.visibility = "visible"; bounce(card); }
-  fxPlay("_claps", .9); fxPlay("_cheer", .45); if(!settings.calm) FX.burst(); Owl.party("#tuOwl"); award(3, card);
-  pr.textContent = "🎉 יֵשׁ!";
-  const p = pick(PRAISE);
-  await sayPhrase("__praise", Math.random() < .35 ? `${p.replace("!","")} ${childName()}!` : p); if(tok.dead) return;
+  if(lvl === "full"){
+    fxPlay("_claps", .9); fxPlay("_cheer", .45); if(!settings.calm) FX.burst(); Owl.party("#tuOwl"); award(3, card);
+    pr.textContent = "🎉 נָכוֹן!";
+    const p = pick(PRAISE);
+    await sayPhrase("__praise", Math.random() < .35 ? `${p.replace("!","")} ${childName()}!` : p); if(tok.dead) return;
+  } else {
+    fxPlay("_xylo", .5); award(1, card);
+    pr.textContent = "👏 יָפֶה שֶׁנִּסִּיתָ!";
+    await Speech.speak("יָפֶה שֶׁנִּסִּיתָ!"); if(tok.dead) return;
+  }
   await sleep(150);
   await sayWord(w); if(tok.dead) return;   // expansion: he hears the target word right after his attempt
   const att = LS.get("attempts", {}); att[w.id] = (att[w.id]||0) + 1; LS.set("attempts", att);
+  if(lvl === "full" && !fromParent){ const hits = LS.get("hits", {}); hits[w.id] = (hits[w.id]||0) + 1; LS.set("hits", hits); }
   if(fromParent) markSaid(w.id);
   await sleep(1200); if(tok.dead) return;
   tuIdx++; runTurn();
@@ -1143,16 +1250,18 @@ async function celebrate(w, tok, fromParent){
 function tuNext(){ sfx.whoosh(); tuIdx++; runTurn(); }
 $("#tuNext").onclick = tuNext;
 $("#tuAgain").onclick = () => {
-  if(!tuWord) return; killFlow(); const tok = flowToken; const c = $("#tuStage .card");
+  if(!tuWord) return; killFlow(); const tok = flowToken; const c = $("#tuStage .card"), w = tuWord;
   if(c){ c.querySelector(".word").style.visibility = "visible"; bounce(c); }
   const pr = $("#tuPrompt");
-  sayWord(tuWord).then(async () => {
+  sayWord(w).then(async () => {
     if(tok.dead) return;
-    const r = await listenPhase(pr, "עַכְשָׁו אַתָּה! 👂", 5000, tok);
-    if(r === "voice") celebrate(tuWord, tok, false); else if(r === "timeout") pr.textContent = "";
+    const r = await listenPhase(pr, "עַכְשָׁו אַתָּה! 👂", 6000, tok, w);
+    if(r.kind === "match") celebrate(w, tok, false, "full");
+    else if(r.kind === "voice") celebrate(w, tok, false, "try");
+    else if(r.kind === "timeout") pr.textContent = "";
   });
 };
-$("#tuSaid").onclick = () => { if(!tuWord) return; killFlow(); celebrate(tuWord, flowToken, true); };
+$("#tuSaid").onclick = () => { if(!tuWord) return; killFlow(); celebrate(tuWord, flowToken, true, "full"); };
 function markSaid(id){
   const d = diary[id] || (diary[id] = {s:0});
   if(d.s !== 2){ d.s = 2; d.d2 = today(); if(!d.d1) d.d1 = d.d2; saveDiary(); const n = Object.values(diary).filter(x=>x.s===2).length; toast(`נרשם ביומן ⭐ (${n} מילים)`); milestone(n); }
@@ -1384,7 +1493,7 @@ function renderTips(){
       <ol class="tiplist">
         <li><b>יושבים יחד.</b> הוא על הברכיים, הטלפון ביניכם. אתם השותפים — האפליקציה רק הכלי.</li>
         <li><b>"מה זה?"</b> — מסתכלים, מצביעים, אומרים יחד. עושים את הקול של החיה בהגזמה.</li>
-        <li><b>"תורך!"</b> — האפליקציה שואלת ו<b>מחכה בשקט</b>. כל קול שהוא משמיע מקבל חגיגה. אל תמהרו לענות במקומו.</li>
+        <li><b>"תורך!"</b> — הינשוף שואל ו<b>מחכה בשקט</b>. כשהוא אומר את המילה (גם בערך) — חגיגה ו-3 כוכבים; ניסיון — "כמעט!", הדגמה ועוד הזדמנות. אל תמהרו לענות במקומו, ולחצו ⭐ כשאתם שומעים שהוא אמר.</li>
         <li><b>"קוקו!"</b> — הסתרה וגילוי. מצוין לצחוק ולמילים "אוֹי", "הִנֵּה", "עוֹד".</li>
         <li><b>אחרי 10 דקות</b> הינשוף הולך לישון. זה בכוונה — הקסם האמיתי קורה בדיבור שאחרי, בעולם.</li>
       </ol></div>
@@ -1416,16 +1525,19 @@ function renderSettings(){
       <div class="chips" id="sRate">${[[0.7,"איטי מאוד"],[0.85,"איטי"],[1,"רגיל"]].map(([v,l]) => `<button class="chip ${settings.rate===v?"on":""}" data-v="${v}">${l}</button>`).join("")}</div>
       <div class="chips" id="sNik"><button class="chip ${settings.nikud?"on":""}" data-v="1">הקראה עם ניקוד</button><button class="chip ${!settings.nikud?"on":""}" data-v="0">בלי ניקוד</button></div>
       <button class="btn light" id="sTest">🔊 בדיקה</button></div>
+    <div class="box"><h3>מה נחשב "נכון" ב"תורך!"</h3>
+      <div class="chips" id="sJudge"><button class="chip ${settings.judge!=="any"?"on":""}" data-v="words">רק כשהוא אומר את המילה</button><button class="chip ${settings.judge==="any"?"on":""}" data-v="any">כל ניסיון קולי</button></div>
+      <div class="muted">במצב "רק את המילה" — זיהוי הדיבור של Google בטלפון בודק מה נאמר, בסלחנות (גם "ננה" לבננה וגם "הב הב" לכלב נחשבים). ניסיון שלא זוהה מקבל "כמעט!", הדגמה וניסיון נוסף — ובסוף כוכב על המאמץ. אצל פעוטות הזיהוי לא מושלם: הכפתור ⭐ "אמר!" תמיד גובר. ${Asr.available() ? "✅ זיהוי דיבור זמין במכשיר." : "⚠️ זיהוי דיבור לא זמין כרגע במכשיר הזה (נדרשת אפליקציית Google)."}</div></div>
     <div class="box"><h3>רגישות המיקרופון ב"תורך!"</h3>
       <div class="chips" id="sSens">${[["low","נמוכה (בית רועש)"],["mid","רגילה"],["high","גבוהה (לחישות)"]].map(([v,l]) => `<button class="chip ${settings.sens===v?"on":""}" data-v="${v}">${l}</button>`).join("")}</div>
       <div class="muted">האפליקציה לא מנסה "להבין" את המילה — היא מזהה שהוא <b>ניסה</b>, וזה מה שחוגגים.</div></div>
     <div class="box"><h3>💞 סנכרון בין הטלפונים</h3>
       <div class="muted">ייצאו קובץ (יומן, הקלטות, תמונות ומילים) ושלחו בווטסאפ לטלפון השני. שם: "ייבוא" → בוחרים את הקובץ. הייבוא ממזג — לא מוחק כלום.</div>
       <div class="acts" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn" id="bExp">📤 ייצוא ושיתוף</button><button class="btn light" id="bImp">📥 ייבוא</button></div></div>
-    <div class="box"><div class="muted">פטפוט של שחף · גרסה 1.4 · הכל נשמר מקומית בטלפון, בלי אינטרנט, בלי פרסומות, בלי איסוף מידע.</div></div>`;
+    <div class="box"><div class="muted">פטפוט של שחף · גרסה 1.5 · הכל נשמר מקומית בטלפון, בלי אינטרנט, בלי פרסומות, בלי איסוף מידע.</div></div>`;
   const bindChips = (id, key, conv) => $("#"+id).querySelectorAll(".chip").forEach(b => b.onclick = () => { settings[key] = conv(b.dataset.v); saveSettings(); renderSettings(); });
   bindChips("sMin", "minutes", Number); bindChips("sVoice", "voice", String); bindChips("sRate", "rate", Number);
-  bindChips("sSens", "sens", String); bindChips("sCalm", "calm", v => v === "1"); bindChips("sNik", "nikud", v => v === "1");
+  bindChips("sSens", "sens", String); bindChips("sCalm", "calm", v => v === "1"); bindChips("sJudge", "judge", String); bindChips("sNik", "nikud", v => v === "1");
   $("#sName").onchange = e => { settings.name = e.target.value.trim() || "שַׁחַף"; saveSettings(); toast("נשמר"); renderSettings(); };
   [["fIma","ima"],["fAba","aba"],["fSis1","sis1"],["fSis2","sis2"],["fSavta","savta"],["fSaba","saba"],["fGm2","gm2"],["fGp2","gp2"]].forEach(([inp, k]) => $("#"+inp).onchange = e => {
     const cl = LS.get("famCleared", {}); cl[k] = !e.target.value.trim(); LS.set("famCleared", cl);   // an emptied name stays empty (hides that card)
@@ -1488,7 +1600,7 @@ let hiddenAt = 0;
 document.addEventListener("visibilitychange", () => {
   if(document.hidden){ hiddenAt = Date.now(); stopAllSound(); if(cur === "turn") Mic.stop(); return; }
   if(Date.now() - hiddenAt > 30*60000){ playMs = 0; if(cur === "bye") go("home"); setTimeout(greet, 500); }  // a new sitting later = a fresh session
-  if(cur === "turn") Mic.start();
+  if(cur === "turn" && !Asr.available()) Mic.start();
 });
 loadMediaIndex().finally(() => renderHome());
 // ---- say hello to Shachaf when the app opens (and when he comes back after a while) ----
